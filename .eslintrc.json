@@ -1,0 +1,14 @@
+{
+  "root": true,
+  "plugins": ["unused-imports", "prettier"],
+  "extends": ["next/core-web-vitals", "plugin:prettier/recommended"],
+  "rules": {
+    "prettier/prettier": ["error"],
+    "no-unused-vars": "off",
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      { "vars": "all", "varsIgnorePattern": "^_", "argsIgnorePattern": "^_" }
+    ]
+  }
+}
