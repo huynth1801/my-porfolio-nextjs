@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, memo } from "react";
+import React, { useEffect, useState, memo, useLayoutEffect } from "react";
 
 // --- Type Definitions ---
 type IconType = "html" | "css" | "javascript" | "typescript" | "react" | "java" | "tailwind";
@@ -178,7 +178,7 @@ const skillsConfig: SkillConfig[] = [
     size: 45,
     speed: 1,
     iconType: "css",
-    phaseShift: (2 * Math.PI) / 3,
+    phaseShift: Math.PI / 2,
     glowColor: "cyan",
     label: "CSS3",
   },
@@ -188,7 +188,7 @@ const skillsConfig: SkillConfig[] = [
     size: 40,
     speed: 1,
     iconType: "javascript",
-    phaseShift: (4 * Math.PI) / 3,
+    phaseShift: Math.PI,
     glowColor: "cyan",
     label: "JavaScript",
   },
@@ -198,7 +198,7 @@ const skillsConfig: SkillConfig[] = [
     size: 40,
     speed: 1,
     iconType: "typescript",
-    phaseShift: (4 * Math.PI) / 3,
+    phaseShift: (3 * Math.PI) / 2,
     glowColor: "cyan",
     label: "Typescript",
   },
@@ -336,9 +336,17 @@ GlowingOrbitPath.displayName = "GlowingOrbitPath";
 export default function OrbitingSkills() {
   const [time, setTime] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useLayoutEffect(() => {
+    const id = requestAnimationFrame(() => {
+      setIsClient(true);
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   useEffect(() => {
-    if (isPaused) return;
+    if (!isClient || isPaused) return;
 
     let animationFrameId: number;
     let lastTime = performance.now();
@@ -353,7 +361,7 @@ export default function OrbitingSkills() {
 
     animationFrameId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationFrameId);
-  }, [isPaused]);
+  }, [isPaused, isClient]);
 
   const orbitConfigs: Array<{ radius: number; glowColor: GlowColor; delay: number }> = [
     { radius: 100, glowColor: "cyan", delay: 0 },
@@ -420,10 +428,11 @@ export default function OrbitingSkills() {
         ))}
 
         {/* Render orbiting skill icons */}
-        {skillsConfig.map((config) => {
-          const angle = time * config.speed + (config.phaseShift || 0);
-          return <OrbitingSkill key={config.id} config={config} angle={angle} />;
-        })}
+        {isClient &&
+          skillsConfig.map((config) => {
+            const angle = time * config.speed + (config.phaseShift || 0);
+            return <OrbitingSkill key={config.id} config={config} angle={angle} />;
+          })}
       </div>
     </main>
   );
