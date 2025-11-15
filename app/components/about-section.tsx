@@ -51,9 +51,8 @@ export default function AboutSection() {
               src="/working.jpg"
               alt="Working"
               fill
-              quality={100}
-              unoptimized
-              sizes="(max-width: 768px) 50vw, 150px"
+              quality={90}
+              sizes="(max-width: 768px) 50vw, 300px"
               className="object-cover object-center rounded-2xl"
             />
           </motion.div>
@@ -67,10 +66,9 @@ export default function AboutSection() {
               src="/play-sport.jpg"
               alt="Playing sport"
               fill
-              quality={100}
-              unoptimized
-              sizes="(max-width: 768px) 50vw, 150px"
-              className="object-cover object-center rounded-2xl"
+              quality={90}
+              sizes="(max-width: 768px) 50vw, 300px"
+              className="object-cover object-top rounded-2xl"
             />
           </motion.div>
         </motion.div>

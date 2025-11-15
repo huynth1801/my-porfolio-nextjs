@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -17,17 +17,17 @@ export function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#0d0d0f] border-b border-[#1a1a1a]">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
-        {/* Logo + Title */}
+        {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
-          <div className="relative w-8 h-8">
-            <Image
-              src="/logo.svg"
-              alt="Logo"
-              fill
-              className="object-contain"
-              priority
-            />
-          </div>
+          <Image
+            src="/huy-nguyen-logo.svg"
+            alt="Huy Nguyen Logo"
+            width={32}
+            height={32}
+            className="w-8 h-8"
+            priority
+          />
+
           <span className="text-white font-semibold text-lg">Huy Nguyen</span>
         </Link>
 
