@@ -7,7 +7,7 @@ import Image from "next/image";
 
 const navItems = [
   { name: "Home", href: "/" },
-  { name: "Tools", href: "/tools" },
+  { name: "Resume", href: "/huy-nguyen-resume.pdf", download: true },
   { name: "Contact", href: "/contact" },
 ];
 
@@ -33,18 +33,38 @@ export function Header() {
 
         {/* Navigation */}
         <nav className="flex items-center gap-8">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "text-sm font-medium transition-colors hover:text-white",
-                pathname === item.href ? "text-white" : "text-gray-400",
-              )}
-            >
-              {item.name}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+
+            if (item.download) {
+              return (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  download
+                  className={cn(
+                    "text-sm font-medium transition-colors hover:text-white",
+                    "text-gray-400",
+                  )}
+                >
+                  {item.name}
+                </a>
+              );
+            }
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-white",
+                  isActive ? "text-white" : "text-gray-400",
+                )}
+              >
+                {item.name}
+              </Link>
+            );
+          })}
         </nav>
       </div>
     </header>

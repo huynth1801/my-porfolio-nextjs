@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sparkles, Zap, Headphones } from "lucide-react";
+import { GithubIcon, LinkedinIcon } from "@/components/ui/social-icon";
 
 export default function AboutSection() {
   return (
@@ -102,7 +103,6 @@ export default function AboutSection() {
           </p>
 
           {/* Feature Cards */}
-          {/* Feature Cards */}
           <motion.div
             className="grid sm:grid-cols-3 gap-5"
             initial={{ opacity: 0, y: 30 }}
@@ -131,6 +131,35 @@ export default function AboutSection() {
               delay={0.4}
             />
           </motion.div>
+
+          {/* Social network */}
+          <div className="flex justify-center mt-8">
+            <div className="flex gap-4">
+              <a
+                href="https://github.com/huynth1801"
+                target="_blank"
+                className="social-link w-8 h-8 rounded-full flex items-center justify-center 
+                        text-gray-600 dark:text-gray-300 
+                        hover:text-gray-900 dark:hover:text-white 
+                        transition-transform hover:-translate-y-0.5 
+                        hover:bg-slate-100 dark:hover:bg-slate-800"
+              >
+                <GithubIcon />
+              </a>
+
+              <a
+                href="https://www.linkedin.com/in/huy-nguyen-085382206/"
+                target="_blank"
+                className="social-link w-8 h-8 rounded-full flex items-center justify-center 
+                        text-gray-600 dark:text-gray-300 
+                        hover:text-gray-900 dark:hover:text-white 
+                        transition-transform hover:-translate-y-0.5 
+                        hover:bg-slate-100 dark:hover:bg-slate-800"
+              >
+                <LinkedinIcon />
+              </a>
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>
