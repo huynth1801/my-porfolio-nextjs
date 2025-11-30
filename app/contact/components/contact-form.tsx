@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
@@ -14,7 +14,6 @@ export const ContactForm: React.FC = () => {
   const {
     control,
     handleSubmit,
-    watch,
     reset,
     formState: { errors },
   } = useForm<ContactFormData>({
@@ -30,10 +29,28 @@ export const ContactForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // store name after successful submit to avoid watching it and causing re-renders
+  const [submittedName, setSubmittedName] = useState<string | null>(null);
 
-  const nameValue = watch("name");
+  // memoize static info cards so they don't re-render
+  const infoCards = useMemo(
+    () => [
+      { icon: <Mail className="w-6 h-6 text-indigo-400" />, title: "Email", value: "" },
+      {
+        icon: <MapPin className="w-6 h-6 text-purple-400" />,
+        title: "Location",
+        value: "Tan Binh District, Ho Chi Minh city",
+      },
+      {
+        icon: <Phone className="w-6 h-6 text-blue-400" />,
+        title: "Phone",
+        value: "+1 (555) 000-0000",
+      },
+    ],
+    [],
+  );
 
-  const onSubmit = async (data: ContactFormData) => {
+  const onSubmit = useCallback(async (data: ContactFormData) => {
     setIsSubmitting(true);
     setErrorMessage(null);
 
@@ -47,43 +64,53 @@ export const ContactForm: React.FC = () => {
       const json = await res.json();
       if (!res.ok || !json.ok) throw new Error(json.error || "Failed to send");
 
+      setSubmittedName(data.name); // store submitted name to show after success
       setIsSuccess(true);
     } catch (err) {
       setErrorMessage(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, []);
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     reset();
     setIsSuccess(false);
     setErrorMessage(null);
-  };
+    setSubmittedName(null);
+  }, [reset]);
 
   if (isSuccess) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-lg mx-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-12 text-center flex flex-col items-center justify-center h-[500px]"
-      >
-        <CheckCircle2 className="w-20 h-20 text-green-400 mb-6" />
-
-        <h2 className="text-3xl font-bold text-white mb-2">Message Sent!</h2>
-
-        <p className="text-gray-400 mb-8">
-          Thanks for reaching out, {nameValue?.split(" ")[0] || "Friend"}.
-        </p>
-
-        <button
-          onClick={resetForm}
-          className="px-6 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+    // keep small success panel component to avoid re-rendering parent form when not necessary
+    const SuccessPanel = React.memo(function SuccessPanel({
+      name,
+      onReset,
+    }: {
+      name: string | null;
+      onReset: () => void;
+    }) {
+      return (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="w-full max-w-lg mx-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-12 text-center flex flex-col items-center justify-center h-[500px]"
         >
-          Send another message
-        </button>
-      </motion.div>
-    );
+          <CheckCircle2 className="w-20 h-20 text-green-400 mb-6" />
+          <h2 className="text-3xl font-bold text-white mb-2">Message Sent!</h2>
+          <p className="text-gray-400 mb-8">
+            Thanks for reaching out, {name?.split(" ")[0] ?? "Friend"}.
+          </p>
+          <button
+            onClick={onReset}
+            className="px-6 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+          >
+            Send another message
+          </button>
+        </motion.div>
+      );
+    });
+
+    return <SuccessPanel name={submittedName} onReset={resetForm} />;
   }
 
   return (
@@ -101,24 +128,15 @@ export const ContactForm: React.FC = () => {
         </div>
 
         <div className="grid gap-6">
-          <InfoCard
-            icon={<Mail className="w-6 h-6 text-indigo-400" />}
-            title="Email"
-            value=""
-            delay={0.4}
-          />
-          <InfoCard
-            icon={<MapPin className="w-6 h-6 text-purple-400" />}
-            title="Location"
-            value="Tan Binh District, Ho Chi Minh city"
-            delay={0.5}
-          />
-          <InfoCard
-            icon={<Phone className="w-6 h-6 text-blue-400" />}
-            title="Phone"
-            value="+1 (555) 000-0000"
-            delay={0.6}
-          />
+          {infoCards.map((card) => (
+            <InfoCard
+              key={card.title}
+              icon={card.icon}
+              title={card.title}
+              value={card.value}
+              delay={0}
+            />
+          ))}
         </div>
       </motion.div>
 
