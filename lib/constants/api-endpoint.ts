@@ -1,0 +1,1 @@
+export const TELEGRAM_EP='https://api.telegram.org/bot'

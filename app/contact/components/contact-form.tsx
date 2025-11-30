@@ -1,13 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Send, Sparkles, CheckCircle2, Loader2, Mail, MapPin, Phone } from "lucide-react";
 import { ContactFormData, FormState } from "@/types/contact.types";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { InfoCard } from "./info-card";
-import { RECIPIENT_EMAIL } from "@/lib/constants/recipient";
 
 export const ContactForm: React.FC = () => {
   const [formData, setFormData] = useState<ContactFormData>({
@@ -34,28 +33,26 @@ export const ContactForm: React.FC = () => {
     e.preventDefault();
     setFormState({ ...formState, isSubmitting: true, error: null });
 
-    // Simulate a brief "processing" state for better UX
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
     try {
-      // Construct the email body
-      const subject = encodeURIComponent(formData.subject || "New Contact Request");
-      const body = encodeURIComponent(
-        `Name: ${formData.name}\n` +
-          `Email: ${formData.email}\n\n` +
-          `Message:\n${formData.message}`,
-      );
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-      // Trigger the mailto action
-      window.location.href = `mailto:${RECIPIENT_EMAIL}?subject=${subject}&body=${body}`;
+      const json = await res.json();
+      if (!res.ok || !json.ok) {
+        setFormState({
+          isSubmitting: false,
+          isSuccess: false,
+          error: json.error ?? "Failed to send",
+        });
+        return;
+      }
 
       setFormState({ isSubmitting: false, isSuccess: true, error: null });
-    } catch (error) {
-      setFormState({
-        isSubmitting: false,
-        isSuccess: false,
-        error: "Could not open email client.",
-      });
+    } catch (err) {
+      setFormState({ isSubmitting: false, isSuccess: false, error: "Unexpected error" });
     }
   };
 
@@ -103,7 +100,7 @@ export const ContactForm: React.FC = () => {
       >
         <div className="space-y-4">
           <motion.h1
-            className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-gray-500"
+            className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-linear-to-r from-white via-white to-gray-500"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -177,17 +174,6 @@ export const ContactForm: React.FC = () => {
               />
             </div>
 
-            <Textarea
-              id="message"
-              name="message"
-              label="Message"
-              placeholder="Tell me about your project..."
-              value={formData.message}
-              onChange={handleChange}
-              required
-              className="min-h-[160px]"
-            />
-
             <div className="relative">
               <Input
                 id="subject"
@@ -219,10 +205,21 @@ export const ContactForm: React.FC = () => {
               </motion.button>
             </div>
 
+            <Textarea
+              id="message"
+              name="message"
+              label="Message"
+              placeholder="Tell me about your project..."
+              value={formData.message}
+              onChange={handleChange}
+              required
+              className="min-h-40"
+            />
+
             <motion.button
               type="submit"
               disabled={formState.isSubmitting}
-              className="w-full h-14 bg-gradient-to-r bg-indigo-400 rounded-xl font-semibold text-white shadow-lg flex items-center justify-center gap-2 overflow-hidden relative"
+              className="w-full h-14 bg-linear-to-r bg-indigo-400 rounded-xl font-semibold text-white shadow-lg flex items-center justify-center gap-2 overflow-hidden relative"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -239,6 +236,11 @@ export const ContactForm: React.FC = () => {
                 </>
               )}
             </motion.button>
+            {formState.error && (
+              <p className="text-sm text-red-400 mt-3" role="status" aria-live="polite">
+                {formState.error}
+              </p>
+            )}
           </div>
         </form>
       </motion.div>

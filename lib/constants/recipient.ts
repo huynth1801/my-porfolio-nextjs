@@ -1,1 +1,0 @@
-export const RECIPIENT_EMAIL = process.env.NEXT_PUBLIC_RECIPIENT_EMAIL
