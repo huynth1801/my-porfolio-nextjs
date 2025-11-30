@@ -12,11 +12,11 @@ export type EducationItem = {
   school: string;
   degree: string;
   field?: string;
-  startDate?: string; // ISO or friendly string
-  endDate?: string; // ISO or friendly string or "Present"
+  startDate?: string;
+  endDate?: string;
   description?: string;
-  tags?: string[]; // e.g. ["Honors", "GPA 3.9"]
-  logoSrc?: string; // optional image URL
+  tags?: string[];
+  logoSrc?: string;
 };
 
 interface EducationSectionProps {
@@ -67,11 +67,7 @@ export const EducationSection: React.FC<EducationSectionProps> = ({
 
           <div className="space-y-6 md:space-y-8">
             {items.map((it, idx) => (
-              <motion.article
-                key={it.id}
-                variants={itemVariants}
-                className={clsx("relative md:pl-16", "group")}
-              >
+              <motion.article key={it.id} className={clsx("relative md:pl-16", "group")}>
                 {/* Timeline dot (desktop) */}
                 <div className="hidden md:absolute md:left-0 md:top-2">
                   <div className="flex items-center">

@@ -1,246 +1,209 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
-import { Send, Sparkles, CheckCircle2, Loader2, Mail, MapPin, Phone } from "lucide-react";
-import { ContactFormData, FormState } from "@/types/contact.types";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Send, CheckCircle2, Loader2, Mail, MapPin, Phone } from "lucide-react";
 import { InfoCard } from "./info-card";
+import { ContactFormData, ContactSchema } from "./schema/contact.schema";
+import InputField from "@/components/formfield/input-field";
+import TextareaField from "@/components/formfield/textarea-field";
 
 export const ContactForm: React.FC = () => {
-  const [formData, setFormData] = useState<ContactFormData>({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ContactFormData>({
+    resolver: zodResolver(ContactSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      subject: "",
+      message: "",
+    },
   });
 
-  const [formState, setFormState] = useState<FormState>({
-    isSubmitting: false,
-    isSuccess: false,
-    error: null,
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // store name after successful submit to avoid watching it and causing re-renders
+  const [submittedName, setSubmittedName] = useState<string | null>(null);
 
-  const [isGeneratingSubject, setIsGeneratingSubject] = useState(false);
+  // memoize static info cards so they don't re-render
+  const infoCards = useMemo(
+    () => [
+      { icon: <Mail className="w-6 h-6 text-indigo-400" />, title: "Email", value: "" },
+      {
+        icon: <MapPin className="w-6 h-6 text-purple-400" />,
+        title: "Location",
+        value: "Tan Binh District, Ho Chi Minh city",
+      },
+      {
+        icon: <Phone className="w-6 h-6 text-blue-400" />,
+        title: "Phone",
+        value: "+1 (555) 000-0000",
+      },
+    ],
+    [],
+  );
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormState({ ...formState, isSubmitting: true, error: null });
+  const onSubmit = useCallback(async (data: ContactFormData) => {
+    setIsSubmitting(true);
+    setErrorMessage(null);
 
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(data),
       });
 
       const json = await res.json();
-      if (!res.ok || !json.ok) {
-        setFormState({
-          isSubmitting: false,
-          isSuccess: false,
-          error: json.error ?? "Failed to send",
-        });
-        return;
-      }
+      if (!res.ok || !json.ok) throw new Error(json.error || "Failed to send");
 
-      setFormState({ isSubmitting: false, isSuccess: true, error: null });
+      setSubmittedName(data.name); // store submitted name to show after success
+      setIsSuccess(true);
     } catch (err) {
-      setFormState({ isSubmitting: false, isSuccess: false, error: "Unexpected error" });
+      setErrorMessage(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setIsSubmitting(false);
     }
-  };
+  }, []);
 
-  const resetForm = () => {
-    setFormData({ name: "", email: "", subject: "", message: "" });
-    setFormState({ isSubmitting: false, isSuccess: false, error: null });
-  };
+  const resetForm = useCallback(() => {
+    reset();
+    setIsSuccess(false);
+    setErrorMessage(null);
+    setSubmittedName(null);
+  }, [reset]);
 
-  if (formState.isSuccess) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-lg mx-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-12 text-center flex flex-col items-center justify-center h-[500px]"
-      >
+  if (isSuccess) {
+    // keep small success panel component to avoid re-rendering parent form when not necessary
+    const SuccessPanel = React.memo(function SuccessPanel({
+      name,
+      onReset,
+    }: {
+      name: string | null;
+      onReset: () => void;
+    }) {
+      return (
         <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 200, damping: 10 }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="w-full max-w-lg mx-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-12 text-center flex flex-col items-center justify-center h-[500px]"
         >
           <CheckCircle2 className="w-20 h-20 text-green-400 mb-6" />
+          <h2 className="text-3xl font-bold text-white mb-2">Message Sent!</h2>
+          <p className="text-gray-400 mb-8">
+            Thanks for reaching out, {name?.split(" ")[0] ?? "Friend"}.
+          </p>
+          <button
+            onClick={onReset}
+            className="px-6 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+          >
+            Send another message
+          </button>
         </motion.div>
-        <h2 className="text-3xl font-bold text-white mb-2">Message Sent!</h2>
-        <p className="text-gray-400 mb-8">
-          Thanks for reaching out, {formData.name.split(" ")[0]}. I'll get back to you soon.
-        </p>
-        <button
-          onClick={resetForm}
-          className="px-6 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
-        >
-          Send another message
-        </button>
-      </motion.div>
-    );
+      );
+    });
+
+    return <SuccessPanel name={submittedName} onReset={resetForm} />;
   }
 
   return (
     <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20 relative z-10">
-      {/* Contact Info Section */}
       <motion.div
         className="flex-1 space-y-8"
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <div className="space-y-4">
-          <motion.h1
-            className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-linear-to-r from-white via-white to-gray-500"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            Let's create something <span className="text-indigo-400">extraordinary.</span>
+          <motion.h1 className="text-5xl md:text-6xl font-bold text-white">
+            Let&apos;s create something <span className="text-indigo-400">extraordinary.</span>
           </motion.h1>
-          <p className="text-lg text-gray-400 max-w-lg leading-relaxed">
-            Have a project in mind? Looking for a partner in crime for your next big idea? Drop me a
-            line and let's talk about the future.
-          </p>
+          <p className="text-lg text-gray-400 max-w-lg">Have a project in mind? Drop me a line.</p>
         </div>
 
         <div className="grid gap-6">
-          <InfoCard
-            icon={<Mail className="w-6 h-6 text-indigo-400" />}
-            title="Email"
-            value="huuhuy1801@gmail.com"
-            delay={0.4}
-          />
-
-          <InfoCard
-            icon={<MapPin className="w-6 h-6 text-purple-400" />}
-            title="Location"
-            value="Tan Binh District, Ho Chi Minh city"
-            delay={0.5}
-          />
-
-          <InfoCard
-            icon={<Phone className="w-6 h-6 text-blue-400" />}
-            title="Phone"
-            value="+1 (555) 000-0000"
-            delay={0.6}
-          />
+          {infoCards.map((card) => (
+            <InfoCard
+              key={card.title}
+              icon={card.icon}
+              title={card.title}
+              value={card.value}
+              delay={0}
+            />
+          ))}
         </div>
       </motion.div>
 
-      {/* Form Section */}
       <motion.div
         className="flex-1 w-full"
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
       >
         <form
-          onSubmit={handleSubmit}
-          className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 sm:p-8 md:p-10 shadow-2xl relative overflow-hidden group"
+          onSubmit={handleSubmit(onSubmit)}
+          className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-10 shadow-2xl relative overflow-hidden group"
         >
-          {/* Subtle glow effect inside card */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-
           <div className="space-y-6 relative z-10">
+            {/* Name + Email */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input
-                id="name"
+              <InputField
                 name="name"
+                control={control}
                 label="Name"
                 placeholder="Huy Nguyen"
-                value={formData.name}
-                onChange={handleChange}
-                required
+                error={errors.name}
               />
-              <Input
-                id="email"
+              <InputField
                 name="email"
-                type="email"
+                control={control}
                 label="Email"
                 placeholder="john@example.com"
-                value={formData.email}
-                onChange={handleChange}
-                required
+                type="email"
+                error={errors.email}
               />
             </div>
 
-            <div className="relative">
-              <Input
-                id="subject"
-                name="subject"
-                label="Subject"
-                placeholder="Project Inquiry"
-                value={formData.subject}
-                onChange={handleChange}
-                required
-                className="pr-12"
-              />
-              <motion.button
-                type="button"
-                disabled={!formData.message || isGeneratingSubject}
-                className={`absolute right-2 top-8 p-1.5 rounded-lg transition-colors ${
-                  !formData.message
-                    ? "text-gray-600 cursor-not-allowed"
-                    : "text-indigo-400 hover:bg-indigo-500/10 hover:text-indigo-300"
-                }`}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                title="Generate subject from message with AI"
-              >
-                {isGeneratingSubject ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                  <Sparkles className="w-5 h-5" />
-                )}
-              </motion.button>
-            </div>
-
-            <Textarea
-              id="message"
-              name="message"
-              label="Message"
-              placeholder="Tell me about your project..."
-              value={formData.message}
-              onChange={handleChange}
-              required
-              className="min-h-40"
+            {/* Subject */}
+            <InputField
+              name="subject"
+              control={control}
+              label="Subject"
+              placeholder="Project Inquiry"
             />
 
+            {/* Message */}
+            <TextareaField
+              name="message"
+              control={control}
+              placeholder="Tell me about your project..."
+            />
+
+            {/* Submit */}
             <motion.button
               type="submit"
-              disabled={formState.isSubmitting}
-              className="w-full h-14 bg-linear-to-r bg-indigo-400 rounded-xl font-semibold text-white shadow-lg flex items-center justify-center gap-2 overflow-hidden relative"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              disabled={isSubmitting}
+              className="w-full h-12 bg-indigo-500 rounded-xl text-white font-semibold flex justify-center items-center gap-2"
             >
-              <div className="absolute inset-0 bg-white/20 translate-y-full hover:translate-y-0 transition-transform duration-300" />
-              {formState.isSubmitting ? (
+              {isSubmitting ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>Sending...</span>
+                  Sending...
                 </>
               ) : (
                 <>
-                  <span>Send Message</span>
+                  Send Message
                   <Send className="w-5 h-5" />
                 </>
               )}
             </motion.button>
-            {formState.error && (
-              <p className="text-sm text-red-400 mt-3" role="status" aria-live="polite">
-                {formState.error}
-              </p>
-            )}
+
+            {errorMessage && <p className="text-sm text-red-400 mt-3">{errorMessage}</p>}
           </div>
         </form>
       </motion.div>

@@ -35,14 +35,26 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: "Telegram not configured" }, { status: 500 });
     }
 
+    const originHeader = req.headers.get("origin") ?? req.headers.get("referer") ?? "";
+    const sentAt = new Date().toLocaleString();
+
+    const originEscaped = originHeader ? escapeHtml(originHeader) : "";
+    const messageEscaped = escapeHtml(messageSafe);
+
     // Build a succinct message for Telegram. Use HTML parse mode and escape values.
     const htmlMsg = `
-      <b>New contact form submission</b>\n
-      <b>Name:</b> ${escapeHtml(name)}\n
-      <b>Email:</b> ${escapeHtml(email)}\n
-      <b>Subject:</b> ${escapeHtml(subject ?? "")}\n
-      <b>Message:</b>\n${escapeHtml(messageSafe)}
-    `;
+      <b>📬 New Contact Form Submission</b>
+      ${originEscaped ? `<i>🔗 From:</i> <a href="${originEscaped}">${originEscaped}</a>\n` : ""}
+      <i>👤 Name:</i> <b>${escapeHtml(name)}</b>
+      <i>✉️ Email:</i> <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a>
+      <i>📝 Subject:</i> ${escapeHtml(subject ?? "—")}
+
+      <b>💬 Message</b>
+      <pre>${messageEscaped}</pre>
+
+      <i>🕒 Received:</i> ${escapeHtml(sentAt)}
+      <i>🔒 Note:</i> Please do not share sensitive info in messages.
+      `.trim();
 
     // Telegram expects POST to sendMessage endpoint
     const telegramUrl = `${TELEGRAM_EP}${TELEGRAM_BOT_TOKEN}/sendMessage`;
@@ -55,7 +67,10 @@ export async function POST(req: Request) {
 
     if (!telegramRes.ok) {
       const errorText = await telegramRes.text();
-      return NextResponse.json({ ok: false, error: `Telegram error: ${errorText}` }, { status: 500 });
+      return NextResponse.json(
+        { ok: false, error: `Telegram error: ${errorText}` },
+        { status: 500 },
+      );
     }
 
     // Optional: send email as backup if SMTP or sendgrid is configured
