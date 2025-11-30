@@ -149,10 +149,8 @@ const TimelineItemContent = memo(function TimelineItemContent({ item }: Timeline
       <div className="space-y-3">
         {item.responsibilities.map((responsibility, idx) => (
           <div key={`${item.id}-resp-${idx}`} className="flex items-start gap-3 group">
-            <div className="w-1.5 h-1.5 bg-slate-400 rounded-full mt-2 flex-shrink-0 group-hover:bg-slate-600 dark:bg-slate-500 dark:group-hover:bg-slate-400 transition-colors duration-200" />
-            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-              {responsibility}
-            </p>
+            <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 shrink-0 group-hover:bg-gray-500 dark:bg-gray-500 transition-colors duration-200" />
+            <p className="text-sm text-gray-400 leading-relaxed">{responsibility}</p>
           </div>
         ))}
       </div>
@@ -185,7 +183,7 @@ const TimelineItem = memo(function TimelineItem({ item, expanded, onToggle }: Ti
   return (
     <div className="relative group">
       {/* Connecting line with gradient - now always visible */}
-      <div className="absolute left-6 top-14 bottom-0 w-[2px] bg-gradient-to-b from-black via-gray-500 to-white dark:from-white dark:via-gray-400 dark:to-black" />
+      <div className="hidden md:block absolute left-6 top-0 bottom-0 w-0.5 bg-linear-to-b from-transparent via-gray-700 to-transparent" />
 
       {/* Timeline node */}
       <div className="absolute left-4 top-6 w-4 h-4 bg-white dark:bg-slate-950 border-2 border-slate-300 dark:border-slate-700 rounded-full flex items-center justify-center transform transition-all duration-200 z-10">
@@ -196,16 +194,16 @@ const TimelineItem = memo(function TimelineItem({ item, expanded, onToggle }: Ti
       <div className="ml-12 mb-8">
         <div
           className={`
-          bg-white dark:bg-slate-950
-          rounded-lg border border-slate-200 dark:border-slate-800
-          transition-all duration-200
-          ${expanded ? "shadow-sm" : "shadow-none hover:shadow-sm"}
+          bg-[#0f1115] rounded-lg border border-transparent hover:border-cyan-500/30
+          group
+          transition-all duration-300
+          ${expanded ? "shadow-lg" : "shadow-none hover:shadow-lg"}
         `}
         >
           {/* Header */}
           <button
             id={headerId}
-            className="w-full text-left p-6 group/button cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition-colors duration-200 rounded-t-lg"
+            className="w-full text-left p-4 md:p-5 group/button cursor-pointer transition-colors duration-200 rounded-t-lg"
             onClick={() => onToggle(item.id)}
             aria-expanded={expanded}
             aria-controls={contentId}
@@ -216,18 +214,16 @@ const TimelineItem = memo(function TimelineItem({ item, expanded, onToggle }: Ti
                   <div className="p-2 bg-slate-100 dark:bg-slate-900 rounded-md">
                     <Icon className="w-4 h-4 text-slate-600 dark:text-slate-400" />
                   </div>
-                  <h3 className="text-base font-semibold text-slate-900 dark:text-slate-50">
+                  <h3 className="text-lg font-semibold text-white leading-tight truncate">
                     {item.title}
                   </h3>
                 </div>
 
-                <div className="flex items-center gap-3 ml-11">
-                  <Badge variant="outline" className="text-xs">
+                <div className="flex items-center gap-3 ml-11 border-slate-200 dark:border-slate-800">
+                  <Badge variant="secondary" className="text-xs">
                     {item.type}
                   </Badge>
-                  <span className="text-xs text-slate-500 dark:text-slate-400">
-                    {item.duration}
-                  </span>
+                  <span className="text-sm text-gray-400">{item.duration}</span>
                 </div>
               </div>
 
@@ -309,7 +305,7 @@ export default function ExperienceSection() {
     <div className="transition-colors duration-300">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <header className="mb-12">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-500 dark:text-slate-50 mb-3">
+          <h1 className="text-3xl font-bold tracking-tight text-white dark:text-slate-50 mb-3">
             Experience
           </h1>
           <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">

@@ -5,8 +5,67 @@ import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sparkles, Zap, Headphones } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/social-icon";
+import { memo } from "react";
 
-export default function AboutSection() {
+const ICON_SPARKLES = <Sparkles className="w-7 h-7 text-pink-400" />;
+const ICON_ZAP = <Zap className="w-7 h-7 text-yellow-400" />;
+const ICON_HEADPHONES = <Headphones className="w-7 h-7 text-cyan-400" />;
+function CreativeFeatureCard({
+  icon,
+  title,
+  desc,
+  gradient,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  desc: string;
+  gradient: string;
+  delay?: number;
+}) {
+  return (
+    <motion.div
+      whileHover={{ scale: 1.05, rotateX: 3, rotateY: -3 }}
+      transition={{ type: "spring", stiffness: 200, damping: 12 }}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+    >
+      <div className="relative group rounded-xl bg-[#141418]/70 backdrop-blur-sm border border-[#1f1f23] hover:border-transparent transition-all duration-300 overflow-hidden shadow-[0_0_25px_-8px_rgba(0,255,255,0.15)]">
+        {/* Gradient Border Animation */}
+        <div
+          className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${gradient} blur-xl`}
+        />
+        <Card className="relative bg-transparent border-none text-center rounded-xl">
+          <CardContent className="p-6 flex flex-col items-center justify-center space-y-4 z-10 relative">
+            <motion.div
+              whileHover={{ scale: 1.2, rotate: 10 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              className="p-3 bg-[#1b1b1f] rounded-full shadow-inner group-hover:shadow-[0_0_15px_rgba(255,255,255,0.2)] transition-shadow"
+            >
+              {icon}
+            </motion.div>
+            <h3 className="text-lg font-semibold text-white">{title}</h3>
+            <p className="text-gray-400 text-sm leading-snug max-w-[180px]">{desc}</p>
+          </CardContent>
+        </Card>
+      </div>
+    </motion.div>
+  );
+}
+
+CreativeFeatureCard.displayName = "CreativeFeatureCard";
+
+const MemoCreativeFeatureCard = memo(
+  CreativeFeatureCard,
+  (prev, next) =>
+    prev.title === next.title &&
+    prev.desc === next.desc &&
+    prev.gradient === next.gradient &&
+    prev.delay === next.delay &&
+    prev.icon === next.icon,
+);
+
+const AboutSection = memo(function AboutSection() {
   return (
     <section
       id="about"
@@ -110,21 +169,21 @@ export default function AboutSection() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <CreativeFeatureCard
-              icon={<Sparkles className="w-7 h-7 text-pink-400" />}
+            <MemoCreativeFeatureCard
+              icon={ICON_SPARKLES}
               title="Creative Design"
               desc="Turning ideas into beautiful and functional designs."
               gradient="from-pink-500/40 via-purple-500/40 to-cyan-500/40"
             />
-            <CreativeFeatureCard
-              icon={<Zap className="w-7 h-7 text-yellow-400" />}
+            <MemoCreativeFeatureCard
+              icon={ICON_ZAP}
               title="High Speed"
               desc="Optimized for fast performance and smooth experience."
               gradient="from-yellow-500/40 via-orange-500/40 to-red-500/40"
               delay={0.2}
             />
-            <CreativeFeatureCard
-              icon={<Headphones className="w-7 h-7 text-cyan-400" />}
+            <MemoCreativeFeatureCard
+              icon={ICON_HEADPHONES}
               title="24/7 Support"
               desc="Always ready to assist and support your project."
               gradient="from-cyan-500/40 via-sky-500/40 to-purple-500/40"
@@ -164,47 +223,9 @@ export default function AboutSection() {
       </div>
     </section>
   );
-}
+});
 
-function CreativeFeatureCard({
-  icon,
-  title,
-  desc,
-  gradient,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  desc: string;
-  gradient: string;
-  delay?: number;
-}) {
-  return (
-    <motion.div
-      whileHover={{ scale: 1.05, rotateX: 3, rotateY: -3 }}
-      transition={{ type: "spring", stiffness: 200, damping: 12 }}
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-    >
-      <div className="relative group rounded-xl bg-[#141418]/70 backdrop-blur-sm border border-[#1f1f23] hover:border-transparent transition-all duration-300 overflow-hidden shadow-[0_0_25px_-8px_rgba(0,255,255,0.15)]">
-        {/* Gradient Border Animation */}
-        <div
-          className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${gradient} blur-xl`}
-        />
-        <Card className="relative bg-transparent border-none text-center rounded-xl">
-          <CardContent className="p-6 flex flex-col items-center justify-center space-y-4 z-10 relative">
-            <motion.div
-              whileHover={{ scale: 1.2, rotate: 10 }}
-              transition={{ type: "spring", stiffness: 300 }}
-              className="p-3 bg-[#1b1b1f] rounded-full shadow-inner group-hover:shadow-[0_0_15px_rgba(255,255,255,0.2)] transition-shadow"
-            >
-              {icon}
-            </motion.div>
-            <h3 className="text-lg font-semibold text-white">{title}</h3>
-            <p className="text-gray-400 text-sm leading-snug max-w-[180px]">{desc}</p>
-          </CardContent>
-        </Card>
-      </div>
-    </motion.div>
-  );
-}
+// Add display name for better debugging in React DevTools
+AboutSection.displayName = "AboutSection";
+
+export default AboutSection;

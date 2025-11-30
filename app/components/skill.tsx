@@ -443,7 +443,7 @@ export default function SkillSection() {
     <div className="transition-colors duration-300">
       <div className="max-w-3xl mx-auto px-2 sm:px-4 lg:px-6 py-16">
         <header className="mb-1">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-500 dark:text-slate-50 mb-3">
+          <h1 className="text-3xl font-bold tracking-tight text-white dark:text-slate-50 mb-3">
             Skills
           </h1>
         </header>
