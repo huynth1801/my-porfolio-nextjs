@@ -31,6 +31,7 @@ export const ContactForm: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   // store name after successful submit to avoid watching it and causing re-renders
   const [submittedName, setSubmittedName] = useState<string | null>(null);
+  const a = 1;
 
   // memoize static info cards so they don't re-render
   const infoCards = useMemo(
