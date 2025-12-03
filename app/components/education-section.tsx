@@ -30,11 +30,6 @@ const containerVariants = {
   show: { opacity: 1, y: 0, transition: { staggerChildren: 0.08 } },
 };
 
-const itemVariants = {
-  hidden: { opacity: 0, x: -12 },
-  show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 160, damping: 18 } },
-};
-
 export const EducationSection: React.FC<EducationSectionProps> = ({
   title = "Education",
   subtitle,
@@ -66,7 +61,7 @@ export const EducationSection: React.FC<EducationSectionProps> = ({
           <div className="hidden md:block absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-gray-700 to-transparent" />
 
           <div className="space-y-6 md:space-y-8">
-            {items.map((it, idx) => (
+            {items.map((it) => (
               <motion.article key={it.id} className={clsx("relative md:pl-16", "group")}>
                 {/* Timeline dot (desktop) */}
                 <div className="hidden md:absolute md:left-0 md:top-2">
