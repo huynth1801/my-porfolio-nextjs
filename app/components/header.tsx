@@ -7,7 +7,11 @@ import Image from "next/image";
 
 const navItems = [
   { name: "Home", href: "/" },
-  { name: "Resume", href: "/huy-nguyen-resume.pdf", download: true },
+  {
+    name: "Resume",
+    href: "/NguyenThaiHuuHuy_FrontEndDeveloper.pdf",
+    download: true,
+  },
   { name: "Contact", href: "/contact" },
 ];
 
