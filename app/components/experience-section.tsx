@@ -78,6 +78,7 @@ interface TimelineItemData {
   id: string;
   title: string;
   type: string;
+  company: string;
   duration: string;
   icon: IconType;
   responsibilities: string[];
@@ -92,52 +93,73 @@ interface ProfessionalTimelineProps {
   expandMode?: ExpandMode;
 }
 
-// --- MOCK DATA ---
 const timelineData: TimelineItemData[] = [
   {
     id: "prof-exp-1",
-    title: "Senior Frontend Developer",
+    title: "Junior Frontend Developer",
     type: "Full-time",
-    duration: "10.2022—Present",
+    company: "TGM Research",
+    duration: "7.2025—Present",
     icon: Code,
     responsibilities: [
-      "Lead development of complex React applications with TypeScript.",
+      "Collaborate with colleagues to develop of complex React applications with TypeScript. Optimize performance for the website",
       "Architect scalable frontend solutions using Next.js and modern tooling.",
-      "Mentor junior developers and conduct code reviews.",
       "Collaborate with design and backend teams to deliver high-quality products.",
+      "Collaborated in an agile development environment.",
     ],
-    skills: ["React", "TypeScript", "Next.js", "Tailwind CSS", "GraphQL"],
+    skills: [
+      "React",
+      "Next.js",
+      "Tailwind CSS",
+      "Shadcn",
+      "MaterialUI",
+      "Zustand",
+      "Redux Toolkit",
+    ],
   },
   {
     id: "prof-exp-2",
-    title: "UI Design Lead",
+    title: "Junior Frontend Developer",
     type: "Full-time",
-    duration: "10.2022—Present",
+    company: "CAS Corporation",
+    duration: "9.2024 - 5.2025",
     icon: Palette,
     responsibilities: [
-      "Ensure UI/UX consistency and high-quality standards.",
-      "Design intuitive, user-focused interfaces aligned with business goals.",
-      "Define and establish a cohesive UI style for the company.",
+      "Worked as a Front-end Developer contributing to the development and maintenance of the company's internal CRM web application.",
+      "Implemented new features and resolved bugs to enhance user experience and ensure smooth daily operations acrossdepartments.",
+      "Built SEO-optimized landing pages using Next.js, enhancing online visibility and improving organic search performance.",
     ],
-    skills: ["Creativity", "UI/UX Design", "Figma"],
+    skills: ["Angular", "TypeScript", "MaterialUI", "Next.js"],
   },
   {
     id: "prof-exp-3",
-    title: "Frontend Developer",
+    title: "Frontend Developer (Short-term Contract)",
     type: "Full-time",
-    duration: "03.2021—09.2022",
+    company: "Likelion",
+    duration: "05.2024—8.2024",
     icon: Code,
     responsibilities: [
-      "Developed responsive web applications using React and Vue.js.",
-      "Implemented pixel-perfect designs from Figma mockups.",
-      "Optimized application performance and user experience.",
-      "Collaborated in an agile development environment.",
+      "Collaborated on a short-term internal project to develop a real-time web-based chat application for internal teamcommunication.",
+      "Worked closely with back-end developers and designers to integrate APIs, manage chat states, and implement UIfeatures such as message grouping, typing indicators, and notifications.",
+      "Contributed to optimizing performance and improving user experience through efficient component rendering and state management.",
     ],
-    skills: ["React", "Vue.js", "JavaScript", "CSS", "HTML"],
+    skills: ["React", "TailwindCSS", "JavaScript", "CSS", "HTML"],
+  },
+  {
+    id: "prof-exp-4",
+    title: "Game Developer Intern",
+    type: "Full-time",
+    company: "Onechain Game Studio",
+    duration: "05.2023—8.2023",
+    icon: Code,
+    responsibilities: [
+      "Implemented gameplay mechanics, player controls, scoring systems, and level progression",
+      "Designed and developed hypercasual games using Cocos Creator and TypeScript.",
+    ],
+    skills: ["Typescript", "Cocos Creator"],
   },
 ];
 
-// --- COMPONENTS ---
 interface TimelineItemContentProps {
   item: TimelineItemData;
 }
@@ -225,6 +247,7 @@ const TimelineItem = memo(function TimelineItem({ item, expanded, onToggle }: Ti
                   </Badge>
                   <span className="text-sm text-gray-400">{item.duration}</span>
                 </div>
+                <span className="text-white text-sm ml-11">{item.company}</span>
               </div>
 
               <div
@@ -257,7 +280,6 @@ const TimelineItem = memo(function TimelineItem({ item, expanded, onToggle }: Ti
 });
 TimelineItem.displayName = "TimelineItem";
 
-// --- MAIN TIMELINE ---
 export function ProfessionalTimeline({
   data,
   defaultExpandedIds,
@@ -299,7 +321,6 @@ export function ProfessionalTimeline({
   );
 }
 
-// --- APP ENTRY POINT ---
 export default function ExperienceSection() {
   return (
     <div className="transition-colors duration-300">
