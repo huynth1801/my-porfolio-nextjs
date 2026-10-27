@@ -39,9 +39,9 @@ export const story = {
   heading: 2.4,
 
   /** chibi → grown-up body scale */
-  scale: 0.55,
+  scale: 0.78,
   /** 0 = lying/sitting asleep, 1 = standing */
-  rise: 0,
+  rise: 1,
   /** 0..1 squash-stretch envelope (GSAP yoyo keyframes on jumps/landings) */
   squash: 0,
   /** active jump progress 0..1 (height = jumpH * 4t(1-t)) */
@@ -52,7 +52,7 @@ export const story = {
   /** ground speed → drives the run cycle */
   speed: 0,
 
-  pose: "sleep" as StoryPose,
+  pose: "idle" as StoryPose,
 
   props: { backpack: 0, hoodie: 0, glasses: 0, badge: 0, gradCap: 0, laptop: 0, book: 0 },
   fx: { levelUp: 0, dust: 0, sparkle: 0, cubes: 0, confetti: 0 },
@@ -145,6 +145,11 @@ export function captionFor(time: number): string {
   let text = CAPTIONS[0].text;
   for (const c of CAPTIONS) if (time >= c.t) text = c.text;
   return text;
+}
+
+// dev/testing aid: live story state readable from the console/tests
+if (typeof window !== "undefined") {
+  (window as unknown as Record<string, unknown>).__story = story;
 }
 
 export const STORY_ACTS = [
@@ -342,6 +347,28 @@ export function exitStory() {
   uiOpen = false;
   paused = false;
   timeline?.pause();
+  // put the boy back on his feet at the house porch
+  const S = story;
+  S.px = -2.7;
+  S.py = 0.3;
+  S.pz = 1.75;
+  S.scale = 0.78;
+  S.rise = 1;
+  S.pose = "idle";
+  S.jumpT = 1;
+  S.jumpH = 0;
+  S.flip = 0;
+  S.speed = 0;
+  S.squash = 0;
+  S.heading = 2.4;
+  S.props.backpack = 0;
+  S.props.hoodie = 0;
+  S.props.glasses = 0;
+  S.props.badge = 0;
+  S.props.gradCap = 0;
+  S.props.laptop = 0;
+  S.props.book = 0;
+  S.fx.cubes = 0;
   emitUi();
 }
 

@@ -110,11 +110,12 @@ export function CameraRig() {
     };
   }, [gl]);
 
-  useFrame((_, rawDelta) => {
+  useFrame((state, rawDelta) => {
     // story mode's director camera owns the rig while playing
     if (story.playing) return;
     // clamp so a tab-switch delta spike never teleports the camera
     const delta = Math.min(rawDelta, 0.05);
+    const elapsed = state.clock.elapsedTime;
     const key = panelStore.get();
     const focus = key ? FOCUS[key] : null;
 
@@ -138,16 +139,19 @@ export function CameraRig() {
       // Follow the continuous Drone Tour path driven by GSAP ScrollTrigger
       const isOverview = tourState.activeWaypointIndex === 0 && journey.progress < 0.05;
 
-      // Auto-rotate only when sitting at the overview hero
-      if (!journey.reduced && isOverview && dragState.moved === 0) {
-        userYaw.current -= YAW_SPEED * delta;
-      } else if (dragState.moved === 0) {
-        // Softly ease user drag offset back to waypoint path when scrolling
+      // Gentle sway at the overview — NOT a continuous orbit (an endlessly
+      // rotating camera makes the whole island look like it is spinning)
+      const sway =
+        !journey.reduced && isOverview && dragState.moved === 0
+          ? Math.sin(elapsed * 0.22) * 0.05
+          : 0;
+      if (dragState.moved === 0) {
+        // Softly ease user drag offset back to waypoint path when idle
         userYaw.current *= Math.exp(-2.2 * delta);
         userPitch.current *= Math.exp(-2.2 * delta);
       }
 
-      const baseYaw = tourState.targetYaw + userYaw.current;
+      const baseYaw = tourState.targetYaw + userYaw.current + sway;
       yawTarget = shortestAngle(yaw.current, baseYaw);
       pitchTarget = THREE.MathUtils.clamp(
         tourState.targetPitch + userPitch.current * 0.7 + journey.pointer.y * 0.02,
