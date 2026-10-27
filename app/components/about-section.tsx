@@ -1,111 +1,69 @@
 "use client";
 
-import Image from "next/image";
-import { motion } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
-import { Sparkles, Zap, Headphones } from "lucide-react";
-import { GithubIcon, LinkedinIcon } from "@/components/ui/social-icon";
 import { memo } from "react";
+import Image from "next/image";
+import { motion } from "motion/react";
+import { Gamepad2, Gauge, Rocket, Sparkles } from "lucide-react";
+import { GithubIcon, LinkedinIcon } from "@/components/ui/social-icon";
+import { profile, strengths } from "@/lib/content";
 
-const ICON_SPARKLES = <Sparkles className="w-7 h-7 text-pink-400" />;
-const ICON_ZAP = <Zap className="w-7 h-7 text-yellow-400" />;
-const ICON_HEADPHONES = <Headphones className="w-7 h-7 text-cyan-400" />;
-function CreativeFeatureCard({
-  icon,
-  title,
-  desc,
-  gradient,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  desc: string;
-  gradient: string;
-  delay?: number;
-}) {
+const STRENGTH_ICONS = {
+  gamepad: Gamepad2,
+  gauge: Gauge,
+  rocket: Rocket,
+} as const;
+
+const STRENGTH_ACCENTS = {
+  gamepad: "text-pink-400",
+  gauge: "text-yellow-400",
+  rocket: "text-cyan-400",
+} as const;
+
+function StrengthCard({ strength }: { strength: (typeof strengths)[number] }) {
+  const Icon = STRENGTH_ICONS[strength.icon];
   return (
     <motion.div
-      whileHover={{ scale: 1.05, rotateX: 3, rotateY: -3 }}
-      transition={{ type: "spring", stiffness: 200, damping: 12 }}
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+      whileHover={{ scale: 1.04 }}
+      transition={{ type: "spring", stiffness: 260, damping: 18 }}
+      className="glass rounded-xl p-5 text-left"
     >
-      <div className="relative group rounded-xl bg-[#141418]/70 backdrop-blur-sm border border-[#1f1f23] hover:border-transparent transition-all duration-300 overflow-hidden shadow-[0_0_25px_-8px_rgba(0,255,255,0.15)]">
-        {/* Gradient Border Animation */}
-        <div
-          className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${gradient} blur-xl`}
-        />
-        <Card className="relative bg-transparent border-none text-center rounded-xl">
-          <CardContent className="p-6 flex flex-col items-center justify-center space-y-4 z-10 relative">
-            <motion.div
-              whileHover={{ scale: 1.2, rotate: 10 }}
-              transition={{ type: "spring", stiffness: 300 }}
-              className="p-3 bg-[#1b1b1f] rounded-full shadow-inner group-hover:shadow-[0_0_15px_rgba(255,255,255,0.2)] transition-shadow"
-            >
-              {icon}
-            </motion.div>
-            <h3 className="text-lg font-semibold text-white">{title}</h3>
-            <p className="text-gray-400 text-sm leading-snug max-w-[180px]">{desc}</p>
-          </CardContent>
-        </Card>
-      </div>
+      <Icon className={`size-6 ${STRENGTH_ACCENTS[strength.icon]}`} />
+      <h3 className="mt-3 text-sm font-semibold text-white">{strength.title}</h3>
+      <p className="mt-1.5 text-xs leading-relaxed text-gray-400">{strength.desc}</p>
     </motion.div>
   );
 }
 
-CreativeFeatureCard.displayName = "CreativeFeatureCard";
-
-const MemoCreativeFeatureCard = memo(
-  CreativeFeatureCard,
-  (prev, next) =>
-    prev.title === next.title &&
-    prev.desc === next.desc &&
-    prev.gradient === next.gradient &&
-    prev.delay === next.delay &&
-    prev.icon === next.icon,
-);
-
 const AboutSection = memo(function AboutSection() {
   return (
-    <section
-      id="about"
-      className="relative overflow-hidden bg-[#0d0d0f] text-gray-300 py-24 px-6 md:px-12 lg:px-20"
-    >
-      {/* Gradient background accent */}
-      <div className="absolute inset-0  from-cyan-500/10 via-purple-500/10 to-pink-500/10 blur-3xl opacity-40 pointer-events-none" />
-
-      <div className="relative max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-        {/* LEFT: Image collage */}
+    <section id="about" data-zone="about" className="relative px-6 py-28 md:px-12">
+      <div className="relative mx-auto grid max-w-6xl items-center gap-16 md:grid-cols-2">
+        {/* LEFT: photo collage */}
         <motion.div
-          className="relative grid grid-cols-2 gap-4 max-w-md mx-auto md:mx-0"
+          className="relative mx-auto grid max-w-md grid-cols-2 gap-4 md:mx-0"
           initial={{ opacity: 0, x: -40 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
         >
-          {/* Glow behind images */}
-          <div className="absolute -inset-8 from-cyan-500/20 via-purple-500/10 to-pink-500/20 blur-3xl rounded-full" />
-
-          {/* Main portrait */}
           <motion.div
             whileHover={{ scale: 1.03 }}
-            className="col-span-2 relative aspect-square overflow-hidden rounded-2xl shadow-[0_0_40px_-10px_rgba(0,255,255,0.3)]"
+            className="relative col-span-2 aspect-square overflow-hidden rounded-2xl border border-white/10 shadow-[0_0_40px_-10px_rgba(34,211,238,0.3)]"
           >
             <Image
               src="/huy.jpg"
-              alt="Main portrait"
+              alt={`${profile.name} portrait`}
               fill
               quality={100}
               sizes="(max-width: 768px) 100vw, 320px"
-              className="object-cover object-center rounded-2xl"
+              className="object-cover object-center"
               priority
             />
           </motion.div>
 
-          {/* Working image */}
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="relative aspect-square overflow-hidden rounded-2xl shadow-[0_0_30px_-10px_rgba(255,255,255,0.15)]"
+            className="relative aspect-square overflow-hidden rounded-2xl border border-white/10"
           >
             <Image
               src="/working.jpg"
@@ -113,14 +71,13 @@ const AboutSection = memo(function AboutSection() {
               fill
               quality={90}
               sizes="(max-width: 768px) 50vw, 300px"
-              className="object-cover object-center rounded-2xl"
+              className="object-cover object-center"
             />
           </motion.div>
 
-          {/* Play sport image */}
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="relative aspect-square overflow-hidden rounded-2xl shadow-[0_0_30px_-10px_rgba(255,255,255,0.15)]"
+            className="relative aspect-square overflow-hidden rounded-2xl border border-white/10"
           >
             <Image
               src="/play-sport.jpg"
@@ -128,12 +85,12 @@ const AboutSection = memo(function AboutSection() {
               fill
               quality={90}
               sizes="(max-width: 768px) 50vw, 300px"
-              className="object-cover object-top rounded-2xl"
+              className="object-cover object-top"
             />
           </motion.div>
         </motion.div>
 
-        {/* RIGHT: About text + feature cards */}
+        {/* RIGHT: story + concrete strengths */}
         <motion.div
           initial={{ opacity: 0, x: 40 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -141,83 +98,54 @@ const AboutSection = memo(function AboutSection() {
           viewport={{ once: true }}
           className="relative z-10"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full from-cyan-500 to-pink-500 text-white text-xs font-semibold uppercase tracking-widest shadow-md">
-            <Sparkles className="w-4 h-4" />
-            About Me
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold tracking-widest text-cyan-300 uppercase">
+            <Sparkles className="size-3.5" />
+            Player profile
           </div>
 
-          <h2 className="text-4xl md:text-5xl font-bold text-white mt-5 mb-6 leading-tight">
-            Huy Nguyen
+          <h2 className="mt-5 mb-6 text-4xl leading-tight font-bold text-white md:text-5xl">
+            From game engines
+            <br />
+            to web apps
           </h2>
 
-          <p className="text-gray-400 mb-5 leading-relaxed text-[15px]">
-            I’m a frontend engineer passionate about crafting smooth, engaging web experiences. I
-            focus on building scalable, high-performance, and elegant interfaces using cutting-edge
-            technologies like React, Next.js, and TailwindCSS.
+          <p className="mb-5 text-[15px] leading-relaxed text-gray-400">
+            I came to the web from game development — I care as much about how an interface{" "}
+            <span className="text-gray-200">feels</span> as how it looks. These days I build
+            scalable, high-performance products with React, Next.js and TypeScript, and I reach for
+            WebGL when a page deserves to be memorable.
           </p>
 
-          <p className="text-gray-400 mb-10 leading-relaxed text-[15px]">
-            I love solving UI challenges, optimizing performance, and turning creative ideas into
-            stunning, interactive designs.
+          <p className="mb-8 text-[15px] leading-relaxed text-gray-400">
+            What you get either way: motion with intent, render discipline, and features shipped
+            end-to-end with design and backend teams.
           </p>
 
-          {/* Feature Cards */}
-          <motion.div
-            className="grid sm:grid-cols-3 gap-5"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <MemoCreativeFeatureCard
-              icon={ICON_SPARKLES}
-              title="Creative Design"
-              desc="Turning ideas into beautiful and functional designs."
-              gradient="from-pink-500/40 via-purple-500/40 to-cyan-500/40"
-            />
-            <MemoCreativeFeatureCard
-              icon={ICON_ZAP}
-              title="High Speed"
-              desc="Optimized for fast performance and smooth experience."
-              gradient="from-yellow-500/40 via-orange-500/40 to-red-500/40"
-              delay={0.2}
-            />
-            <MemoCreativeFeatureCard
-              icon={ICON_HEADPHONES}
-              title="24/7 Support"
-              desc="Always ready to assist and support your project."
-              gradient="from-cyan-500/40 via-sky-500/40 to-purple-500/40"
-              delay={0.4}
-            />
-          </motion.div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {strengths.map((strength) => (
+              <StrengthCard key={strength.title} strength={strength} />
+            ))}
+          </div>
 
-          {/* Social network */}
-          <div className="flex justify-center mt-8">
-            <div className="flex gap-4">
-              <a
-                href="https://github.com/huynth1801"
-                target="_blank"
-                className="social-link w-8 h-8 rounded-full flex items-center justify-center 
-                        text-gray-600 dark:text-gray-300 
-                        hover:text-gray-900 dark:hover:text-white 
-                        transition-transform hover:-translate-y-0.5 
-                        hover:bg-slate-100 dark:hover:bg-slate-800"
-              >
-                <GithubIcon />
-              </a>
-
-              <a
-                href="https://www.linkedin.com/in/huy-nguyen-085382206/"
-                target="_blank"
-                className="social-link w-8 h-8 rounded-full flex items-center justify-center 
-                        text-gray-600 dark:text-gray-300 
-                        hover:text-gray-900 dark:hover:text-white 
-                        transition-transform hover:-translate-y-0.5 
-                        hover:bg-slate-100 dark:hover:bg-slate-800"
-              >
-                <LinkedinIcon />
-              </a>
-            </div>
+          <div className="mt-8 flex gap-3">
+            <a
+              href={profile.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub"
+              className="flex size-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-gray-400 transition-colors hover:border-white/30 hover:text-white"
+            >
+              <GithubIcon />
+            </a>
+            <a
+              href={profile.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              className="flex size-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-gray-400 transition-colors hover:border-white/30 hover:text-white"
+            >
+              <LinkedinIcon />
+            </a>
           </div>
         </motion.div>
       </div>
@@ -225,7 +153,6 @@ const AboutSection = memo(function AboutSection() {
   );
 });
 
-// Add display name for better debugging in React DevTools
 AboutSection.displayName = "AboutSection";
 
 export default AboutSection;

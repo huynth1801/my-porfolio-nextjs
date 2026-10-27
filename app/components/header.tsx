@@ -4,23 +4,21 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { profile } from "@/lib/content";
 
-const navItems = [
-  { name: "Home", href: "/" },
-  {
-    name: "Resume",
-    href: "/NguyenThaiHuuHuy_FrontEndDeveloper.pdf",
-    download: true,
-  },
-  { name: "Contact", href: "/contact" },
+const sectionLinks = [
+  { name: "About", hash: "#about" },
+  { name: "Experience", hash: "#experience" },
+  { name: "Projects", hash: "#projects" },
 ];
 
 export function Header() {
   const pathname = usePathname();
+  const onHome = pathname === "/";
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#0d0d0f] border-b border-[#1a1a1a]">
-      <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
+    <header className="fixed top-0 right-0 left-0 z-50 border-b border-white/5 bg-[#0d0d0f]/70 backdrop-blur-md">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
           <Image
@@ -28,47 +26,47 @@ export function Header() {
             alt="Huy Nguyen Logo"
             width={32}
             height={32}
-            className="w-8 h-8"
+            className="size-8"
             priority
           />
-
-          <span className="text-white font-semibold text-lg">Huy Nguyen</span>
+          <span className="text-lg font-semibold text-white">Huy Nguyen</span>
         </Link>
 
-        {/* Navigation */}
-        <nav className="flex items-center gap-8">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href;
-
-            if (item.download) {
-              return (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  download
-                  className={cn(
-                    "text-sm font-medium transition-colors hover:text-white",
-                    "text-gray-400",
-                  )}
-                >
-                  {item.name}
-                </a>
-              );
-            }
-
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "text-sm font-medium transition-colors hover:text-white",
-                  isActive ? "text-white" : "text-gray-400",
-                )}
+        {/* Section anchors — only meaningful on the home journey */}
+        {onHome && (
+          <nav className="hidden items-center gap-7 md:flex" aria-label="Sections">
+            {sectionLinks.map((item) => (
+              <a
+                key={item.hash}
+                href={item.hash}
+                className="text-sm font-medium text-gray-400 transition-colors hover:text-white"
               >
                 {item.name}
-              </Link>
-            );
-          })}
+              </a>
+            ))}
+          </nav>
+        )}
+
+        {/* Always-visible actions: CV + Contact */}
+        <nav className="flex items-center gap-5">
+          <a
+            href={profile.resume}
+            download
+            className="text-sm font-medium text-gray-400 transition-colors hover:text-white"
+          >
+            Resume
+          </a>
+          <Link
+            href="/contact"
+            className={cn(
+              "rounded-full px-4 py-1.5 text-sm font-semibold transition-colors",
+              pathname === "/contact"
+                ? "bg-white/15 text-white"
+                : "bg-linear-to-r from-cyan-400 to-violet-400 text-gray-950 hover:brightness-110",
+            )}
+          >
+            Contact
+          </Link>
         </nav>
       </div>
     </header>
