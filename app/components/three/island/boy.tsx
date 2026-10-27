@@ -90,8 +90,16 @@ export function BoyCharacter() {
     const hop = s.pose === "cheer" && !airborne ? Math.abs(Math.sin(t * 7)) * 0.07 : 0;
     root.current.position.set(s.px, s.py + arc + hop, s.pz);
 
-    heading.current += shortestAngle(heading.current, s.heading) * Math.min(1, dt * 8);
+    // shortestAngle returns an ABSOLUTE angle — damping must go
+    // (target - current) * k, never `current += absolute * k` (that
+    // feeds back on itself and spins the character up exponentially)
+    const headingTarget = shortestAngle(heading.current, s.heading);
+    heading.current += (headingTarget - heading.current) * Math.min(1, dt * 8);
     root.current.rotation.y = heading.current;
+    // dev/testing probe: the character's live visual yaw
+    if (typeof window !== "undefined") {
+      (window as unknown as Record<string, unknown>).__boyHeading = heading.current;
+    }
 
     const squash = s.squash;
     const stretch = airborne ? 0.08 : 0;
