@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useRef, useSyncExternalStore } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { boot } from "./boot";
@@ -13,25 +13,40 @@ function phaseFromHour(h: number): DayPhase {
   return "night";
 }
 
-let cachedPhase: DayPhase | null = null;
-export function getDayPhase(): DayPhase {
-  if (cachedPhase) return cachedPhase;
+const listeners = new Set<() => void>();
+let currentPhase: DayPhase = (function () {
   let override: string | null = null;
   try {
     override = new URLSearchParams(window.location.search).get("phase");
   } catch {}
-  cachedPhase =
-    override === "day" || override === "golden" || override === "night"
-      ? (override as DayPhase)
-      : phaseFromHour(new Date().getHours());
-  return cachedPhase;
+  if (override === "day" || override === "golden" || override === "night") return override;
+  return phaseFromHour(new Date().getHours());
+})();
+
+export const phaseStore = {
+  get: () => currentPhase,
+  set: (p: DayPhase) => {
+    currentPhase = p;
+    listeners.forEach((fn) => fn());
+  },
+  subscribe: (fn: () => void) => {
+    listeners.add(fn);
+    return () => listeners.delete(fn);
+  },
+};
+
+export function useDayPhase(): DayPhase {
+  return useSyncExternalStore(phaseStore.subscribe, phaseStore.get, () => "day");
+}
+
+export function getDayPhase(): DayPhase {
+  return phaseStore.get();
 }
 
 type LightRig = {
   sun: { pos: [number, number, number]; color: string; intensity: number };
   ambient: { color: string; intensity: number };
   hemi: { sky: string; ground: string; intensity: number };
-  /** 0..1 — how much the neon/window accent lights are on */
   neon: number;
 };
 
@@ -57,12 +72,10 @@ const RIGS: Record<DayPhase, LightRig> = {
 };
 
 export function getRig(): LightRig {
-  return RIGS[getDayPhase()];
+  return RIGS[phaseStore.get()];
 }
 
 export function IslandLighting() {
-  const rig = useMemo(() => RIGS[getDayPhase()], []);
-
   const sunRef = useRef<THREE.DirectionalLight>(null!);
   const ambRef = useRef<THREE.AmbientLight>(null!);
   const hemiRef = useRef<THREE.HemisphereLight>(null!);
@@ -71,30 +84,74 @@ export function IslandLighting() {
   const schoolRef = useRef<THREE.PointLight>(null!);
   const towersRef = useRef<THREE.PointLight>(null!);
 
-  useFrame((state) => {
+  const curSunColor = useRef(new THREE.Color(RIGS[currentPhase].sun.color));
+  const curAmbColor = useRef(new THREE.Color(RIGS[currentPhase].ambient.color));
+  const curNeon = useRef(RIGS[currentPhase].neon);
+  const curSunIntensity = useRef(RIGS[currentPhase].sun.intensity);
+  const curAmbIntensity = useRef(RIGS[currentPhase].ambient.intensity);
+
+  useFrame((state, delta) => {
+    const phase = phaseStore.get();
+    const targetRig = RIGS[phase];
+
+    // Smoothly transition between day / golden / night
+    const lerpSpeed = 1 - Math.exp(-3.0 * delta);
+    curSunColor.current.lerp(new THREE.Color(targetRig.sun.color), lerpSpeed);
+    curAmbColor.current.lerp(new THREE.Color(targetRig.ambient.color), lerpSpeed);
+    curNeon.current += (targetRig.neon - curNeon.current) * lerpSpeed;
+    curSunIntensity.current += (targetRig.sun.intensity - curSunIntensity.current) * lerpSpeed;
+    curAmbIntensity.current += (targetRig.ambient.intensity - curAmbIntensity.current) * lerpSpeed;
+
     const b = boot.value;
     const flicker =
-      b >= 1 ? 1 : Math.max(0.04, b * (0.82 + 0.18 * Math.sin(state.clock.elapsedTime * 47) * Math.sin(state.clock.elapsedTime * 13)));
+      b >= 1
+        ? 1
+        : Math.max(
+            0.04,
+            b *
+              (0.82 +
+                0.18 *
+                  Math.sin(state.clock.elapsedTime * 47) *
+                  Math.sin(state.clock.elapsedTime * 13)),
+          );
     const k = b * b * (3 - 2 * b) * flicker;
 
-    sunRef.current.intensity = rig.sun.intensity * k;
-    ambRef.current.intensity = rig.ambient.intensity * k;
-    hemiRef.current.intensity = rig.hemi.intensity * k;
-    arcadeRef.current.intensity = 2.4 * rig.neon * k;
-    homeRef.current.intensity = 1.6 * rig.neon * k;
-    schoolRef.current.intensity = 1.4 * rig.neon * k;
-    towersRef.current.intensity = 2.0 * rig.neon * k;
+    if (sunRef.current) {
+      sunRef.current.intensity = curSunIntensity.current * k;
+      sunRef.current.color.copy(curSunColor.current);
+    }
+    if (ambRef.current) {
+      ambRef.current.intensity = curAmbIntensity.current * k;
+      ambRef.current.color.copy(curAmbColor.current);
+    }
+    if (hemiRef.current) {
+      hemiRef.current.intensity = targetRig.hemi.intensity * k;
+    }
+    if (arcadeRef.current) {
+      arcadeRef.current.intensity = 2.4 * curNeon.current * k;
+    }
+    if (homeRef.current) {
+      homeRef.current.intensity = 1.6 * curNeon.current * k;
+    }
+    if (schoolRef.current) {
+      schoolRef.current.intensity = 1.4 * curNeon.current * k;
+    }
+    if (towersRef.current) {
+      towersRef.current.intensity = 2.0 * curNeon.current * k;
+    }
   });
+
+  const init = RIGS[currentPhase];
 
   return (
     <>
-      <ambientLight ref={ambRef} color={rig.ambient.color} intensity={rig.ambient.intensity} />
-      <hemisphereLight ref={hemiRef} args={[rig.hemi.sky, rig.hemi.ground, rig.hemi.intensity]} />
+      <ambientLight ref={ambRef} color={init.ambient.color} intensity={init.ambient.intensity} />
+      <hemisphereLight ref={hemiRef} args={[init.hemi.sky, init.hemi.ground, init.hemi.intensity]} />
       <directionalLight
         ref={sunRef}
-        position={rig.sun.pos}
-        color={rig.sun.color}
-        intensity={rig.sun.intensity}
+        position={init.sun.pos}
+        color={init.sun.color}
+        intensity={init.sun.intensity}
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-camera-left={-12}

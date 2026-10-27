@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
-import { journey, clamp01, smoothstep } from "@/lib/journey-store";
+import { journey, tourState } from "@/lib/journey-store";
 import { panelStore } from "@/lib/panel-store";
 import type { PanelKey } from "@/lib/content";
 
@@ -11,9 +11,7 @@ import type { PanelKey } from "@/lib/content";
     to tell a camera drag apart from a click. */
 export const dragState = { moved: 0 };
 
-const PIVOT_HOME = new THREE.Vector3(0, 1.4, 0);
 const PITCH = { min: 0.22, max: 0.85, home: 0.5 };
-const RADIUS_HOME = 16.5;
 const YAW_SPEED = 0.045;
 
 type FocusTarget = {
@@ -40,10 +38,9 @@ function shortestAngle(from: number, to: number): number {
 }
 
 /**
- * Orbiting diorama camera. Slowly auto-rotates when idle; dragging spins it;
- * opening a district panel glides the camera in for a close-up, closing
- * glides back to the overview. Scrolling past the hero recedes gently so
- * the island becomes a backdrop behind the HTML sections.
+ * Scrollytelling Drone Camera Rig.
+ * Continuously glides along the 5 districts as you scroll down the page.
+ * Dragging allows manual orbit exploration; opening panels zooms in for close-up.
  */
 export function CameraRig() {
   const gl = useThree((s) => s.gl);
@@ -55,10 +52,10 @@ export function CameraRig() {
   const userPitch = useRef(0);
   const wasFocused = useRef(false);
 
-  const pivot = useRef(PIVOT_HOME.clone());
-  const radius = useRef(RADIUS_HOME);
+  const pivot = useRef(new THREE.Vector3(0, 1.4, 0));
+  const radius = useRef(16.5);
   const pos = useRef(new THREE.Vector3(12, 11, 14));
-  const look = useRef(PIVOT_HOME.clone());
+  const look = useRef(new THREE.Vector3(0, 1.4, 0));
 
   useEffect(() => {
     const el = gl.domElement;
@@ -111,20 +108,14 @@ export function CameraRig() {
   }, [gl]);
 
   useFrame((_, delta) => {
-    const blend = smoothstep(clamp01(journey.progress / 0.13));
     const key = panelStore.get();
     const focus = key ? FOCUS[key] : null;
 
     // Detect panel close -> resume smooth orbit from current angle
     if (wasFocused.current && !focus) {
-      userYaw.current = yaw.current - 0.6;
+      userYaw.current = yaw.current - tourState.targetYaw;
     }
     wasFocused.current = !!focus;
-
-    // auto-rotate only while idle at the overview (no drag, no panel open)
-    if (!journey.reduced && !focus && dragState.moved === 0) {
-      userYaw.current -= YAW_SPEED * delta;
-    }
 
     let yawTarget: number;
     let pitchTarget: number;
@@ -132,26 +123,37 @@ export function CameraRig() {
     let pivotTarget: THREE.Vector3;
 
     if (focus) {
-      // Zoom and focus into district
+      // Zoom and focus into district close-up for opened panel
       yawTarget = shortestAngle(yaw.current, focus.yaw);
       pitchTarget = focus.pitch;
       radiusTarget = focus.radius;
       pivotTarget = focus.pivot.clone();
     } else {
-      // Overview diorama
-      yawTarget = 0.6 + userYaw.current;
-      pitchTarget = THREE.MathUtils.lerp(
-        PITCH.home + userPitch.current * (1 - blend) + journey.pointer.y * 0.02,
-        PITCH.home + 0.08,
-        blend,
+      // Follow the continuous Drone Tour path driven by GSAP ScrollTrigger
+      const isOverview = tourState.activeWaypointIndex === 0 && journey.progress < 0.05;
+
+      // Auto-rotate only when sitting at the overview hero
+      if (!journey.reduced && isOverview && dragState.moved === 0) {
+        userYaw.current -= YAW_SPEED * delta;
+      } else if (dragState.moved === 0) {
+        // Softly ease user drag offset back to waypoint path when scrolling
+        userYaw.current *= Math.exp(-2.2 * delta);
+        userPitch.current *= Math.exp(-2.2 * delta);
+      }
+
+      const baseYaw = tourState.targetYaw + userYaw.current;
+      yawTarget = shortestAngle(yaw.current, baseYaw);
+      pitchTarget = THREE.MathUtils.clamp(
+        tourState.targetPitch + userPitch.current * 0.7 + journey.pointer.y * 0.02,
+        PITCH.min,
+        PITCH.max,
       );
-      radiusTarget = THREE.MathUtils.lerp(
-        journey.tier === "low" ? RADIUS_HOME + 2 : RADIUS_HOME,
-        RADIUS_HOME + 6,
-        blend,
+      radiusTarget = journey.tier === "low" ? tourState.targetRadius + 1.5 : tourState.targetRadius;
+      pivotTarget = new THREE.Vector3(
+        tourState.targetPivot[0],
+        tourState.targetPivot[1],
+        tourState.targetPivot[2],
       );
-      pivotTarget = PIVOT_HOME.clone();
-      pivotTarget.y += blend * 0.5;
     }
 
     const k = 1 - Math.exp(-3.5 * delta);

@@ -446,11 +446,19 @@ export default function SkillSection() {
       className="pointer-events-auto relative px-2 py-24 sm:px-4"
     >
       <div className="mx-auto max-w-3xl">
-        <header className="mb-1 px-4 sm:px-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
-            Inventory
-          </p>
+        <header className="glass mb-8 rounded-2xl p-6 md:p-8 border border-white/12 shadow-2xl">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-mono text-[10px] font-semibold tracking-wider text-cyan-300 uppercase px-2.5 py-0.5 rounded-full bg-cyan-400/10 border border-cyan-400/25">
+              WAYPOINT 05 // SKILLS KIOSK
+            </span>
+            <span className="text-[11px] font-medium text-gray-400">
+              Inventory & Stack
+            </span>
+          </div>
           <h2 className="mt-3 text-3xl font-bold tracking-tight text-white md:text-4xl">Skills</h2>
+          <p className="mt-2 text-sm leading-relaxed text-gray-300">
+            Interactive skill orbits — core tools and technologies powering production web & game applications.
+          </p>
         </header>
 
         <OrbitingSkills />

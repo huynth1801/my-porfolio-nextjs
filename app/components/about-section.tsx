@@ -102,9 +102,14 @@ const AboutSection = memo(function AboutSection() {
           viewport={{ once: true }}
           className="glass relative z-10 rounded-3xl p-7 md:p-9 shadow-2xl border border-white/12"
         >
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold tracking-widest text-cyan-300 uppercase">
-            <Sparkles className="size-3.5" />
-            Player profile
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-mono text-[10px] font-semibold tracking-wider text-cyan-300 uppercase px-2.5 py-0.5 rounded-full bg-cyan-400/10 border border-cyan-400/25">
+              WAYPOINT 02 // HUY&apos;S HOUSE
+            </span>
+            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-400">
+              <Sparkles className="size-3 text-cyan-400" />
+              Player profile
+            </span>
           </div>
 
           <h2 className="mt-5 mb-5 text-3xl leading-tight font-bold text-white md:text-4xl">

@@ -3,7 +3,7 @@
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
-import { getDayPhase } from "./lighting";
+import { phaseStore } from "./lighting";
 
 const SKY_COLORS = {
   day: "#5ea5e6",
@@ -36,13 +36,6 @@ function FluffyCloud({
 }) {
   const group = useRef<THREE.Group>(null!);
   const angle = useRef(initialAngle);
-  const phase = getDayPhase();
-  const isNight = phase === "night";
-  const isGolden = phase === "golden";
-
-  const cloudColor = isNight ? "#1c223c" : isGolden ? "#ffe8d6" : "#ffffff";
-  const emissiveColor = isNight ? "#12172b" : isGolden ? "#ffb685" : "#ffffff";
-  const emissiveIntensity = isNight ? 0.1 : isGolden ? 0.45 : 0.55;
 
   useFrame((_, delta) => {
     angle.current += speed * delta;
@@ -59,9 +52,9 @@ function FluffyCloud({
       <mesh>
         <sphereGeometry args={[1.3, 10, 8]} />
         <meshStandardMaterial
-          color={cloudColor}
-          emissive={emissiveColor}
-          emissiveIntensity={emissiveIntensity}
+          color="#ffffff"
+          emissive="#ffffff"
+          emissiveIntensity={0.5}
           roughness={0.4}
           flatShading
         />
@@ -70,9 +63,9 @@ function FluffyCloud({
       <mesh position={[1.0, -0.15, 0.2]}>
         <sphereGeometry args={[0.95, 8, 7]} />
         <meshStandardMaterial
-          color={cloudColor}
-          emissive={emissiveColor}
-          emissiveIntensity={emissiveIntensity}
+          color="#ffffff"
+          emissive="#ffffff"
+          emissiveIntensity={0.5}
           roughness={0.4}
           flatShading
         />
@@ -80,9 +73,9 @@ function FluffyCloud({
       <mesh position={[-1.0, -0.2, -0.1]}>
         <sphereGeometry args={[0.9, 8, 7]} />
         <meshStandardMaterial
-          color={cloudColor}
-          emissive={emissiveColor}
-          emissiveIntensity={emissiveIntensity}
+          color="#ffffff"
+          emissive="#ffffff"
+          emissiveIntensity={0.5}
           roughness={0.4}
           flatShading
         />
@@ -90,9 +83,9 @@ function FluffyCloud({
       <mesh position={[0.2, 0.45, -0.3]}>
         <sphereGeometry args={[0.85, 8, 7]} />
         <meshStandardMaterial
-          color={cloudColor}
-          emissive={emissiveColor}
-          emissiveIntensity={emissiveIntensity}
+          color="#ffffff"
+          emissive="#ffffff"
+          emissiveIntensity={0.5}
           roughness={0.4}
           flatShading
         />
@@ -100,9 +93,9 @@ function FluffyCloud({
       <mesh position={[-0.45, 0.4, 0.35]}>
         <sphereGeometry args={[0.75, 8, 7]} />
         <meshStandardMaterial
-          color={cloudColor}
-          emissive={emissiveColor}
-          emissiveIntensity={emissiveIntensity}
+          color="#ffffff"
+          emissive="#ffffff"
+          emissiveIntensity={0.5}
           roughness={0.4}
           flatShading
         />
@@ -128,7 +121,6 @@ function HotAirBalloon() {
 
   return (
     <group ref={balloonRef} scale={0.75}>
-      {/* Striped Balloon Envelope */}
       <mesh position={[0, 0.9, 0]}>
         <sphereGeometry args={[0.7, 12, 10]} />
         <meshStandardMaterial color="#f43f5e" roughness={0.5} flatShading />
@@ -137,12 +129,10 @@ function HotAirBalloon() {
         <coneGeometry args={[0.55, 0.6, 12]} />
         <meshStandardMaterial color="#38bdf8" roughness={0.5} flatShading />
       </mesh>
-      {/* Basket */}
       <mesh position={[0, -0.1, 0]}>
         <boxGeometry args={[0.22, 0.18, 0.22]} />
         <meshStandardMaterial color="#854d0e" roughness={0.8} />
       </mesh>
-      {/* Ropes */}
       {[-0.08, 0.08].map((x) =>
         [-0.08, 0.08].map((z) => (
           <mesh key={`${x}-${z}`} position={[x, 0.12, z]}>
@@ -155,7 +145,6 @@ function HotAirBalloon() {
   );
 }
 
-/** Deterministic pseudo-random float 0..1 based on seed index */
 function seeded(index: number, salt: number): number {
   const x = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453;
   return x - Math.floor(x);
@@ -163,9 +152,8 @@ function seeded(index: number, salt: number): number {
 
 /** Starlight dust field active during night phase */
 function NightStars({ count = 200 }: { count?: number }) {
-  const isNight = getDayPhase() === "night";
-  const isGolden = getDayPhase() === "golden";
   const matRef = useRef<THREE.ShaderMaterial>(null!);
+  const opacityRef = useRef(0);
 
   const { geometry, material } = useMemo(() => {
     const positions = new Float32Array(count * 3);
@@ -187,7 +175,7 @@ function NightStars({ count = 200 }: { count?: number }) {
       transparent: true,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
-      uniforms: { uTime: { value: 0 }, uOpacity: { value: isNight ? 0.95 : isGolden ? 0.3 : 0 } },
+      uniforms: { uTime: { value: 0 }, uOpacity: { value: 0 } },
       vertexShader: /* glsl */ `
         uniform float uTime;
         attribute float aPhase;
@@ -212,11 +200,16 @@ function NightStars({ count = 200 }: { count?: number }) {
       `,
     });
     return { geometry: geom, material: mat };
-  }, [count, isNight, isGolden]);
+  }, [count]);
 
-  useFrame((state) => {
+  useFrame((state, delta) => {
+    const phase = phaseStore.get();
+    const targetOpacity = phase === "night" ? 0.95 : phase === "golden" ? 0.3 : 0;
+    opacityRef.current += (targetOpacity - opacityRef.current) * Math.min(1, delta * 3.0);
+
     if (matRef.current) {
       matRef.current.uniforms.uTime.value = state.clock.elapsedTime;
+      matRef.current.uniforms.uOpacity.value = opacityRef.current;
     }
   });
 
@@ -228,14 +221,31 @@ function NightStars({ count = 200 }: { count?: number }) {
 }
 
 export function IslandEnvironment() {
-  const phase = getDayPhase();
-  const skyColor = SKY_COLORS[phase];
-  const fogDensity = FOG_DENSITY[phase];
+  const bgRef = useRef<THREE.Color>(null!);
+  const fogRef = useRef<THREE.FogExp2>(null!);
+  const curColor = useRef(new THREE.Color(SKY_COLORS[phaseStore.get()]));
+
+  useFrame((_, delta) => {
+    const phase = phaseStore.get();
+    const targetHex = SKY_COLORS[phase];
+    curColor.current.lerp(new THREE.Color(targetHex), Math.min(1, delta * 3.0));
+
+    if (bgRef.current) {
+      bgRef.current.copy(curColor.current);
+    }
+    if (fogRef.current) {
+      fogRef.current.color.copy(curColor.current);
+      fogRef.current.density = FOG_DENSITY[phase];
+    }
+  });
+
+  const initColor = SKY_COLORS[phaseStore.get()];
+  const initFog = FOG_DENSITY[phaseStore.get()];
 
   return (
     <>
-      <color attach="background" args={[skyColor]} />
-      <fogExp2 attach="fog" args={[skyColor, fogDensity]} />
+      <color ref={bgRef} attach="background" args={[initColor]} />
+      <fogExp2 ref={fogRef} attach="fog" args={[initColor, initFog]} />
 
       {/* Radiant, fluffy marshmallow white clouds */}
       <FluffyCloud scale={1.25} speed={0.032} radius={18} initialAngle={0.4} y={5.2} />

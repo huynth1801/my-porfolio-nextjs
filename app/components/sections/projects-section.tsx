@@ -116,11 +116,16 @@ export function ProjectsSection() {
       className="pointer-events-auto relative px-6 py-28 md:px-12"
     >
       <div className="mx-auto max-w-5xl">
-        <div className="glass mb-10 max-w-xl rounded-2xl p-6 md:p-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
-            Selected work
-          </p>
-          <h2 className="mt-2.5 text-3xl font-bold tracking-tight text-white md:text-4xl">
+        <div className="glass mb-10 max-w-xl rounded-2xl p-6 md:p-8 border border-white/12 shadow-2xl">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-mono text-[10px] font-semibold tracking-wider text-cyan-300 uppercase px-2.5 py-0.5 rounded-full bg-cyan-400/10 border border-cyan-400/25">
+              WAYPOINT 04 // PIXEL ARCADE
+            </span>
+            <span className="text-[11px] font-medium text-gray-400">
+              Selected work
+            </span>
+          </div>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-white md:text-4xl">
             Projects worth a click
           </h2>
           <p className="mt-2.5 text-sm leading-relaxed text-gray-300">

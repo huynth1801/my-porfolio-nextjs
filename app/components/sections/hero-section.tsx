@@ -49,11 +49,16 @@ export function HeroSection() {
 
       <div
         data-hero-reveal
-        className="relative w-full max-w-md rounded-2xl border border-white/10 bg-[#0d0d0f]/55 p-6 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)] backdrop-blur-md md:p-7"
+        className="glass relative w-full max-w-md rounded-2xl p-6 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)] backdrop-blur-xl border border-white/12 md:p-7"
       >
-        <p className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold tracking-[0.18em] text-cyan-300 uppercase">
-          {profile.role} · {profile.location}
-        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="font-mono text-[10px] font-semibold tracking-wider text-cyan-300 uppercase px-2.5 py-0.5 rounded-full bg-cyan-400/10 border border-cyan-400/25">
+            WAYPOINT 01 // OVERVIEW
+          </span>
+          <span className="text-[11px] font-medium text-gray-400">
+            {profile.location}
+          </span>
+        </div>
 
         <p className="mt-4 text-pretty text-lg leading-relaxed text-gray-100">
           {profile.tagline}
