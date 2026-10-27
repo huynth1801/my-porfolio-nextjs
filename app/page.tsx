@@ -8,6 +8,7 @@ import { ContactCta } from "./components/sections/contact-cta";
 import { JourneyCanvas } from "./components/journey/journey-canvas";
 import { SmoothScroll } from "./components/journey/smooth-scroll";
 import { PanelOverlay } from "./components/panels/panel-overlay";
+import { StoryPlayer } from "./components/three/island/story-player";
 import { TourHud } from "./components/journey/tour-hud";
 import { educations } from "@/lib/content";
 
@@ -32,6 +33,7 @@ export default function Home() {
         <ContactCta />
       </main>
       <PanelOverlay />
+      <StoryPlayer />
       <TourHud />
     </>
   );

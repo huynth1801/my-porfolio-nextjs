@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 import { journey, tourState } from "@/lib/journey-store";
+import { story } from "./story-store";
 import { panelStore } from "@/lib/panel-store";
 import type { PanelKey } from "@/lib/content";
 
@@ -110,6 +111,8 @@ export function CameraRig() {
   }, [gl]);
 
   useFrame((_, rawDelta) => {
+    // story mode's director camera owns the rig while playing
+    if (story.playing) return;
     // clamp so a tab-switch delta spike never teleports the camera
     const delta = Math.min(rawDelta, 0.05);
     const key = panelStore.get();

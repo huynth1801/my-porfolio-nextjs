@@ -10,6 +10,9 @@ import { DistrictSchool } from "./district-school";
 import { DistrictTowers } from "./district-towers";
 import { DistrictArcade } from "./district-arcade";
 import { DistrictRadio } from "./district-radio";
+import { BoyCharacter } from "./boy";
+import { StoryFx } from "./story-fx";
+import { StoryCamera } from "./story-camera";
 
 /**
  * 🏝️ Đảo nổi — "Thành phố sự nghiệp" (Floating Career Island)
@@ -38,6 +41,11 @@ export function Island() {
       <DistrictTowers />
       <DistrictArcade />
       <DistrictRadio />
+
+      {/* Story mode — "The Developer's Odyssey" */}
+      <BoyCharacter />
+      <StoryFx />
+      <StoryCamera />
     </>
   );
 }
