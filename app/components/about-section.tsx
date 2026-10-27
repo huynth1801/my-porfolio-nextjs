@@ -25,11 +25,11 @@ function StrengthCard({ strength }: { strength: (typeof strengths)[number] }) {
     <motion.div
       whileHover={{ scale: 1.04 }}
       transition={{ type: "spring", stiffness: 260, damping: 18 }}
-      className="glass rounded-xl p-5 text-left"
+      className="rounded-xl border border-white/10 bg-white/[0.04] p-4 text-left transition-colors hover:border-cyan-400/30"
     >
-      <Icon className={`size-6 ${STRENGTH_ACCENTS[strength.icon]}`} />
-      <h3 className="mt-3 text-sm font-semibold text-white">{strength.title}</h3>
-      <p className="mt-1.5 text-xs leading-relaxed text-gray-400">{strength.desc}</p>
+      <Icon className={`size-5 ${STRENGTH_ACCENTS[strength.icon]}`} />
+      <h3 className="mt-2.5 text-sm font-semibold text-white">{strength.title}</h3>
+      <p className="mt-1 text-xs leading-relaxed text-gray-300">{strength.desc}</p>
     </motion.div>
   );
 }
@@ -100,38 +100,38 @@ const AboutSection = memo(function AboutSection() {
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="relative z-10"
+          className="glass relative z-10 rounded-3xl p-7 md:p-9 shadow-2xl border border-white/12"
         >
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold tracking-widest text-cyan-300 uppercase">
             <Sparkles className="size-3.5" />
             Player profile
           </div>
 
-          <h2 className="mt-5 mb-6 text-4xl leading-tight font-bold text-white md:text-5xl">
+          <h2 className="mt-5 mb-5 text-3xl leading-tight font-bold text-white md:text-4xl">
             From game engines
             <br />
             to web apps
           </h2>
 
-          <p className="mb-5 text-[15px] leading-relaxed text-gray-400">
+          <p className="mb-4 text-[15px] leading-relaxed text-gray-300">
             I came to the web from game development — I care as much about how an interface{" "}
-            <span className="text-gray-200">feels</span> as how it looks. These days I build
+            <span className="text-white font-medium">feels</span> as how it looks. These days I build
             scalable, high-performance products with React, Next.js and TypeScript, and I reach for
             WebGL when a page deserves to be memorable.
           </p>
 
-          <p className="mb-8 text-[15px] leading-relaxed text-gray-400">
+          <p className="mb-6 text-[15px] leading-relaxed text-gray-300">
             What you get either way: motion with intent, render discipline, and features shipped
             end-to-end with design and backend teams.
           </p>
 
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-3.5 sm:grid-cols-3">
             {strengths.map((strength) => (
               <StrengthCard key={strength.title} strength={strength} />
             ))}
           </div>
 
-          <div className="mt-8 flex gap-3">
+          <div className="mt-7 flex gap-3">
             <a
               href={profile.github}
               target="_blank"

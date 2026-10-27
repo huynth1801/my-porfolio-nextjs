@@ -66,7 +66,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
         <p className="mt-0.5 text-sm" style={{ color: project.accent }}>
           {project.tagline}
         </p>
-        <p className="mt-3 flex-1 text-sm leading-relaxed text-gray-400">{project.description}</p>
+        <p className="mt-3 flex-1 text-sm leading-relaxed text-gray-300">{project.description}</p>
 
         <div className="mt-5 flex flex-wrap gap-2">
           {project.stack.map((tech) => (
@@ -116,16 +116,15 @@ export function ProjectsSection() {
       className="pointer-events-auto relative px-6 py-28 md:px-12"
     >
       <div className="mx-auto max-w-5xl">
-        <div className="mb-12">
+        <div className="glass mb-10 max-w-xl rounded-2xl p-6 md:p-8">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
             Selected work
           </p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-white md:text-4xl">
+          <h2 className="mt-2.5 text-3xl font-bold tracking-tight text-white md:text-4xl">
             Projects worth a click
           </h2>
-          <p className="mt-3 max-w-xl text-sm leading-relaxed text-gray-400">
-            Things you can actually open and use — from a real-time chat app to a game built in a
-            game engine.
+          <p className="mt-2.5 text-sm leading-relaxed text-gray-300">
+            Things you can actually open and use — from a full-stack e-commerce store to games and WebGL experiences.
           </p>
         </div>
 

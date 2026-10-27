@@ -13,11 +13,6 @@ function phaseFromHour(h: number): DayPhase {
   return "night";
 }
 
-/**
- * The island follows the visitor's real clock: golden afternoon sun, or a
- * starlit night where the windows and neon signs carry the scene.
- * `?phase=` in the URL overrides it (handy for demos/screenshots).
- */
 let cachedPhase: DayPhase | null = null;
 export function getDayPhase(): DayPhase {
   if (cachedPhase) return cachedPhase;
@@ -42,34 +37,29 @@ type LightRig = {
 
 const RIGS: Record<DayPhase, LightRig> = {
   day: {
-    sun: { pos: [18, 26, 12], color: "#fff1d6", intensity: 2.5 },
-    ambient: { color: "#cfe0ff", intensity: 0.5 },
-    hemi: { sky: "#9ec8ff", ground: "#6a5a4a", intensity: 0.6 },
+    sun: { pos: [18, 28, 14], color: "#fff9ee", intensity: 3.2 },
+    ambient: { color: "#e2f1ff", intensity: 1.15 },
+    hemi: { sky: "#b8dcff", ground: "#756655", intensity: 0.8 },
     neon: 0,
   },
   golden: {
-    sun: { pos: [26, 7, -4], color: "#ff9a5c", intensity: 2.7 },
-    ambient: { color: "#ffd9b8", intensity: 0.36 },
-    hemi: { sky: "#e8b98a", ground: "#5a4a3c", intensity: 0.4 },
-    neon: 0.45,
+    sun: { pos: [26, 9, -4], color: "#ffa568", intensity: 3.4 },
+    ambient: { color: "#ffe5cf", intensity: 0.75 },
+    hemi: { sky: "#f0b68c", ground: "#6b5444", intensity: 0.6 },
+    neon: 0.5,
   },
   night: {
-    sun: { pos: [-14, 22, -12], color: "#8fa8ff", intensity: 0.55 },
-    ambient: { color: "#2a3358", intensity: 0.24 },
-    hemi: { sky: "#26304f", ground: "#1c1a22", intensity: 0.18 },
+    sun: { pos: [-14, 22, -12], color: "#9db4ff", intensity: 0.75 },
+    ambient: { color: "#2d3760", intensity: 0.4 },
+    hemi: { sky: "#2d3a66", ground: "#1f1d2b", intensity: 0.35 },
     neon: 1,
   },
 };
 
-/** Shared per-phase tuning for other components (windows, neon, sky…). */
 export function getRig(): LightRig {
   return RIGS[getDayPhase()];
 }
 
-/**
- * Every light on the island, tuned to the current day phase and stuttering
- * on during the boot sequence.
- */
 export function IslandLighting() {
   const rig = useMemo(() => RIGS[getDayPhase()], []);
 
@@ -90,7 +80,6 @@ export function IslandLighting() {
     sunRef.current.intensity = rig.sun.intensity * k;
     ambRef.current.intensity = rig.ambient.intensity * k;
     hemiRef.current.intensity = rig.hemi.intensity * k;
-    // neon accents live at night
     arcadeRef.current.intensity = 2.4 * rig.neon * k;
     homeRef.current.intensity = 1.6 * rig.neon * k;
     schoolRef.current.intensity = 1.4 * rig.neon * k;

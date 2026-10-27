@@ -47,7 +47,7 @@ export function RoomDimmer() {
       if (el) {
         // fade in during the hero → about hand-off, then hold
         const t = clamp01((journey.progress - 0.03) / 0.12);
-        el.style.opacity = String(t * 0.62);
+        el.style.opacity = String(t * 0.72);
       }
       raf = requestAnimationFrame(tick);
     };
@@ -59,7 +59,7 @@ export function RoomDimmer() {
     <div
       ref={ref}
       aria-hidden
-      className="pointer-events-none fixed inset-0 z-0 bg-[#0d0d0f] opacity-0"
+      className="pointer-events-none fixed inset-0 z-0 bg-[#070913] opacity-0"
     />
   );
 }

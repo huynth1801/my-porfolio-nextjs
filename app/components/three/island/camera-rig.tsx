@@ -151,7 +151,7 @@ export function CameraRig() {
         blend,
       );
       pivotTarget = PIVOT_HOME.clone();
-      pivotTarget.y += blend * 2.5;
+      pivotTarget.y += blend * 0.5;
     }
 
     const k = 1 - Math.exp(-3.5 * delta);
