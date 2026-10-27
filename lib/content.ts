@@ -126,24 +126,24 @@ export type Project = {
   stack: string[];
   demo?: string;
   repo?: string;
-  icon: "clapperboard" | "messages" | "gamepad" | "globe";
+  icon: "store" | "clapperboard" | "gamepad" | "globe";
   accent: string;
   year: string;
 };
 
 export const projects: Project[] = [
   {
-    id: "genzu-chat",
-    title: "GenZu Chat",
-    tagline: "Real-time chat application",
+    id: "myshop",
+    title: "MyShop",
+    tagline: "Full-stack e-commerce storefront",
     description:
-      "Owned the frontend of a real-time chat app: Socket.IO messaging, friend-request notifications with Redux Saga, and speech-to-text input.",
-    stack: ["React", "Socket.IO", "Redux Toolkit", "TailwindCSS"],
-    demo: "https://genzu-chat.netlify.app/",
-    repo: "https://github.com/Hieunmtse150772/GenZu_Chatting_FE",
-    icon: "messages",
-    accent: "#22d3ee",
-    year: "2024",
+      "Online store with product catalog, categories, cart and Stripe Checkout — an Astro 5 + React islands frontend backed by a Java 21 Spring Boot API on PostgreSQL, with an admin area for orders.",
+    stack: ["Astro 5", "React", "Stripe", "Spring Boot", "PostgreSQL"],
+    demo: "https://thuyshop.store",
+    repo: "https://github.com/huynth1801/myshop-astro",
+    icon: "store",
+    accent: "#34d399",
+    year: "2026",
   },
   {
     id: "sunfix",
@@ -202,7 +202,6 @@ export const educations: Education[] = [
     degree: "Electronics and Telecommunication Engineering",
     startDate: "2018",
     endDate: "2022",
-    description: "Graduated with honors. Focus on frontend engineering, UX and algorithms.",
   },
   {
     id: "uni-2",
@@ -210,7 +209,6 @@ export const educations: Education[] = [
     degree: "Software Engineering",
     startDate: "2023",
     endDate: "2025",
-    description: "Practical patterns and state management.",
     tags: ["Certificate"],
   },
 ];

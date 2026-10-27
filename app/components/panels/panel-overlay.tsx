@@ -12,8 +12,8 @@ import {
   Globe,
   Linkedin,
   Mail,
-  MessagesSquare,
   Rocket,
+  ShoppingBag,
   X,
 } from "lucide-react";
 import { usePanel, panelStore } from "@/lib/panel-store";
@@ -38,8 +38,8 @@ const LABELS: Record<PanelKey, string> = {
 };
 
 const PROJECT_ICONS = {
+  store: ShoppingBag,
   clapperboard: ExternalLink,
-  messages: MessagesSquare,
   gamepad: Gamepad2,
   globe: Globe,
 } as const;

@@ -2,12 +2,12 @@
 
 import { useRef } from "react";
 import { motion } from "motion/react";
-import { Clapperboard, ExternalLink, Gamepad2, Github, Globe, MessagesSquare } from "lucide-react";
+import { Clapperboard, ExternalLink, Gamepad2, Github, Globe, ShoppingBag } from "lucide-react";
 import { projects, type Project } from "@/lib/content";
 
 const ICONS = {
+  store: ShoppingBag,
   clapperboard: Clapperboard,
-  messages: MessagesSquare,
   gamepad: Gamepad2,
   globe: Globe,
 } as const;
