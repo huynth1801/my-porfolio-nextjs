@@ -169,10 +169,10 @@ export function Room() {
       </Hotspot>
 
       <Hotspot
-        position={[0.05, 0.7, -1.12]}
-        radius={0.62}
-        height={0.45}
-        glowY={-0.08}
+        position={[0.05, 0.85, -1.18]}
+        radius={0.55}
+        height={0.25}
+        glowY={-0.14}
         label="Skills"
         target="skills"
       >
@@ -193,16 +193,16 @@ export function Room() {
         </group>
       </Hotspot>
 
-      {/* the mascot, loafing on the rug in plain sight */}
+      {/* the mascot, curled up in the corner where the two walls meet */}
       <Hotspot
-        position={[0.62, 0.3, 0.42]}
+        position={[3.55, 0.3, -2.25]}
         radius={0.34}
         height={0.5}
         glowY={-0.28}
         label="Meow"
         target="meow"
       >
-        <group position={[0, -0.3, 0]} rotation={[0, 0.35, 0]} scale={1.3}>
+        <group position={[0, -0.3, 0]} rotation={[0, -0.75, 0]} scale={1.45}>
           <Cat />
         </group>
       </Hotspot>

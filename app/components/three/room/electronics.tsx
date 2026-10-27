@@ -380,17 +380,19 @@ export function MidiKeyboard() {
     [white, black],
   );
 
-  // local origin = drawer centre; placed by its Hotspot
+  // local origin = tray centre; placed by its Hotspot. The tray is tucked
+  // under the desk top with vertical rails bridging up to it, so it reads
+  // as a real slide-out drawer instead of a floating box.
   return (
     <group>
       <mesh castShadow>
-        <boxGeometry args={[1.18, 0.09, 0.4]} />
+        <boxGeometry args={[1.18, 0.08, 0.4]} />
         <meshStandardMaterial color="#17171d" roughness={0.5} />
       </mesh>
-      {/* slide rails reaching back under the desk, so it reads attached */}
+      {/* slide rails bridging up to the underside of the desk */}
       {[-0.56, 0.56].map((x) => (
-        <mesh key={x} position={[x, -0.01, -0.24]}>
-          <boxGeometry args={[0.045, 0.035, 0.34]} />
+        <mesh key={x} position={[x, 0.06, -0.02]}>
+          <boxGeometry args={[0.05, 0.12, 0.34]} />
           <meshStandardMaterial color={C.metal} roughness={0.4} metalness={0.5} />
         </mesh>
       ))}
@@ -398,7 +400,7 @@ export function MidiKeyboard() {
       <primitive object={black} />
       {/* knobs */}
       {[0, 1, 2, 3].map((i) => (
-        <mesh key={i} position={[-0.44 + i * 0.075, 0.065, -0.12]} rotation={[Math.PI / 2, 0, 0]}>
+        <mesh key={i} position={[-0.44 + i * 0.075, 0.062, -0.12]} rotation={[Math.PI / 2, 0, 0]}>
           <cylinderGeometry args={[0.024, 0.024, 0.03, 14]} />
           <meshStandardMaterial color="#2c2c34" roughness={0.4} />
         </mesh>
