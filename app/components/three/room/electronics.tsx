@@ -5,6 +5,7 @@ import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { C } from "./furniture";
 import { getClockTexture, getPosterTexture } from "./textures";
+import { boot } from "./boot";
 import { getGlowTexture } from "../glow-texture";
 
 /* ------------------------------------------------------------------ */
@@ -12,7 +13,7 @@ import { getGlowTexture } from "../glow-texture";
 /* ------------------------------------------------------------------ */
 
 export function Monitor() {
-  const clock = getClockTexture();
+  const clock = getClockTexture(() => boot.value);
   const glowTexture = useMemo(() => getGlowTexture(), []);
 
   // local origin = centre of the stand base; placed by its Hotspot
@@ -436,7 +437,7 @@ function buildKeys(black: boolean) {
 /* ------------------------------------------------------------------ */
 
 export function ShelfItems({ shelfY }: { shelfY: number }) {
-  const clock = getClockTexture();
+  const clock = getClockTexture(() => boot.value);
   const poster = getPosterTexture();
   return (
     <group>

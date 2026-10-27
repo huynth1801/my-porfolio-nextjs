@@ -10,3 +10,11 @@ export const hotspotStore = {
   y: 0,
   label: "",
 };
+
+/** Shared state for the room's non-navigational toys (chair spin, cat). */
+export const toyStore = {
+  /** chair spins to this accumulated target (radians) */
+  spinTarget: 0,
+  /** incremented every time the cat gets poked */
+  catPokes: 0,
+};

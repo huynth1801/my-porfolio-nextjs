@@ -4,6 +4,9 @@ import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { getGlowTexture } from "../glow-texture";
+import { getSkylineTexture } from "./textures";
+import { getDayPhase, getRig } from "./lighting";
+import { toyStore } from "./hotspot-store";
 
 /* Palette shared by every room part */
 export const C = {
@@ -87,27 +90,29 @@ function Rug() {
 }
 
 function WindowAndCurtain() {
-  // window sits on the right wall (x = 4.7 plane), curtain beside it
+  // window lives on the BACK wall (visible from the default camera), with
+  // the curtain half drawn over its right edge. The view follows the
+  // visitor's real clock: day sky or a night skyline.
+  const night = getDayPhase() === "night";
+  const skyline = useMemo(() => getSkylineTexture(night), [night]);
+
   return (
     <group>
-      {/* night glass */}
-      <mesh position={[4.68, 1.95, -0.5]} rotation={[0, -Math.PI / 2, 0]}>
+      {/* the view */}
+      <mesh position={[2.65, 2.1, -2.72]}>
         <planeGeometry args={[1.5, 1.7]} />
-        <meshStandardMaterial color={C.night} roughness={0.2} metalness={0.1} emissive="#16233d" emissiveIntensity={0.7} />
+        <meshBasicMaterial map={skyline} toneMapped={night ? false : true} />
       </mesh>
-      {/* frame */}
-      {[
-        [0, 0.87, 1.66, 0.09],
-        [0, -0.87, 1.66, 0.09],
-      ].map(([z, y, w, h], i) => (
-        <mesh key={`h${i}`} position={[4.68, y, -0.5 + z]} rotation={[0, -Math.PI / 2, 0]}>
-          <boxGeometry args={[0.07, h, w]} />
+      {/* frame: horizontal + vertical bars */}
+      {[-0.87, 0.87].map((y) => (
+        <mesh key={y} position={[2.65, 2.1 + y, -2.72]}>
+          <boxGeometry args={[1.66, 0.09, 0.07]} />
           <meshStandardMaterial color={C.ceramic} roughness={0.6} />
         </mesh>
       ))}
-      {[-0.76, 0, 0.76].map((z, i) => (
-        <mesh key={`v${i}`} position={[4.68, 1.95, -0.5 + z]} rotation={[0, -Math.PI / 2, 0]}>
-          <boxGeometry args={[0.07, 1.78, 0.09]} />
+      {[-0.76, 0, 0.76].map((x) => (
+        <mesh key={x} position={[2.65 + x, 2.1, -2.72]}>
+          <boxGeometry args={[0.09, 1.78, 0.07]} />
           <meshStandardMaterial color={C.ceramic} roughness={0.6} />
         </mesh>
       ))}
@@ -133,11 +138,11 @@ function Curtain() {
 
   useFrame((state) => {
     // a slow draught through the room
-    ref.current.rotation.y = -Math.PI / 2 + Math.sin(state.clock.elapsedTime * 0.35) * 0.035;
+    ref.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.35) * 0.05;
   });
 
   return (
-    <mesh ref={ref} geometry={geometry} position={[4.5, 1.62, 0.62]} rotation={[0, -Math.PI / 2, 0]} castShadow>
+    <mesh ref={ref} geometry={geometry} position={[3.62, 1.62, -2.64]} castShadow>
       <meshStandardMaterial color={C.curtain} roughness={1} side={THREE.DoubleSide} />
     </mesh>
   );
@@ -163,7 +168,7 @@ function AcousticFoam() {
       inst.instanceMatrix.needsUpdate = true;
       return inst;
     };
-    return [build(1.0, 3.9, 2), build(-4.4, -2.2, 2)];
+    return [build(-4.4, -2.2, 2)];
   }, []);
 
   useEffect(
@@ -227,9 +232,10 @@ export function Shelf() {
   const glowTexture = useMemo(() => getGlowTexture(), []);
 
   useFrame(() => {
-    // gentle LED flicker, like a cheap strip that is alive
+    // gentle LED flicker, brighter at night (the phase tuning decides how loud it is)
     const m = glow.current.material as THREE.MeshBasicMaterial;
-    m.opacity = 0.32 + Math.sin(performance.now() * 0.002) * 0.03;
+    const base = 0.32 * Math.min(1.7, getRig().led / 0.32);
+    m.opacity = base + Math.sin(performance.now() * 0.002) * 0.03;
   });
 
   return (
@@ -266,9 +272,22 @@ export function Shelf() {
   );
 }
 
+const CHAIR_YAW = -0.55;
+
 export function Chair() {
+  const group = useRef<THREE.Group>(null!);
+  const spin = useRef(0);
+
+  useFrame((_, delta) => {
+    // spin eases toward the accumulated target poked via the Hotspot
+    spin.current += (toyStore.spinTarget - spin.current) * Math.min(1, delta * 2.2);
+    group.current.rotation.y = CHAIR_YAW + spin.current;
+  });
+
+  // local origin = floor under the seat centre; placed (and spun) by the
+  // Hotspot wrapper in room.tsx
   return (
-    <group position={[1.05, 0, 0.55]} rotation={[0, -0.55, 0]} scale={0.92}>
+    <group ref={group} rotation={[0, CHAIR_YAW, 0]}>
       {/* star base */}
       {[0, 1, 2, 3, 4].map((i) => (
         <group key={i} rotation={[0, (i * Math.PI * 2) / 5, 0]}>

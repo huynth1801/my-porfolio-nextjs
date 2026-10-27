@@ -1,10 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Volume2, VolumeX } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { profile } from "@/lib/content";
+import { lofi } from "@/lib/audio";
 
 const sectionLinks = [
   { name: "About", hash: "#about" },
@@ -15,6 +18,12 @@ const sectionLinks = [
 export function Header() {
   const pathname = usePathname();
   const onHome = pathname === "/";
+  const [musicOn, setMusicOn] = useState(false);
+
+  const toggleMusic = async () => {
+    const on = await lofi.toggle();
+    setMusicOn(on);
+  };
 
   return (
     <header className="fixed top-0 right-0 left-0 z-50 border-b border-white/5 bg-[#0d0d0f]/70 backdrop-blur-md">
@@ -47,8 +56,22 @@ export function Header() {
           </nav>
         )}
 
-        {/* Always-visible actions: CV + Contact */}
-        <nav className="flex items-center gap-5">
+        {/* Always-visible actions: music, Resume, Contact */}
+        <nav className="flex items-center gap-4">
+          <button
+            onClick={toggleMusic}
+            aria-label={musicOn ? "Turn lo-fi music off" : "Turn lo-fi music on"}
+            aria-pressed={musicOn}
+            title={musicOn ? "Lo-fi: on" : "Lo-fi: off"}
+            className={cn(
+              "flex size-9 cursor-pointer items-center justify-center rounded-full border transition-colors",
+              musicOn
+                ? "border-cyan-400/50 text-cyan-300 shadow-[0_0_16px_-4px_rgba(34,211,238,0.6)]"
+                : "border-white/10 text-gray-400 hover:border-white/30 hover:text-white",
+            )}
+          >
+            {musicOn ? <Volume2 className="size-4" /> : <VolumeX className="size-4" />}
+          </button>
           <a
             href={profile.resume}
             download

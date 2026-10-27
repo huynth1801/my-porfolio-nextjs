@@ -10,7 +10,11 @@ import { useFrame } from "@react-three/fiber";
 import { journey } from "@/lib/journey-store";
 import { CameraRig } from "./camera-rig";
 import { Hotspot } from "./hotspots";
-import { RoomShell, Desk, Shelf, Chair, Plant, Books, C } from "./furniture";import {
+import { RoomLighting } from "./lighting";
+import { useBoot } from "./boot";
+import { Cat } from "./cat";
+import { RoomShell, Desk, Shelf, Chair, Plant, Books } from "./furniture";
+import {
   Monitor,
   Speakers,
   PcCase,
@@ -75,34 +79,12 @@ function Dust({ count }: { count: number }) {
 
 export function Room() {
   const low = journey.tier === "low";
+  useBoot();
 
   return (
     <>
       <CameraRig />
-
-      {/* warm interior + cool accents, matching the reference shot */}
-      <ambientLight intensity={0.38} color="#ffe9d0" />
-      <hemisphereLight args={["#cdd8ff", "#3a2a1c", 0.5]} />
-      {/* "sunlight" through the window */}
-      <directionalLight
-        position={[4.2, 3.3, 1.1]}
-        intensity={2.1}
-        color="#ffe3c2"
-        castShadow
-        shadow-mapSize={low ? [1024, 1024] : [2048, 2048]}
-        shadow-camera-left={-4}
-        shadow-camera-right={4}
-        shadow-camera-top={4}
-        shadow-camera-bottom={-4}
-        shadow-camera-near={0.5}
-        shadow-camera-far={12}
-        shadow-bias={-0.0004}
-        shadow-normalBias={0.02}
-      />
-      {/* monitor backlight spill */}
-      <pointLight position={[-0.45, 1.85, -2.25]} color={C.ledBlue} intensity={3.5} distance={3.5} decay={2} />
-      {/* soft warm fill above the desk */}
-      <pointLight position={[0.4, 2.9, -0.4]} color="#ffd9a6" intensity={4} distance={7} decay={2} />
+      <RoomLighting />
 
       <RoomShell />
       <Desk />
@@ -112,7 +94,6 @@ export function Room() {
       <group position={[-3.55, 0, -2.0]}>
         <Plant scale={1.9} />
       </group>
-      <Chair />
       <Speakers />
       <DeskPeripherals />
 
@@ -196,6 +177,34 @@ export function Room() {
         target="skills"
       >
         <MidiKeyboard />
+      </Hotspot>
+
+      {/* the chair — poke it for a spin */}
+      <Hotspot
+        position={[1.05, 0.6, 0.55]}
+        radius={0.5}
+        height={1.3}
+        glowY={-0.58}
+        label="Spin!"
+        target="spin"
+      >
+        <group scale={0.92}>
+          <Chair />
+        </group>
+      </Hotspot>
+
+      {/* the mascot, loafing on the rug in plain sight */}
+      <Hotspot
+        position={[0.62, 0.3, 0.42]}
+        radius={0.34}
+        height={0.5}
+        glowY={-0.28}
+        label="Meow"
+        target="meow"
+      >
+        <group position={[0, -0.3, 0]} rotation={[0, 0.35, 0]} scale={1.3}>
+          <Cat />
+        </group>
       </Hotspot>
 
       <Dust count={low ? 60 : 140} />

@@ -5,14 +5,15 @@ import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { profile, type PanelKey } from "@/lib/content";
 import { panelStore } from "@/lib/panel-store";
-import { hotspotStore } from "./hotspot-store";
+import { sfx } from "@/lib/audio";
+import { hotspotStore, toyStore } from "./hotspot-store";
 import { getGlowTexture } from "../glow-texture";
 import { dragState } from "./camera-rig";
 
 /**
  * Wraps an interactive object in the room. Hover: soft glow disc under the
  * object + pointer cursor + tooltip label. Click (if it wasn't a drag):
- * open the matching quick-view panel over the room.
+ * open the matching quick-view panel — or trigger a toy (chair spin, cat).
  */
 export function Hotspot({
   position,
@@ -31,8 +32,8 @@ export function Hotspot({
   /** local y for the glow disc; defaults to just under the hit cylinder */
   glowY?: number;
   label: string;
-  /** panel to open, or "resume" to trigger the CV download */
-  target: PanelKey | "resume";
+  /** panel to open, CV download, or a room toy */
+  target: PanelKey | "resume" | "spin" | "meow";
   children?: ReactNode;
 }) {
   const [hovered, setHovered] = useState(false);
@@ -73,12 +74,24 @@ export function Hotspot({
           e.stopPropagation();
           if (dragState.moved > 6) return; // that was a camera drag, not a click
           if (target === "resume") {
+            sfx.click();
             const a = document.createElement("a");
             a.href = profile.resume;
             a.download = "";
             a.click();
             return;
           }
+          if (target === "spin") {
+            sfx.click();
+            toyStore.spinTarget += Math.PI * 3.5;
+            return;
+          }
+          if (target === "meow") {
+            toyStore.catPokes++;
+            sfx.meow();
+            return;
+          }
+          sfx.click();
           panelStore.open(target);
         }}
       >

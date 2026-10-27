@@ -1,6 +1,7 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
+import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import * as THREE from "three";
 import { journey } from "@/lib/journey-store";
 import { Room } from "./room/room";
@@ -22,6 +23,14 @@ export default function Scene() {
       }}
     >
       <Room />
+      {/* RGB, LED strips and the monitor actually glow — skipped on small/weak
+          devices to protect the frame budget */}
+      {!low && (
+        <EffectComposer>
+          <Bloom mipmapBlur intensity={0.75} luminanceThreshold={0.62} luminanceSmoothing={0.25} />
+          <Vignette eskil={false} offset={0.22} darkness={0.5} />
+        </EffectComposer>
+      )}
     </Canvas>
   );
 }
