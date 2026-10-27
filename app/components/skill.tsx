@@ -369,7 +369,7 @@ export function OrbitingSkills() {
   ];
 
   return (
-    <main className="w-full flex items-center justify-center overflow-hidden">
+    <div className="flex w-full items-center justify-center overflow-hidden">
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-10">
         <div
@@ -428,24 +428,29 @@ export function OrbitingSkills() {
         ))}
 
         {/* Render orbiting skill icons */}
-        {isClient &&
-          skillsConfig.map((config) => {
-            const angle = time * config.speed + (config.phaseShift || 0);
-            return <OrbitingSkill key={config.id} config={config} angle={angle} />;
-          })}
+          {isClient &&
+            skillsConfig.map((config) => {
+              const angle = time * config.speed + (config.phaseShift || 0);
+              return <OrbitingSkill key={config.id} config={config} angle={angle} />;
+            })}
       </div>
-    </main>
+    </div>
   );
 }
 
 export default function SkillSection() {
   return (
-    <div className="transition-colors duration-300">
-      <div className="max-w-3xl mx-auto px-2 sm:px-4 lg:px-6 py-16">
-        <header className="mb-1">
-          <h1 className="text-3xl font-bold tracking-tight text-white dark:text-slate-50 mb-3">
-            Skills
-          </h1>
+    <div
+      id="skills"
+      data-zone="skills"
+      className="pointer-events-auto relative px-2 py-24 sm:px-4"
+    >
+      <div className="mx-auto max-w-3xl">
+        <header className="mb-1 px-4 sm:px-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
+            Inventory
+          </p>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-white md:text-4xl">Skills</h2>
         </header>
 
         <OrbitingSkills />

@@ -1,11 +1,12 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "lucide-react";
 import clsx from "clsx";
+import { educations } from "@/lib/content";
 
 export type EducationItem = {
   id: string;
@@ -33,10 +34,10 @@ const containerVariants = {
 export const EducationSection: React.FC<EducationSectionProps> = ({
   title = "Education",
   subtitle,
-  items,
+  items = educations,
 }) => {
   return (
-    <section id="education" className="py-12">
+    <section id="education" className="pointer-events-auto py-12">
       <div className="max-w-3xl mx-auto px-6">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
           <div>
@@ -70,7 +71,7 @@ export const EducationSection: React.FC<EducationSectionProps> = ({
                   </div>
                 </div>
 
-                <Card className="bg-[#0f1115] border border-transparent hover:border-cyan-500/30 transition-all duration-300 shadow-lg">
+                <Card className="glass border-none shadow-lg transition-all duration-300 hover:border-cyan-500/30">
                   <CardHeader className="p-4 md:p-5">
                     <div className="flex items-start gap-4">
                       <div className="flex-1 min-w-0">

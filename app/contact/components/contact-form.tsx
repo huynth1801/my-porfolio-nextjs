@@ -3,7 +3,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { Send, CheckCircle2, Loader2, Mail, MapPin, Phone } from "lucide-react";
 import { InfoCard } from "./info-card";
 import { ContactFormData, ContactSchema } from "./schema/contact.schema";
