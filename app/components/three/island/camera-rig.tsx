@@ -56,6 +56,8 @@ export function CameraRig() {
   const radius = useRef(16.5);
   const pos = useRef(new THREE.Vector3(12, 11, 14));
   const look = useRef(new THREE.Vector3(0, 1.4, 0));
+  /** reused per-frame — avoids allocating inside useFrame (GC hitches) */
+  const pivotTarget = useRef(new THREE.Vector3());
 
   useEffect(() => {
     const el = gl.domElement;
@@ -107,7 +109,9 @@ export function CameraRig() {
     };
   }, [gl]);
 
-  useFrame((_, delta) => {
+  useFrame((_, rawDelta) => {
+    // clamp so a tab-switch delta spike never teleports the camera
+    const delta = Math.min(rawDelta, 0.05);
     const key = panelStore.get();
     const focus = key ? FOCUS[key] : null;
 
@@ -120,14 +124,13 @@ export function CameraRig() {
     let yawTarget: number;
     let pitchTarget: number;
     let radiusTarget: number;
-    let pivotTarget: THREE.Vector3;
 
     if (focus) {
       // Zoom and focus into district close-up for opened panel
       yawTarget = shortestAngle(yaw.current, focus.yaw);
       pitchTarget = focus.pitch;
       radiusTarget = focus.radius;
-      pivotTarget = focus.pivot.clone();
+      pivotTarget.current.copy(focus.pivot);
     } else {
       // Follow the continuous Drone Tour path driven by GSAP ScrollTrigger
       const isOverview = tourState.activeWaypointIndex === 0 && journey.progress < 0.05;
@@ -149,7 +152,7 @@ export function CameraRig() {
         PITCH.max,
       );
       radiusTarget = journey.tier === "low" ? tourState.targetRadius + 1.5 : tourState.targetRadius;
-      pivotTarget = new THREE.Vector3(
+      pivotTarget.current.set(
         tourState.targetPivot[0],
         tourState.targetPivot[1],
         tourState.targetPivot[2],
@@ -160,7 +163,7 @@ export function CameraRig() {
     yaw.current += (yawTarget - yaw.current) * k;
     pitch.current += (pitchTarget - pitch.current) * k;
     radius.current += (radiusTarget - radius.current) * k;
-    pivot.current.lerp(pivotTarget, k);
+    pivot.current.lerp(pivotTarget.current, k);
     look.current.lerp(pivot.current, k);
 
     pos.current.set(

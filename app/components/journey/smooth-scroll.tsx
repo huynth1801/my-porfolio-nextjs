@@ -39,23 +39,32 @@ export function SmoothScroll() {
     gsap.ticker.add(raf);
     gsap.ticker.lagSmoothing(0);
 
-    // Compute centers of all 7 sections
-    const updateWaypoints = () => {
-      const scrollCenter = window.scrollY + window.innerHeight * 0.45;
-      const centers: number[] = [];
-
+    // Compute centers of all 7 sections.
+    // Measured ONCE and cached — reading getBoundingClientRect inside the
+    // scroll handler forces layout every frame and stutters on low-end
+    // devices. Re-measured on resize, ScrollTrigger refresh and accordion
+    // toggles (anything that changes layout height).
+    let centers: number[] = [];
+    const measureCenters = () => {
+      const next: number[] = [];
       for (let i = 0; i < TOUR_WAYPOINTS.length; i++) {
         const el = document.getElementById(TOUR_WAYPOINTS[i].id);
         if (el) {
           const rect = el.getBoundingClientRect();
           const docTop = rect.top + window.scrollY;
           // For hero (#home), center is near top
-          const c = i === 0 ? 0 : docTop + rect.height * 0.35;
-          centers.push(c);
+          next.push(i === 0 ? 0 : docTop + rect.height * 0.35);
         } else {
-          centers.push(i * 1000);
+          next.push(i * 1000);
         }
       }
+      centers = next;
+    };
+    measureCenters();
+
+    // Pure math only — safe to run every scroll frame.
+    const updateWaypoints = () => {
+      const scrollCenter = window.scrollY + window.innerHeight * 0.45;
 
       // Find which segment we are currently in
       let seg = 0;
@@ -107,15 +116,26 @@ export function SmoothScroll() {
     const trigger = ScrollTrigger.create({
       start: 0,
       end: "max",
-      onUpdate: (self) => {
-        journey.progress = self.progress;
+      onUpdate: () => {
+        journey.progress = trigger.progress;
         updateWaypoints();
       },
     });
     journey.progress = trigger.progress;
     updateWaypoints();
 
-    window.addEventListener("resize", updateWaypoints);
+    // Layout changes invalidate the cached centers
+    window.addEventListener("resize", measureCenters);
+    ScrollTrigger.addEventListener("refresh", measureCenters);
+    // accordions change section heights — remeasure shortly after any toggle
+    const onAccordionToggle = (e: MouseEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (t?.closest("button[aria-expanded], button[aria-controls]")) {
+        window.setTimeout(measureCenters, 350);
+        window.setTimeout(measureCenters, 800);
+      }
+    };
+    document.addEventListener("click", onAccordionToggle);
 
     const onPointerMove = (e: PointerEvent) => {
       journey.pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -128,7 +148,9 @@ export function SmoothScroll() {
       trigger.kill();
       lenis.destroy();
       journey.lenis = null;
-      window.removeEventListener("resize", updateWaypoints);
+      window.removeEventListener("resize", measureCenters);
+      ScrollTrigger.removeEventListener("refresh", measureCenters);
+      document.removeEventListener("click", onAccordionToggle);
       window.removeEventListener("pointermove", onPointerMove);
     };
   }, []);
