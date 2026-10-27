@@ -36,7 +36,11 @@ function StrengthCard({ strength }: { strength: (typeof strengths)[number] }) {
 
 const AboutSection = memo(function AboutSection() {
   return (
-    <section id="about" data-zone="about" className="relative px-6 py-28 md:px-12">
+    <section
+      id="about"
+      data-zone="about"
+      className="pointer-events-auto relative px-6 py-28 md:px-12"
+    >
       <div className="relative mx-auto grid max-w-6xl items-center gap-16 md:grid-cols-2">
         {/* LEFT: photo collage */}
         <motion.div

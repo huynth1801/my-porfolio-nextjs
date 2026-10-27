@@ -37,7 +37,7 @@ export const EducationSection: React.FC<EducationSectionProps> = ({
   items = educations,
 }) => {
   return (
-    <section id="education" className="py-12">
+    <section id="education" className="pointer-events-auto py-12">
       <div className="max-w-3xl mx-auto px-6">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
           <div>

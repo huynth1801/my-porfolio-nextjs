@@ -440,7 +440,11 @@ export function OrbitingSkills() {
 
 export default function SkillSection() {
   return (
-    <div id="skills" data-zone="skills" className="relative px-2 py-24 sm:px-4">
+    <div
+      id="skills"
+      data-zone="skills"
+      className="pointer-events-auto relative px-2 py-24 sm:px-4"
+    >
       <div className="mx-auto max-w-3xl">
         <header className="mb-1 px-4 sm:px-2">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">

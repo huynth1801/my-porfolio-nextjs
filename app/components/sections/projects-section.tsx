@@ -110,7 +110,11 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
 export function ProjectsSection() {
   return (
-    <section id="projects" data-zone="projects" className="relative px-6 py-28 md:px-12">
+    <section
+      id="projects"
+      data-zone="projects"
+      className="pointer-events-auto relative px-6 py-28 md:px-12"
+    >
       <div className="mx-auto max-w-5xl">
         <div className="mb-12">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">

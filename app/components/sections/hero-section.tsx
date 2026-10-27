@@ -3,16 +3,16 @@
 import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { ChevronDown, FileDown, Rocket } from "lucide-react";
+import { ChevronDown, FileDown, MousePointerClick, Rocket } from "lucide-react";
 import { profile } from "@/lib/content";
 import { journey } from "@/lib/journey-store";
 
 gsap.registerPlugin(useGSAP);
 
 /**
- * Full-screen opener. The visible "HUY" is drawn by the particle canvas
- * behind this section — real HTML text lives in the sr-only h1 so search
- * engines and screen readers still get the full name.
+ * Full-screen opener over the 3D workspace room. The section itself ignores
+ * pointer events so the room stays draggable; interactive children opt back
+ * in. A sr-only h1 keeps the full name in the document for SEO/a11y.
  */
 export function HeroSection() {
   const scope = useRef<HTMLElement>(null);
@@ -25,7 +25,7 @@ export function HeroSection() {
         opacity: 0,
         duration: 0.9,
         stagger: 0.14,
-        delay: 0.9,
+        delay: 0.7,
         ease: "power3.out",
       });
     },
@@ -37,25 +37,28 @@ export function HeroSection() {
       ref={scope}
       id="home"
       data-zone="hero"
-      className="relative flex min-h-screen flex-col items-center justify-end px-6 pb-32 text-center"
+      className="pointer-events-none relative flex min-h-screen flex-col items-start justify-end px-6 pb-32 text-left md:px-20"
     >
       <h1 className="sr-only">{profile.name} — {profile.role}</h1>
 
       <p
         data-hero-reveal
-        className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300 backdrop-blur-sm"
+        className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#0d0d0f]/60 px-4 py-1.5 text-xs font-semibold tracking-[0.2em] text-cyan-300 uppercase backdrop-blur-sm"
       >
         {profile.role} · {profile.location}
       </p>
 
       <p
         data-hero-reveal
-        className="max-w-xl text-balance text-lg leading-relaxed text-gray-300 md:text-xl"
+        className="max-w-md text-balance text-lg leading-relaxed text-gray-100 md:text-xl"
       >
         {profile.tagline}
       </p>
 
-      <div data-hero-reveal className="mt-9 flex flex-wrap items-center justify-center gap-4">
+      <div
+        data-hero-reveal
+        className="pointer-events-auto mt-9 flex flex-wrap items-center justify-start gap-4"
+      >
         <a
           href="#projects"
           className="group inline-flex items-center gap-2 rounded-full bg-linear-to-r from-cyan-400 to-violet-400 px-6 py-3 text-sm font-semibold text-gray-950 shadow-[0_0_30px_-8px_rgba(34,211,238,0.6)] transition-transform duration-200 hover:scale-[1.04] active:scale-95"
@@ -66,18 +69,26 @@ export function HeroSection() {
         <a
           href={profile.resume}
           download
-          className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-gray-200 backdrop-blur-sm transition-colors hover:border-white/30 hover:bg-white/10"
+          className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-[#0d0d0f]/60 px-6 py-3 text-sm font-semibold text-gray-200 backdrop-blur-sm transition-colors hover:border-white/30 hover:bg-white/10"
         >
           <FileDown className="size-4" />
           Download CV
         </a>
       </div>
 
+      <p
+        data-hero-reveal
+        className="mt-6 inline-flex items-center gap-2 text-xs text-gray-400"
+      >
+        <MousePointerClick className="size-3.5 text-cyan-400" />
+        Drag to look around — click the glowing spots on the desk
+      </p>
+
       {/* bottom HUD — game flavor, kept subtle */}
       <div className="absolute inset-x-0 bottom-8 flex items-end justify-between px-6 md:px-12">
         <a
           href="#about"
-          className="group flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-gray-500 transition-colors hover:text-gray-300"
+          className="pointer-events-auto group flex items-center gap-2 text-xs tracking-[0.25em] text-gray-500 uppercase transition-colors hover:text-gray-300"
         >
           <ChevronDown className="size-4 animate-bounce" />
           Scroll to play
@@ -86,7 +97,7 @@ export function HeroSection() {
           {["React", "Next.js", "TypeScript", "WebGL"].map((tech) => (
             <span
               key={tech}
-              className="rounded-md border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-medium text-gray-400 backdrop-blur-sm"
+              className="rounded-md border border-white/10 bg-[#0d0d0f]/60 px-2.5 py-1 text-[11px] font-medium text-gray-400 backdrop-blur-sm"
             >
               {tech}
             </span>

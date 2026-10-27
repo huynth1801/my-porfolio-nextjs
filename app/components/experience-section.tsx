@@ -130,7 +130,10 @@ export function ExperienceSection() {
   }, []);
 
   return (
-    <section id="experience" className="relative px-6 py-20 md:px-12">
+    <section
+      id="experience"
+      className="pointer-events-auto relative px-6 py-20 md:px-12"
+    >
       <div className="mx-auto max-w-3xl">
         <div className="mb-6">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">

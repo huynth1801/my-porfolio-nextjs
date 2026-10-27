@@ -10,7 +10,7 @@ export function ContactCta() {
     <section
       id="contact"
       data-zone="contact"
-      className="relative flex min-h-[92vh] flex-col items-center justify-center px-6 py-28 text-center"
+      className="pointer-events-auto relative flex min-h-[92vh] flex-col items-center justify-center px-6 py-28 text-center"
     >
       <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
         End of the journey — for now

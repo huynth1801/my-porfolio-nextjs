@@ -14,7 +14,9 @@ export default function Home() {
     <>
       <SmoothScroll />
       <JourneyCanvas />
-      <main className="relative">
+      {/* main ignores pointer events so the 3D room stays draggable during
+          the hero; each section below opts back in with pointer-events-auto */}
+      <main className="pointer-events-none relative z-10">
         <HeroSection />
         <AboutSection />
         <ExperienceSection />

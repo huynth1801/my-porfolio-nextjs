@@ -1,17 +1,10 @@
-import type { Vector3 } from "three";
+import type Lenis from "lenis";
 
 /**
- * Mutable, render-free scroll/pointer state shared between the DOM world
- * (SmoothScroll writes it) and the WebGL world (Scene reads it every frame).
+ * Mutable, render-free state shared between the DOM world (SmoothScroll
+ * writes it) and the WebGL world (the room scene reads it every frame).
  * Deliberately not React state — updating this never triggers a re-render.
  */
-export type JourneyKey = {
-  /** scroll progress 0..1 at which the camera arrives at this pose */
-  f: number;
-  pos: Vector3;
-  look: Vector3;
-};
-
 export type JourneyTier = "high" | "low";
 
 export const journey = {
@@ -19,12 +12,12 @@ export const journey = {
   progress: 0,
   /** pointer position in NDC (-1..1, y up) */
   pointer: { x: 0, y: 0 },
-  /** camera keyframes measured from the DOM, sorted by f */
-  keys: [] as JourneyKey[],
   /** prefers-reduced-motion */
   reduced: false,
-  /** particle/geometry budget decided from device */
+  /** geometry/shadow budget decided from device */
   tier: "high" as JourneyTier,
+  /** the Lenis instance, so 3D hotspots can scroll to sections */
+  lenis: null as Lenis | null,
 };
 
 export const clamp01 = (v: number) => Math.min(1, Math.max(0, v));

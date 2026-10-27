@@ -22,6 +22,7 @@ export function SmoothScroll() {
       anchors: true,
       wheelMultiplier: 1,
     });
+    journey.lenis = lenis;
 
     lenis.on("scroll", ScrollTrigger.update);
 
@@ -48,6 +49,7 @@ export function SmoothScroll() {
       gsap.ticker.remove(raf);
       trigger.kill();
       lenis.destroy();
+      journey.lenis = null;
       window.removeEventListener("pointermove", onPointerMove);
     };
   }, []);
