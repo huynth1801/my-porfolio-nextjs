@@ -154,6 +154,27 @@ html.lenis body {
   border: 1px solid rgb(255 255 255 / 0.08);
 }
 
+/* Small pill link used inside quick-view panels */
+.panel-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  background: rgb(255 255 255 / 0.04);
+  padding: 0.45rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgb(209 213 219);
+  transition:
+    border-color 0.2s,
+    color 0.2s;
+}
+.panel-link:hover {
+  border-color: rgb(34 211 238 / 0.45);
+  color: #fff;
+}
+
 /* Static fallback backdrop (reduced motion / no WebGL / pre-hydration) */
 .ambient-bg {
   background:

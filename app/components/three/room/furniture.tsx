@@ -117,6 +117,7 @@ function WindowAndCurtain() {
 }
 
 function Curtain() {
+  const ref = useRef<THREE.Mesh>(null!);
   const geometry = useMemo(() => {
     const geo = new THREE.PlaneGeometry(1.4, 3.1, 36, 1);
     const pos = geo.attributes.position;
@@ -130,13 +131,13 @@ function Curtain() {
 
   useEffect(() => () => geometry.dispose(), [geometry]);
 
+  useFrame((state) => {
+    // a slow draught through the room
+    ref.current.rotation.y = -Math.PI / 2 + Math.sin(state.clock.elapsedTime * 0.35) * 0.035;
+  });
+
   return (
-    <mesh
-      geometry={geometry}
-      position={[4.5, 1.62, 0.62]}
-      rotation={[0, -Math.PI / 2, 0]}
-      castShadow
-    >
+    <mesh ref={ref} geometry={geometry} position={[4.5, 1.62, 0.62]} rotation={[0, -Math.PI / 2, 0]} castShadow>
       <meshStandardMaterial color={C.curtain} roughness={1} side={THREE.DoubleSide} />
     </mesh>
   );
@@ -287,17 +288,22 @@ export function Chair() {
       </mesh>
       {/* seat */}
       <mesh position={[0, 0.55, 0]} castShadow>
-        <boxGeometry args={[0.52, 0.1, 0.5]} />
+        <boxGeometry args={[0.52, 0.09, 0.5]} />
         <meshStandardMaterial color={C.fabric} roughness={1} />
       </mesh>
-      {/* backrest + headrest */}
-      <mesh position={[0, 0.97, 0.26]} rotation={[-0.08, 0, 0]} castShadow>
-        <boxGeometry args={[0.5, 0.78, 0.08]} />
-        <meshStandardMaterial color={C.fabric} roughness={1} />
+      {/* backrest: slimmer, tilted, so it doesn't read as a slab */}
+      <mesh position={[0, 0.94, 0.25]} rotation={[-0.12, 0, 0]} castShadow>
+        <boxGeometry args={[0.44, 0.66, 0.055]} />
+        <meshStandardMaterial color="#878c96" roughness={1} />
       </mesh>
-      <mesh position={[0, 1.44, 0.2]} rotation={[-0.08, 0, 0]} castShadow>
-        <boxGeometry args={[0.36, 0.16, 0.07]} />
-        <meshStandardMaterial color={C.fabric} roughness={1} />
+      <mesh position={[0, 1.34, 0.18]} rotation={[-0.12, 0, 0]} castShadow>
+        <boxGeometry args={[0.3, 0.13, 0.055]} />
+        <meshStandardMaterial color="#878c96" roughness={1} />
+      </mesh>
+      {/* lumbar gap */}
+      <mesh position={[0, 0.72, 0.22]} rotation={[-0.12, 0, 0]}>
+        <boxGeometry args={[0.3, 0.09, 0.03]} />
+        <meshStandardMaterial color={C.fabricDark} roughness={0.8} />
       </mesh>
       {/* armrests */}
       {[-0.3, 0.3].map((x) => (
@@ -311,6 +317,31 @@ export function Chair() {
             <meshStandardMaterial color={C.fabricDark} roughness={0.6} />
           </mesh>
         </group>
+      ))}
+    </group>
+  );
+}
+
+/** Stack of books on the shelf — the Education hotspot lives here. */
+export function Books({ position }: { position: [number, number, number] }) {
+  return (
+    <group position={position}>
+      {(
+        [
+          ["#22d3ee", 0.3, 0.045, 0.22, 0.06],
+          ["#a78bfa", 0.27, 0.05, 0.2, -0.09],
+          ["#f472b6", 0.24, 0.04, 0.18, 0.14],
+        ] as const
+      ).map(([color, w, h, d, rot], i) => (
+        <mesh
+          key={i}
+          position={[Math.sin(rot) * 0.012, 0.03 + i * 0.048, 0]}
+          rotation={[0, rot, 0]}
+          castShadow
+        >
+          <boxGeometry args={[w, h, d]} />
+          <meshStandardMaterial color={color} roughness={0.7} />
+        </mesh>
       ))}
     </group>
   );

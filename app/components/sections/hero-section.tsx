@@ -37,52 +37,51 @@ export function HeroSection() {
       ref={scope}
       id="home"
       data-zone="hero"
-      className="pointer-events-none relative flex min-h-screen flex-col items-start justify-end px-6 pb-32 text-left md:px-20"
+      className="pointer-events-none relative flex min-h-screen flex-col items-start justify-end px-6 pb-28 text-left md:px-16"
     >
+      {/* scrim so the HUD always reads over the room, at any viewport size */}
+      <div
+        aria-hidden
+        className="absolute inset-x-0 bottom-0 h-[55%] bg-linear-to-t from-[#0d0d0f]/90 via-[#0d0d0f]/45 to-transparent"
+      />
+
       <h1 className="sr-only">{profile.name} — {profile.role}</h1>
-
-      <p
-        data-hero-reveal
-        className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#0d0d0f]/60 px-4 py-1.5 text-xs font-semibold tracking-[0.2em] text-cyan-300 uppercase backdrop-blur-sm"
-      >
-        {profile.role} · {profile.location}
-      </p>
-
-      <p
-        data-hero-reveal
-        className="max-w-md text-balance text-lg leading-relaxed text-gray-100 md:text-xl"
-      >
-        {profile.tagline}
-      </p>
 
       <div
         data-hero-reveal
-        className="pointer-events-auto mt-9 flex flex-wrap items-center justify-start gap-4"
+        className="relative w-full max-w-md rounded-2xl border border-white/10 bg-[#0d0d0f]/55 p-6 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)] backdrop-blur-md md:p-7"
       >
-        <a
-          href="#projects"
-          className="group inline-flex items-center gap-2 rounded-full bg-linear-to-r from-cyan-400 to-violet-400 px-6 py-3 text-sm font-semibold text-gray-950 shadow-[0_0_30px_-8px_rgba(34,211,238,0.6)] transition-transform duration-200 hover:scale-[1.04] active:scale-95"
-        >
-          <Rocket className="size-4 transition-transform duration-200 group-hover:-translate-y-0.5" />
-          Explore projects
-        </a>
-        <a
-          href={profile.resume}
-          download
-          className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-[#0d0d0f]/60 px-6 py-3 text-sm font-semibold text-gray-200 backdrop-blur-sm transition-colors hover:border-white/30 hover:bg-white/10"
-        >
-          <FileDown className="size-4" />
-          Download CV
-        </a>
-      </div>
+        <p className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold tracking-[0.18em] text-cyan-300 uppercase">
+          {profile.role} · {profile.location}
+        </p>
 
-      <p
-        data-hero-reveal
-        className="mt-6 inline-flex items-center gap-2 text-xs text-gray-400"
-      >
-        <MousePointerClick className="size-3.5 text-cyan-400" />
-        Drag to look around — click the glowing spots on the desk
-      </p>
+        <p className="mt-4 text-pretty text-lg leading-relaxed text-gray-100">
+          {profile.tagline}
+        </p>
+
+        <div className="pointer-events-auto mt-6 flex flex-wrap items-center gap-3">
+          <a
+            href="#projects"
+            className="group inline-flex items-center gap-2 rounded-full bg-linear-to-r from-cyan-400 to-violet-400 px-5 py-2.5 text-sm font-semibold text-gray-950 shadow-[0_0_30px_-8px_rgba(34,211,238,0.6)] transition-transform duration-200 hover:scale-[1.04] active:scale-95"
+          >
+            <Rocket className="size-4 transition-transform duration-200 group-hover:-translate-y-0.5" />
+            Explore projects
+          </a>
+          <a
+            href={profile.resume}
+            download
+            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-gray-200 transition-colors hover:border-white/30 hover:bg-white/10"
+          >
+            <FileDown className="size-4" />
+            Download CV
+          </a>
+        </div>
+
+        <p className="mt-5 flex items-center gap-2 text-xs text-gray-400">
+          <MousePointerClick className="size-3.5 shrink-0 text-cyan-400" />
+          Drag to look around — click things on the desk to open them
+        </p>
+      </div>
 
       {/* bottom HUD — game flavor, kept subtle */}
       <div className="absolute inset-x-0 bottom-8 flex items-end justify-between px-6 md:px-12">

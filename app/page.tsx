@@ -7,6 +7,7 @@ import { ProjectsSection } from "./components/sections/projects-section";
 import { ContactCta } from "./components/sections/contact-cta";
 import { JourneyCanvas } from "./components/journey/journey-canvas";
 import { SmoothScroll } from "./components/journey/smooth-scroll";
+import { PanelOverlay } from "./components/panels/panel-overlay";
 import { educations } from "@/lib/content";
 
 export default function Home() {
@@ -29,6 +30,7 @@ export default function Home() {
         />
         <ContactCta />
       </main>
+      <PanelOverlay />
     </>
   );
 }

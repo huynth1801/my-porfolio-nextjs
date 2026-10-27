@@ -13,8 +13,8 @@ export const dragState = { moved: 0 };
 const PIVOT_HOME = new THREE.Vector3(0.1, 1.3, -1.55);
 const PIVOT_FAR = new THREE.Vector3(0.1, 2.1, -1.3); // past the hero: dollhouse
 const YAW = { min: -0.75, max: 0.42, home: -0.22, far: -0.1 };
-const PITCH = { min: 0.04, max: 0.4, home: 0.17, far: 0.33 };
-const RADIUS_HOME = 5.9;
+const PITCH = { min: 0.04, max: 0.4, home: 0.19, far: 0.33 };
+const RADIUS_HOME = 6.2;
 const RADIUS_FAR = 9.2;
 
 /**

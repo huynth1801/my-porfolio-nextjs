@@ -83,9 +83,9 @@ function Headphones({ position }: { position: [number, number, number] }) {
 /* Studio speakers                                                     */
 /* ------------------------------------------------------------------ */
 
-function Speaker({ x }: { x: number }) {
+function Speaker({ x, z = -1.95 }: { x: number; z?: number }) {
   return (
-    <group position={[x, 1.32, -1.95]} rotation={[0, x > -0.45 ? -0.25 : 0.25, 0]}>
+    <group position={[x, 1.32, z]} rotation={[0, x > -0.45 ? -0.25 : 0.25, 0]}>
       <mesh castShadow>
         <boxGeometry args={[0.34, 0.5, 0.3]} />
         <meshStandardMaterial color={C.purple} roughness={0.6} />
@@ -119,8 +119,8 @@ function Speaker({ x }: { x: number }) {
 export function Speakers() {
   return (
     <>
-      <Speaker x={-1.5} />
-      <Speaker x={0.72} />
+      <Speaker x={-1.52} />
+      <Speaker x={0.84} z={-1.86} />
     </>
   );
 }
@@ -300,7 +300,45 @@ export function DeskPeripherals() {
           <torusGeometry args={[0.035, 0.011, 8, 18]} />
           <meshStandardMaterial color={C.ceramic} roughness={0.5} />
         </mesh>
+        <Steam />
       </group>
+    </group>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Steam wisps above the coffee                                        */
+/* ------------------------------------------------------------------ */
+
+function Steam() {
+  const group = useRef<THREE.Group>(null!);
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    group.current.children.forEach((child, i) => {
+      const p = ((t * 0.35 + i * 0.45) % 1.4) / 1.4; // 0..1 lifecycle
+      child.position.y = 0.18 + p * 0.28;
+      child.position.x = Math.sin((p + i * 0.8) * 7) * 0.018;
+      const m = (child as THREE.Sprite).material as THREE.SpriteMaterial;
+      m.opacity = 0.22 * Math.sin(p * Math.PI);
+      child.scale.setScalar(0.6 + p * 0.7);
+    });
+  });
+
+  return (
+    <group ref={group}>
+      {[0, 1, 2].map((i) => (
+        <sprite key={i} position={[0, 0.18, 0]} scale={[0.06, 0.09, 1]}>
+          <spriteMaterial
+            map={getGlowTexture()}
+            color="#ffffff"
+            transparent
+            opacity={0}
+            blending={THREE.AdditiveBlending}
+            depthWrite={false}
+          />
+        </sprite>
+      ))}
     </group>
   );
 }
@@ -348,6 +386,13 @@ export function MidiKeyboard() {
         <boxGeometry args={[1.18, 0.09, 0.4]} />
         <meshStandardMaterial color="#17171d" roughness={0.5} />
       </mesh>
+      {/* slide rails reaching back under the desk, so it reads attached */}
+      {[-0.56, 0.56].map((x) => (
+        <mesh key={x} position={[x, -0.01, -0.24]}>
+          <boxGeometry args={[0.045, 0.035, 0.34]} />
+          <meshStandardMaterial color={C.metal} roughness={0.4} metalness={0.5} />
+        </mesh>
+      ))}
       <primitive object={white} />
       <primitive object={black} />
       {/* knobs */}

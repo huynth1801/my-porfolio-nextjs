@@ -10,7 +10,7 @@ import { useFrame } from "@react-three/fiber";
 import { journey } from "@/lib/journey-store";
 import { CameraRig } from "./camera-rig";
 import { Hotspot } from "./hotspots";
-import { RoomShell, Desk, Shelf, Chair, Plant, C } from "./furniture";import {
+import { RoomShell, Desk, Shelf, Chair, Plant, Books, C } from "./furniture";import {
   Monitor,
   Speakers,
   PcCase,
@@ -108,6 +108,7 @@ export function Room() {
       <Desk />
       <Shelf />
       <ShelfItems shelfY={2.3175} />
+      <Books position={[-1.28, 2.3175, -2.5]} />
       <group position={[-3.55, 0, -2.0]}>
         <Plant scale={1.9} />
       </group>
@@ -115,19 +116,39 @@ export function Room() {
       <Speakers />
       <DeskPeripherals />
 
-      {/* interactive objects — click to jump to their section */}
+      {/* interactive objects — click to open their quick-view panel */}
       <Hotspot
         position={[-0.45, 1.7, -2.02]}
         radius={0.8}
         height={1.05}
         glowY={-0.4}
-        label="About me"
-        target="#about"
+        label="Experience"
+        target="experience"
       >
         <group position={[0, -0.425, -0.03]}>
           <Monitor />
         </group>
       </Hotspot>
+
+      {/* poster on the shelf */}
+      <Hotspot
+        position={[0.32, 2.6, -2.55]}
+        radius={0.42}
+        height={0.72}
+        glowY={-0.27}
+        label="About me"
+        target="about"
+      />
+
+      {/* stack of books */}
+      <Hotspot
+        position={[-1.28, 2.53, -2.5]}
+        radius={0.48}
+        height={0.42}
+        glowY={-0.19}
+        label="Education"
+        target="education"
+      />
 
       <Hotspot
         position={[1.66, 1.6, -1.85]}
@@ -135,7 +156,7 @@ export function Room() {
         height={1.15}
         glowY={-0.52}
         label="Projects"
-        target="#projects"
+        target="projects"
       >
         <PcCase />
       </Hotspot>
@@ -159,7 +180,7 @@ export function Room() {
         height={0.3}
         glowY={-0.02}
         label="Contact"
-        target="#contact"
+        target="contact"
       >
         <group position={[0, -0.015, 0]}>
           <Phone />
@@ -172,7 +193,7 @@ export function Room() {
         height={0.45}
         glowY={-0.08}
         label="Skills"
-        target="#skills"
+        target="skills"
       >
         <MidiKeyboard />
       </Hotspot>

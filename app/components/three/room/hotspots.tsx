@@ -3,8 +3,8 @@
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
-import { journey } from "@/lib/journey-store";
-import { profile } from "@/lib/content";
+import { profile, type PanelKey } from "@/lib/content";
+import { panelStore } from "@/lib/panel-store";
 import { hotspotStore } from "./hotspot-store";
 import { getGlowTexture } from "../glow-texture";
 import { dragState } from "./camera-rig";
@@ -12,7 +12,7 @@ import { dragState } from "./camera-rig";
 /**
  * Wraps an interactive object in the room. Hover: soft glow disc under the
  * object + pointer cursor + tooltip label. Click (if it wasn't a drag):
- * smooth-scroll to the matching page section.
+ * open the matching quick-view panel over the room.
  */
 export function Hotspot({
   position,
@@ -31,8 +31,8 @@ export function Hotspot({
   /** local y for the glow disc; defaults to just under the hit cylinder */
   glowY?: number;
   label: string;
-  /** css selector to scroll to, or "resume" to trigger the CV download */
-  target: string;
+  /** panel to open, or "resume" to trigger the CV download */
+  target: PanelKey | "resume";
   children?: ReactNode;
 }) {
   const [hovered, setHovered] = useState(false);
@@ -79,7 +79,7 @@ export function Hotspot({
             a.click();
             return;
           }
-          journey.lenis?.scrollTo(target, { offset: -64, duration: 1.6 });
+          panelStore.open(target);
         }}
       >
         <cylinderGeometry args={[radius, radius, height, 20]} />

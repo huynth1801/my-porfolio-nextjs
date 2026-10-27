@@ -214,3 +214,22 @@ export const educations: Education[] = [
     tags: ["Certificate"],
   },
 ];
+
+/** Grouped skills for the quick-view panel (resume-accurate). */
+export const skillGroups: Array<{ title: string; items: string[] }> = [
+  {
+    title: "Languages",
+    items: ["TypeScript", "JavaScript", "HTML/CSS", "SQL", "Java"],
+  },
+  {
+    title: "Frameworks & libraries",
+    items: ["React", "Next.js", "Angular", "TailwindCSS", "MaterialUI", "shadcn/ui", "Redux Toolkit", "Zustand"],
+  },
+  {
+    title: "Creative & tools",
+    items: ["Cocos Creator", "WebGL / R3F", "GSAP", "Git", "Figma"],
+  },
+];
+
+/** What a room hotspot opens. */
+export type PanelKey = "about" | "experience" | "projects" | "skills" | "education" | "contact";

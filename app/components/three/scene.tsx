@@ -12,7 +12,7 @@ export default function Scene() {
     <Canvas
       shadows
       dpr={low ? [1, 1.5] : [1, 1.75]}
-      camera={{ fov: 42, near: 0.1, far: 80, position: [3.4, 2.9, 4.4] }}
+      camera={{ fov: 44, near: 0.1, far: 80, position: [3.4, 2.9, 4.4] }}
       gl={{ antialias: true, powerPreference: "high-performance" }}
       style={{ touchAction: "pan-y" }}
       onCreated={({ gl, scene }) => {
