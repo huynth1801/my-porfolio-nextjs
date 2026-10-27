@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { journey, clamp01 } from "@/lib/journey-store";
-import { hotspotStore } from "@/app/components/three/room/hotspot-store";
+import { hotspotStore } from "@/app/components/three/island/hotspot-store";
 
 /** Floating label that follows the cursor while a 3D hotspot is hovered. */
 export function HotspotTooltip() {

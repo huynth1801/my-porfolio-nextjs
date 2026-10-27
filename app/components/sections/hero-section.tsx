@@ -79,7 +79,7 @@ export function HeroSection() {
 
         <p className="mt-5 flex items-center gap-2 text-xs text-gray-400">
           <MousePointerClick className="size-3.5 shrink-0 text-cyan-400" />
-          Drag to look around — click things on the desk to open them
+          Drag to orbit the island — click districts to explore the journey
         </p>
       </div>
 
