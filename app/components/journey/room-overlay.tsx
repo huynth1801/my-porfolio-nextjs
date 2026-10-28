@@ -14,9 +14,18 @@ export function HotspotTooltip() {
       const el = ref.current;
       if (el) {
         if (hotspotStore.active) {
-          el.style.opacity = "1";
-          el.style.transform = `translate(${hotspotStore.x + 16}px, ${hotspotStore.y + 18}px)`;
           el.textContent = hotspotStore.label;
+          // keep the tooltip inside the viewport: flip above the cursor near
+          // the bottom edge, pull left near the right edge (the tour HUD and
+          // waypoint label live in that corner)
+          const w = el.offsetWidth || 120;
+          const h = el.offsetHeight || 30;
+          let tx = hotspotStore.x + 16;
+          let ty = hotspotStore.y + 18;
+          if (tx + w > window.innerWidth - 12) tx = hotspotStore.x - w - 14;
+          if (ty + h > window.innerHeight - 90) ty = hotspotStore.y - h - 14;
+          el.style.transform = `translate(${Math.max(8, tx)}px, ${Math.max(8, ty)}px)`;
+          el.style.opacity = "1";
         } else {
           el.style.opacity = "0";
         }
@@ -31,7 +40,7 @@ export function HotspotTooltip() {
     <div
       ref={ref}
       aria-hidden
-      className="pointer-events-none fixed top-0 left-0 z-40 rounded-md border border-cyan-400/40 bg-[#0d0d0f]/90 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-cyan-200 opacity-0 shadow-lg backdrop-blur-sm transition-opacity duration-150"
+      className="pointer-events-none fixed top-0 left-0 z-[70] rounded-md border border-cyan-400/40 bg-[#0d0d0f]/90 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-cyan-200 opacity-0 shadow-lg backdrop-blur-sm transition-opacity duration-150"
     />
   );
 }
