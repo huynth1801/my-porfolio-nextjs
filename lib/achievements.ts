@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import type { PanelKey } from "@/lib/content";
 
 /**
@@ -39,16 +39,6 @@ const state = {
   last: null as { id: AchievementId; title: string; desc: string; icon: string } | null,
 };
 
-// restore progress (client-only module)
-try {
-  const raw = localStorage.getItem("huy:ach");
-  if (raw) {
-    const p = JSON.parse(raw) as Persisted;
-    (p.visited ?? []).forEach((k) => state.visited.add(k));
-    state.catPokes = p.catPokes ?? 0;
-  }
-} catch {}
-
 const listeners = new Set<() => void>();
 let snapshot: AchSnapshot = readSnapshot();
 
@@ -64,6 +54,27 @@ function emitUi() {
   snapshot = readSnapshot();
   listeners.forEach((fn) => fn());
 }
+
+/**
+ * Restores saved progress. MUST run after mount (never during render):
+ * the server and the first client render both see the empty state, so
+ * hydration matches — saved values fade in right after.
+ */
+export function hydrateAchievements() {
+  if (hydrated) return;
+  hydrated = true;
+  try {
+    const raw = localStorage.getItem("huy:ach");
+    if (raw) {
+      const p = JSON.parse(raw) as Persisted;
+      (p.visited ?? []).forEach((k) => state.visited.add(k));
+      state.catPokes = p.catPokes ?? 0;
+      emitUi();
+    }
+  } catch {}
+}
+
+let hydrated = false;
 
 function persist() {
   try {
@@ -127,5 +138,10 @@ const subscribe = (fn: () => void) => {
 };
 
 export function useAchievements(): AchSnapshot {
+  // restore saved progress right after mount (empty state on first paint
+  // keeps SSR and client identical — no hydration mismatch)
+  useEffect(() => {
+    hydrateAchievements();
+  }, []);
   return useSyncExternalStore(subscribe, () => snapshot, () => snapshot);
 }
