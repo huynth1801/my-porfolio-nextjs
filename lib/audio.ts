@@ -283,6 +283,25 @@ class Sfx {
     o.stop(t + 0.6);
     lfo.stop(t + 0.6);
   }
+
+  /** pleasant harmonic chime for elevator / rewards */
+  chime() {
+    const ctx = this.ensure();
+    if (!ctx) return;
+    if (ctx.state === "suspended") void ctx.resume();
+    const t = ctx.currentTime;
+    [1046.5, 1318.51, 1567.98].forEach((freq, i) => {
+      const o = ctx.createOscillator();
+      o.type = "sine";
+      o.frequency.setValueAtTime(freq, t + i * 0.08);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.08, t + i * 0.08);
+      g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.08 + 0.4);
+      o.connect(g).connect(ctx.destination);
+      o.start(t + i * 0.08);
+      o.stop(t + i * 0.08 + 0.45);
+    });
+  }
 }
 
 export const lofi = new LofiEngine();
