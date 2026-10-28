@@ -6,6 +6,8 @@ import { useFrame } from "@react-three/fiber";
 import { Hotspot } from "./hotspots";
 import { getRig } from "./lighting";
 import { boot } from "./boot";
+import { attachFlappyCanvas, flappy, flappyUpdate, flappyPress } from "./flappy";
+import { useEffect, useMemo } from "react";
 
 /**
  * District 4: Pixel Arcade & Games Zone (Khu Arcade → Projects & Skills)
@@ -18,8 +20,31 @@ export function DistrictArcade() {
   const marqueeRef = useRef<THREE.MeshStandardMaterial>(null!);
   const joystickBallRef = useRef<THREE.Mesh>(null!);
   const rig = getRig();
+  const gameCanvas = useMemo(() => {
+    const canvas = document.createElement("canvas");
+    attachFlappyCanvas(canvas);
+    return canvas;
+  }, []);
+  const gameTex = useMemo(() => {
+    const tex = new THREE.CanvasTexture(gameCanvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
+  }, [gameCanvas]);
+  useEffect(() => () => gameTex.dispose(), [gameTex]);
+  // Space = flap while a game is running
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.code === "Space" && flappy.mode !== "attract") {
+        e.preventDefault();
+        flappyPress();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
-  useFrame((state) => {
+  useFrame((state, dtd) => {
+    const dt = Math.min(dtd, 0.05);
     const b = boot.value;
     const factor = rig.neon * b;
     const t = state.clock.elapsedTime;
@@ -38,19 +63,25 @@ export function DistrictArcade() {
       marqueeRef.current.emissiveIntensity = factor * 3.2 * flicker;
     }
     if (joystickBallRef.current) {
-      joystickBallRef.current.rotation.x = Math.sin(t * 2) * 0.15;
+      // idle sway, plus a lean back on every flap while a game is running
+      joystickBallRef.current.rotation.x =
+        Math.sin(t * 2) * 0.15 - flappy.flapPulse * 0.55;
       joystickBallRef.current.rotation.z = Math.cos(t * 2) * 0.15;
     }
+    // drive the door-screen game; redraw the texture when it rendered
+    const redrew = flappyUpdate(dt, t);
+    if (redrew || flappy.dirty) gameTex.needsUpdate = true;
+    flappy.dirty = false;
   });
 
   return (
     <group position={[-3.2, 0.3, -2.2]} rotation={[0, 0.8, 0]}>
       {/* Main Arcade Building Hotspot -> Projects */}
       <Hotspot
-        position={[0, 1.2, 0]}
-        radius={1.8}
-        height={2.2}
-        glowY={-0.9}
+        position={[0, 1.35, -0.35]}
+        radius={1.15}
+        height={2.3}
+        glowY={-1.15}
         label="Projects"
         target="projects"
       >
@@ -122,15 +153,10 @@ export function DistrictArcade() {
 
         {/* Entrance Portal with Neon Arch */}
         <group position={[0, 0.55, 0.92]}>
-          {/* Recessed glass door */}
-          <mesh position={[0, 0, -0.05]}>
+          {/* Flappy.DEV game screen (the recessed door) */}
+          <mesh position={[0, 0, -0.04]}>
             <planeGeometry args={[0.9, 1.05]} />
-            <meshStandardMaterial
-              color="#3b0764"
-              emissive="#a855f7"
-              emissiveIntensity={rig.neon * 1.2}
-              roughness={0.2}
-            />
+            <meshBasicMaterial map={gameTex} toneMapped={false} />
           </mesh>
           {/* Bright Cyan Entrance Arch */}
           <mesh position={[-0.48, 0, 0.02]}>
@@ -147,6 +173,16 @@ export function DistrictArcade() {
           </mesh>
         </group>
       </Hotspot>
+
+      {/* Flappy.DEV — the door screen itself is playable */}
+      <Hotspot
+        position={[0, 0.85, 0.92]}
+        radius={0.5}
+        height={1.1}
+        glowY={-0.62}
+        label="Play Flappy.DEV"
+        target="flappy"
+      />
 
       {/* Giant Retro Arcade Joystick Monument */}
       <group position={[1.4, 0, 0.8]}>

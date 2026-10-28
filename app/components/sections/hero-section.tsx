@@ -6,6 +6,7 @@ import { useGSAP } from "@gsap/react";
 import { ChevronDown, FileDown, MousePointerClick, Rocket } from "lucide-react";
 import { profile } from "@/lib/content";
 import { journey } from "@/lib/journey-store";
+import { useAchievements } from "@/lib/achievements";
 
 gsap.registerPlugin(useGSAP);
 
@@ -15,6 +16,7 @@ gsap.registerPlugin(useGSAP);
  * in. A sr-only h1 keeps the full name in the document for SEO/a11y.
  */
 export function HeroSection() {
+  const ach = useAchievements();
   const scope = useRef<HTMLElement>(null);
 
   useGSAP(
@@ -83,7 +85,10 @@ export function HeroSection() {
           {/* Story mode entry — temporarily hidden (re-enable via startStory) */}
         </div>
 
-        <p className="mt-5 flex items-center gap-2 text-xs text-gray-400">
+        <p className="mt-3 text-xs text-gray-500">
+          🏆 Districts explored {ach.visited}/6 · Achievements {ach.unlocked}/3
+        </p>
+        <p className="mt-2 flex items-center gap-2 text-xs text-gray-400">
           <MousePointerClick className="size-3.5 shrink-0 text-cyan-400" />
           Drag to orbit the island — click districts to explore the journey
         </p>

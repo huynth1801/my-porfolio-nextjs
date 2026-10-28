@@ -13,6 +13,7 @@ import { DistrictRadio } from "./district-radio";
 import { BoyCharacter } from "./boy";
 import { StoryFx } from "./story-fx";
 import { StoryCamera } from "./story-camera";
+import { AchievementCelebration } from "./celebration";
 
 /**
  * 🏝️ Đảo nổi — "Thành phố sự nghiệp" (Floating Career Island)
@@ -46,6 +47,7 @@ export function Island() {
       <BoyCharacter />
       <StoryFx />
       <StoryCamera />
+      <AchievementCelebration />
     </>
   );
 }

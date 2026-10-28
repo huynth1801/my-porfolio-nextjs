@@ -9,6 +9,7 @@ import { JourneyCanvas } from "./components/journey/journey-canvas";
 import { SmoothScroll } from "./components/journey/smooth-scroll";
 import { PanelOverlay } from "./components/panels/panel-overlay";
 import { StoryPlayer } from "./components/three/island/story-player";
+import { AchievementToasts } from "./components/achievements/achievement-toasts";
 import { TourHud } from "./components/journey/tour-hud";
 import { educations } from "@/lib/content";
 
@@ -34,6 +35,7 @@ export default function Home() {
       </main>
       <PanelOverlay />
       <StoryPlayer />
+      <AchievementToasts />
       <TourHud />
     </>
   );

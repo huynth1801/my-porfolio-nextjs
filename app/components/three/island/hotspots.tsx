@@ -4,6 +4,8 @@ import { useMemo, useRef, useState, type ReactNode } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { profile, type PanelKey } from "@/lib/content";
+import { visitDistrict, noteCatPoke } from "@/lib/achievements";
+import { flappyPress } from "./flappy";
 import { panelStore } from "@/lib/panel-store";
 import { sfx } from "@/lib/audio";
 import { hotspotStore, toyStore } from "./hotspot-store";
@@ -32,8 +34,8 @@ export function Hotspot({
   /** local y for the glow disc; defaults to just under the hit cylinder */
   glowY?: number;
   label: string;
-  /** panel to open, CV download, or a room toy */
-  target: PanelKey | "resume" | "spin" | "meow";
+  /** panel to open, CV download, a room toy, or the arcade game */
+  target: PanelKey | "resume" | "spin" | "meow" | "flappy";
   children?: ReactNode;
 }) {
   const [hovered, setHovered] = useState(false);
@@ -88,10 +90,17 @@ export function Hotspot({
           }
           if (target === "meow") {
             toyStore.catPokes++;
+            noteCatPoke();
             sfx.meow();
             return;
           }
+          if (target === "flappy") {
+            sfx.click();
+            flappyPress();
+            return;
+          }
           sfx.click();
+          visitDistrict(target);
           panelStore.open(target);
         }}
       >
