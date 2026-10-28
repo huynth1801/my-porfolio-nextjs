@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { RotateCcw, FolderGit2, ArrowLeft, ArrowUp, X } from "lucide-react";
 import { useFlappy, flappyPress, flappyClose, attachFlappyHudCanvas } from "./flappy";
 import { panelStore } from "@/lib/panel-store";
 import { sfx } from "@/lib/audio";
@@ -52,7 +53,7 @@ export function ArcadeCabinetOverlay() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/65 backdrop-blur-md transition-opacity duration-300 animate-fadeIn"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-md transition-opacity duration-200 animate-fadeIn"
       onClick={(e) => {
         // Clicking the darkened backdrop exits arcade mode
         if (e.target === e.currentTarget) {
@@ -61,18 +62,16 @@ export function ArcadeCabinetOverlay() {
         }
       }}
     >
-      {/* Retro Arcade Cabinet Frame */}
-      <div className="relative w-full max-w-[380px] sm:max-w-[420px] rounded-3xl bg-gradient-to-b from-purple-950/95 via-slate-900/95 to-black/95 border-2 border-cyan-400/40 shadow-[0_0_50px_rgba(6,182,212,0.35),0_0_80px_rgba(168,85,247,0.25)] p-4 sm:p-5 flex flex-col items-center">
-        {/* Glowing Top Marquee */}
-        <div className="w-full flex items-center justify-between pb-3 border-b border-purple-500/30 mb-3">
+      {/* Handcrafted Arcade Cabinet Frame */}
+      <div className="relative w-full max-w-[360px] sm:max-w-[400px] rounded-2xl bg-[#0d0f17] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.08)] p-3.5 sm:p-4.5 flex flex-col items-center">
+        {/* Clean Header Bar */}
+        <div className="w-full flex items-center justify-between pb-2.5 border-b border-white/8 mb-2.5">
           <div className="flex items-center gap-2">
-            <span className="text-xl sm:text-2xl animate-pulse">🕹️</span>
-            <div>
-              <h2 className="text-xs sm:text-sm font-black tracking-widest text-cyan-300 font-mono uppercase drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]">
-                ARCADE ZONE
-              </h2>
-              <p className="text-[10px] text-purple-300 font-mono tracking-wider">FLAPPY.DEV // PIXEL RUNNER</p>
-            </div>
+            <span className="size-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.7)] animate-pulse" />
+            <span className="text-xs font-mono font-semibold tracking-wider text-neutral-200 uppercase">
+              Flappy.DEV
+            </span>
+            <span className="text-[10px] font-mono text-neutral-500">v1.0</span>
           </div>
 
           <button
@@ -80,16 +79,17 @@ export function ArcadeCabinetOverlay() {
               sfx.click();
               flappyClose();
             }}
-            className="px-2.5 py-1 text-xs font-mono font-bold text-slate-300 hover:text-white bg-slate-800/80 hover:bg-rose-500/80 rounded-lg border border-slate-700 hover:border-rose-400 transition-all cursor-pointer"
+            className="flex items-center gap-1 px-2 py-0.5 text-[11px] font-mono text-neutral-400 hover:text-white bg-white/[0.04] hover:bg-white/[0.1] rounded-md border border-white/10 transition-colors cursor-pointer"
             title="Thoát (ESC)"
           >
-            ✕ ESC
+            <X className="size-3" />
+            <span>Esc</span>
           </button>
         </div>
 
         {/* CRT Arcade Monitor Container */}
         <div
-          className="relative w-full aspect-[256/300] max-h-[360px] rounded-2xl overflow-hidden bg-slate-950 border-2 border-cyan-500/50 shadow-inner flex items-center justify-center cursor-pointer select-none group"
+          className="relative w-full aspect-[256/300] max-h-[350px] rounded-xl overflow-hidden bg-[#04060a] border border-white/10 shadow-inner flex items-center justify-center cursor-pointer select-none group"
           onClick={() => {
             flappyPress();
           }}
@@ -101,48 +101,55 @@ export function ArcadeCabinetOverlay() {
           />
 
           {/* CRT Scanlines Overlay Effect */}
-          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.28)_50%)] bg-[length:100%_4px] opacity-70" />
-          <div className="pointer-events-none absolute inset-0 bg-radial from-transparent via-transparent to-black/40" />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%)] bg-[length:100%_4px] opacity-60" />
+          <div className="pointer-events-none absolute inset-0 bg-radial from-transparent via-transparent to-black/35" />
 
           {/* Click to Flap Hint Indicator */}
           {mode === "play" && (
-            <div className="absolute bottom-2 left-0 right-0 text-center pointer-events-none">
-              <span className="text-[11px] font-mono font-bold tracking-wider text-cyan-200/90 bg-black/60 px-3 py-1 rounded-full border border-cyan-500/30 backdrop-blur-xs">
-                CHẠM / BẤM SPACE ĐỂ BAY 🪽
-              </span>
+            <div className="absolute bottom-2.5 inset-x-0 flex justify-center pointer-events-none">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-black/70 border border-white/10 backdrop-blur-sm text-[11px] font-mono text-neutral-300">
+                <kbd className="px-1 py-0.5 rounded bg-white/15 text-[10px] font-mono text-white">
+                  Space
+                </kbd>
+                <span>hoặc Click để bay</span>
+              </div>
             </div>
           )}
         </div>
 
-        {/* Live Score & Status Panel */}
-        <div className="w-full mt-3 flex items-center justify-between px-2 font-mono">
-          <div className="flex items-center gap-1.5">
-            <span className="text-[11px] text-slate-400 uppercase tracking-wider">Điểm:</span>
-            <span className="text-base sm:text-lg font-black text-amber-400 drop-shadow-[0_0_6px_rgba(251,191,36,0.6)]">
-              {score}
-            </span>
+        {/* Score & Status Panel */}
+        <div className="w-full mt-2.5 flex items-center justify-between px-1 font-mono">
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[10px] text-neutral-400 uppercase tracking-wider">Điểm:</span>
+            <span className="text-base font-bold text-neutral-100">{score}</span>
           </div>
 
-          <div className="flex items-center gap-1.5">
-            <span className="text-[11px] text-slate-400 uppercase tracking-wider">Kỷ lục:</span>
-            <span className="text-sm sm:text-base font-black text-cyan-300 drop-shadow-[0_0_6px_rgba(6,182,212,0.6)]">
-              🏆 {best}
-            </span>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[10px] text-neutral-400 uppercase tracking-wider">Kỷ lục:</span>
+            <span className="text-sm font-bold text-amber-400">{best}</span>
           </div>
         </div>
 
-        {/* Game Over Actions or In-Game Controls */}
+        {/* Actions Section */}
         {mode === "over" ? (
-          <div className="w-full mt-3 flex flex-col gap-2">
+          <div className="w-full mt-2.5 flex flex-col gap-2">
+            {/* Primary Tactile Button */}
             <button
               onClick={() => {
                 flappyPress();
               }}
-              className="w-full py-2.5 px-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-mono font-black text-xs sm:text-sm tracking-wider uppercase rounded-xl shadow-[0_0_20px_rgba(6,182,212,0.4)] border border-cyan-300/40 transition-all cursor-pointer flex items-center justify-center gap-2"
+              className="w-full flex items-center justify-between py-2 px-3.5 bg-white hover:bg-neutral-100 active:bg-neutral-200 text-neutral-950 font-mono text-xs font-semibold rounded-lg shadow-sm active:translate-y-px transition-all cursor-pointer"
             >
-              <span>🕹️ CHƠI LẠI (BẤM SPACE)</span>
+              <div className="flex items-center gap-2">
+                <RotateCcw className="size-3.5" />
+                <span>Chơi lại</span>
+              </div>
+              <kbd className="px-1.5 py-0.5 rounded bg-neutral-200/90 text-[10px] text-neutral-700 font-mono font-normal">
+                Space
+              </kbd>
             </button>
 
+            {/* Secondary Actions */}
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => {
@@ -150,9 +157,10 @@ export function ArcadeCabinetOverlay() {
                   flappyClose();
                   panelStore.open("projects");
                 }}
-                className="py-2 px-2 text-xs font-mono font-bold text-amber-300 bg-amber-950/60 hover:bg-amber-900/80 rounded-xl border border-amber-500/40 hover:border-amber-400 transition-all cursor-pointer text-center"
+                className="flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] active:bg-white/[0.12] text-neutral-300 hover:text-white font-mono text-xs transition-colors cursor-pointer"
               >
-                📁 Xem dự án
+                <FolderGit2 className="size-3.5 text-neutral-400" />
+                <span>Xem dự án</span>
               </button>
 
               <button
@@ -160,21 +168,25 @@ export function ArcadeCabinetOverlay() {
                   sfx.click();
                   flappyClose();
                 }}
-                className="py-2 px-2 text-xs font-mono font-bold text-slate-300 bg-slate-800/70 hover:bg-slate-700/80 rounded-xl border border-slate-600/50 hover:border-slate-400 transition-all cursor-pointer text-center"
+                className="flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] active:bg-white/[0.12] text-neutral-300 hover:text-white font-mono text-xs transition-colors cursor-pointer"
               >
-                ✕ Thoát ra đảo
+                <ArrowLeft className="size-3.5 text-neutral-400" />
+                <span>Thoát ra đảo</span>
               </button>
             </div>
           </div>
         ) : (
-          <div className="w-full mt-3 flex items-center gap-2">
+          <div className="w-full mt-2.5 flex items-center gap-2">
             {/* Mobile / Direct Touch Big Flap Button */}
             <button
               onClick={() => flappyPress()}
-              className="flex-1 py-2 px-3 bg-cyan-950/80 hover:bg-cyan-900/90 active:bg-cyan-800 text-cyan-300 font-mono font-bold text-xs rounded-xl border border-cyan-500/40 flex items-center justify-center gap-1.5 transition-all cursor-pointer select-none"
+              className="flex-1 flex items-center justify-center gap-2 py-2 px-3 bg-white/[0.06] hover:bg-white/[0.1] active:bg-white/[0.15] text-neutral-200 font-mono text-xs font-medium rounded-lg border border-white/10 transition-colors cursor-pointer select-none"
             >
-              <span>🪽</span>
-              <span>NHẤP ĐỂ BAY (SPACE / W)</span>
+              <ArrowUp className="size-3.5 text-cyan-400" />
+              <span>Bay lên</span>
+              <kbd className="px-1 py-0.2 rounded bg-white/10 text-[10px] text-neutral-400 font-normal">
+                Space
+              </kbd>
             </button>
 
             <button
@@ -183,10 +195,11 @@ export function ArcadeCabinetOverlay() {
                 flappyClose();
                 panelStore.open("projects");
               }}
-              className="py-2 px-3 text-xs font-mono font-bold text-purple-300 bg-purple-950/60 hover:bg-purple-900/80 rounded-xl border border-purple-500/30 hover:border-purple-400 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 py-2 px-3 text-xs font-mono text-neutral-400 hover:text-white bg-white/[0.03] hover:bg-white/[0.08] rounded-lg border border-white/10 transition-colors cursor-pointer"
               title="Xem các dự án nổi bật"
             >
-              📁 Dự án
+              <FolderGit2 className="size-3.5" />
+              <span>Dự án</span>
             </button>
           </div>
         )}
