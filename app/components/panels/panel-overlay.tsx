@@ -221,7 +221,7 @@ function ContactContent() {
           <Github className="size-4" /> GitHub
         </a>
       </div>
-      <a href="/contact" className="flex items-center justify-center gap-2 rounded-xl bg-linear-to-r from-cyan-400 to-violet-400 py-3 text-sm font-semibold text-gray-950 transition-transform hover:scale-[1.02]">
+      <a href="/contact" className="flex items-center justify-center gap-2 rounded-xl btn-solid py-3 text-sm font-semibold transition-transform hover:scale-[1.02]">
         <Rocket className="size-4" /> Open the contact form
       </a>
     </div>

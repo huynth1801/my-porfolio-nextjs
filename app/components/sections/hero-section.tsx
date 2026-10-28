@@ -68,7 +68,7 @@ export function HeroSection() {
         <div className="pointer-events-auto mt-6 flex flex-wrap items-center gap-3">
           <a
             href="#projects"
-            className="group inline-flex items-center gap-2 rounded-full bg-linear-to-r from-cyan-400 to-violet-400 px-5 py-2.5 text-sm font-semibold text-gray-950 shadow-[0_0_30px_-8px_rgba(34,211,238,0.6)] transition-transform duration-200 hover:scale-[1.04] active:scale-95"
+            className="group inline-flex items-center gap-2 rounded-full btn-solid px-5 py-2.5 text-sm font-semibold transition-transform duration-200 hover:scale-[1.04] active:scale-95"
           >
             <Rocket className="size-4 transition-transform duration-200 group-hover:-translate-y-0.5" />
             Explore projects
@@ -83,7 +83,7 @@ export function HeroSection() {
           </a>
           <button
             onClick={() => startStory(0)}
-            className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-cyan-400/40 bg-cyan-400/10 px-5 py-2.5 text-sm font-semibold text-cyan-200 transition-colors hover:bg-cyan-400/20"
+            className="inline-flex cursor-pointer items-center gap-2 rounded-full btn-story px-5 py-2.5 text-sm font-semibold transition-transform duration-200 hover:scale-[1.04] active:scale-95"
           >
             <Play className="size-4" />
             Watch my story

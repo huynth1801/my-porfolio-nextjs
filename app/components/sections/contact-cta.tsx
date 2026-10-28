@@ -34,7 +34,7 @@ export function ContactCta() {
         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
           <a
             href={`mailto:${profile.email}`}
-            className="inline-flex items-center gap-2 rounded-full bg-linear-to-r from-cyan-400 to-violet-400 px-6 py-3 text-sm font-semibold text-gray-950 shadow-[0_0_30px_-8px_rgba(34,211,238,0.6)] transition-transform duration-200 hover:scale-[1.04] active:scale-95"
+            className="inline-flex items-center gap-2 rounded-full btn-solid px-6 py-3 text-sm font-semibold transition-transform duration-200 hover:scale-[1.04] active:scale-95"
           >
             <Mail className="size-4" />
             {profile.email}

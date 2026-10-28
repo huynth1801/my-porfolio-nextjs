@@ -85,7 +85,7 @@ export function Header() {
               "rounded-full px-4 py-1.5 text-sm font-semibold transition-colors",
               pathname === "/contact"
                 ? "bg-white/15 text-white"
-                : "bg-linear-to-r from-cyan-400 to-violet-400 text-gray-950 hover:brightness-110",
+                : "btn-solid",
             )}
           >
             Contact

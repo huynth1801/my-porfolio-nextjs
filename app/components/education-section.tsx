@@ -52,7 +52,7 @@ export const EducationSection: React.FC<EducationSectionProps> = ({
             <h3 className="text-2xl md:text-3xl font-bold text-white">{title}</h3>
             {subtitle && <p className="text-sm text-gray-300 mt-1">{subtitle}</p>}
           </div>
-          <Badge className="from-cyan-500 to-pink-500 text-white shadow-md">
+          <Badge className="bg-[#d84f4c] text-white shadow-md border-0">
             <span className="flex items-center gap-2">
               <Calendar className="w-4 h-4" /> {items.length} entries
             </span>

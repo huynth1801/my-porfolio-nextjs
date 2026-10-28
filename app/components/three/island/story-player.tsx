@@ -82,7 +82,7 @@ export function StoryPlayer() {
             {/* progress */}
             <div className="mb-3 h-1 overflow-hidden rounded-full bg-white/10">
               <div
-                className="h-full rounded-full bg-linear-to-r from-cyan-400 to-violet-400 transition-[width] duration-200"
+                className="h-full rounded-full bg-[#f2ead9] transition-[width] duration-200"
                 style={{ width: `${Math.min(100, progress * 100)}%` }}
               />
             </div>
