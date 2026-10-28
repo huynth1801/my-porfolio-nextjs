@@ -173,9 +173,9 @@ export const projects: Project[] = [
   {
     id: "portfolio",
     title: "This portfolio",
-    tagline: "Interactive 3D workspace",
+    tagline: "Interactive 3D floating career island",
     description:
-      "The site you're on right now: a fully coded low-poly 3D room — live-clock monitor, spinning RGB fans, drag-to-orbit camera — built with React Three Fiber and GSAP.",
+      "The site you're on right now: a low-poly floating island 'Career City' with 5 districts, real-time day/night lighting, camera transitions, and mascot cat — built with React Three Fiber, Three.js, and GSAP.",
     stack: ["Next.js 16", "React Three Fiber", "GSAP", "Lenis"],
     repo: "https://github.com/huynth1801/my-porfolio-nextjs",
     icon: "globe",

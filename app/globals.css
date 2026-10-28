@@ -148,10 +148,35 @@ html.lenis body {
 /* ---- Journey visual language ---- */
 /* Frosted panel used across sections so text stays readable over the 3D scene */
 .glass {
-  background: color-mix(in oklab, #14141b 62%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgb(255 255 255 / 0.08);
+  background: color-mix(in oklab, #0d101a 82%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgb(255 255 255 / 0.12);
+  box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.5);
+}
+
+/* Indie-game button system — warm, solid, no gradients */
+.btn-solid {
+  background: #f2ead9;
+  color: #17171d;
+  box-shadow: 0 8px 22px -12px rgba(0, 0, 0, 0.8);
+  transition:
+    transform 0.2s,
+    background 0.2s;
+}
+.btn-solid:hover {
+  background: #fffdf6;
+}
+.btn-story {
+  background: #d84f4c;
+  color: #fff;
+  box-shadow: 0 8px 22px -12px rgba(0, 0, 0, 0.8);
+  transition:
+    transform 0.2s,
+    background 0.2s;
+}
+.btn-story:hover {
+  background: #bd423f;
 }
 
 /* Small pill link used inside quick-view panels */

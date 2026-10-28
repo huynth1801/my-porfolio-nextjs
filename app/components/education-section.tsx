@@ -39,12 +39,20 @@ export const EducationSection: React.FC<EducationSectionProps> = ({
   return (
     <section id="education" className="pointer-events-auto py-12">
       <div className="max-w-3xl mx-auto px-6">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+        <div className="glass mb-8 rounded-2xl p-6 md:p-8 border border-white/12 shadow-2xl flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <span className="font-mono text-[10px] font-semibold tracking-wider text-cyan-300 uppercase px-2.5 py-0.5 rounded-full bg-cyan-400/10 border border-cyan-400/25">
+                WAYPOINT 06 // TECH ACADEMY
+              </span>
+              <span className="text-[11px] font-medium text-gray-400">
+                Education & Credentials
+              </span>
+            </div>
             <h3 className="text-2xl md:text-3xl font-bold text-white">{title}</h3>
-            {subtitle && <p className="text-sm text-gray-400 mt-1">{subtitle}</p>}
+            {subtitle && <p className="text-sm text-gray-300 mt-1">{subtitle}</p>}
           </div>
-          <Badge className=" from-cyan-500 to-pink-500 text-white shadow-md">
+          <Badge className="bg-[#d84f4c] text-white shadow-md border-0">
             <span className="flex items-center gap-2">
               <Calendar className="w-4 h-4" /> {items.length} entries
             </span>

@@ -135,14 +135,19 @@ export function ExperienceSection() {
       className="pointer-events-auto relative px-6 py-20 md:px-12"
     >
       <div className="mx-auto max-w-3xl">
-        <div className="mb-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
-            The journey so far
-          </p>
+        <div className="glass mb-8 rounded-2xl p-6 md:p-8 border border-white/12 shadow-2xl">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-mono text-[10px] font-semibold tracking-wider text-cyan-300 uppercase px-2.5 py-0.5 rounded-full bg-cyan-400/10 border border-cyan-400/25">
+              WAYPOINT 03 // CAREER TOWERS
+            </span>
+            <span className="text-[11px] font-medium text-gray-400">
+              The journey so far
+            </span>
+          </div>
           <h2 className="mt-3 text-3xl font-bold tracking-tight text-white md:text-4xl">
             Experience
           </h2>
-          <p className="mt-3 text-sm leading-relaxed text-gray-400">
+          <p className="mt-2.5 text-sm leading-relaxed text-gray-300">
             Four checkpoints — from game dev intern to building production React apps.
           </p>
         </div>
