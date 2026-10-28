@@ -309,30 +309,30 @@ export function BoyCharacter() {
       <group ref={flip}>
         <group ref={rise}>
           <group ref={hips}>
-            {/* legs: hip → knee → shin/shoe */}
-            <group ref={hipL} position={[-0.055, 0.02, 0]}>
-              <mesh position={[0, -0.08, 0]} material={mats.pants} castShadow>
-                <capsuleGeometry args={[0.045, 0.09, 4, 8]} />
+            {/* legs: hip (0.18, meets torso bottom 0.19) → knee → shin/shoe */}
+            <group ref={hipL} position={[-0.055, 0.18, 0]}>
+              <mesh position={[0, -0.085, 0]} material={mats.pants} castShadow>
+                <capsuleGeometry args={[0.048, 0.1, 4, 8]} />
               </mesh>
               <group ref={kneeL} position={[0, -0.17, 0]}>
-                <mesh position={[0, -0.065, 0]} material={mats.skin} castShadow>
-                  <capsuleGeometry args={[0.036, 0.09, 4, 8]} />
+                <mesh position={[0, -0.06, 0]} material={mats.pants} castShadow>
+                  <capsuleGeometry args={[0.04, 0.07, 4, 8]} />
                 </mesh>
-                <mesh position={[0, -0.135, 0.03]} material={mats.shoe} castShadow>
-                  <boxGeometry args={[0.07, 0.04, 0.115]} />
+                <mesh position={[0, -0.125, 0.03]} material={mats.shoe} castShadow>
+                  <boxGeometry args={[0.07, 0.045, 0.12]} />
                 </mesh>
               </group>
             </group>
-            <group ref={hipR} position={[0.055, 0.02, 0]}>
-              <mesh position={[0, -0.08, 0]} material={mats.pants} castShadow>
-                <capsuleGeometry args={[0.045, 0.09, 4, 8]} />
+            <group ref={hipR} position={[0.055, 0.18, 0]}>
+              <mesh position={[0, -0.085, 0]} material={mats.pants} castShadow>
+                <capsuleGeometry args={[0.048, 0.1, 4, 8]} />
               </mesh>
               <group ref={kneeR} position={[0, -0.17, 0]}>
-                <mesh position={[0, -0.065, 0]} material={mats.skin} castShadow>
-                  <capsuleGeometry args={[0.036, 0.09, 4, 8]} />
+                <mesh position={[0, -0.06, 0]} material={mats.pants} castShadow>
+                  <capsuleGeometry args={[0.04, 0.07, 4, 8]} />
                 </mesh>
-                <mesh position={[0, -0.135, 0.03]} material={mats.shoe} castShadow>
-                  <boxGeometry args={[0.07, 0.04, 0.115]} />
+                <mesh position={[0, -0.125, 0.03]} material={mats.shoe} castShadow>
+                  <boxGeometry args={[0.07, 0.045, 0.12]} />
                 </mesh>
               </group>
             </group>
