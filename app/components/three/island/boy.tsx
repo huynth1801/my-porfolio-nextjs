@@ -9,6 +9,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { story, type StoryPose } from "./story-store";
 import { proximityStore, PROXIMITY_TARGETS, type ProximityTarget } from "@/lib/proximity-store";
+import { flappy } from "./flappy";
 
 useGLTF.preload("/models/player.glb");
 
@@ -246,6 +247,7 @@ export function BoyCharacter() {
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (isInputActive()) return;
+      if (flappy.isOpen) return;
       if (e.code === "KeyE") {
         proximityStore.triggerActive();
       }
@@ -292,7 +294,7 @@ export function BoyCharacter() {
     const s = story;
 
     /* ---------- Keyboard locomotion during free exploration ---------- */
-    if (!s.playing) {
+    if (!s.playing && !flappy.isOpen) {
       const k = keys.current;
       let dx = 0;
       let dz = 0;
@@ -343,6 +345,9 @@ export function BoyCharacter() {
         }
       }
       proximityStore.setActive(closest);
+    } else if (flappy.isOpen) {
+      s.speed = 0;
+      proximityStore.setActive(null);
     } else {
       proximityStore.setActive(null);
     }

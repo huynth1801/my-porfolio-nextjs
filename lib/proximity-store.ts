@@ -6,7 +6,7 @@ import { story } from "@/app/components/three/island/story-store";
 import { noteCatPoke } from "@/lib/achievements";
 import { sfx } from "@/lib/audio";
 import { profile } from "@/lib/content";
-import { flappyPress } from "@/app/components/three/island/flappy";
+import { flappyOpen } from "@/app/components/three/island/flappy";
 import { toyStore } from "@/app/components/three/island/hotspot-store";
 
 export type ProximityId = "cat" | "mailbox" | "arcade" | "elevator-up" | "elevator-down";
@@ -184,8 +184,8 @@ function executeInteraction(id: ProximityId) {
       const arcPos = PROXIMITY_TARGETS.find((t) => t.id === "arcade")!.pos;
       story.heading = Math.atan2(arcPos[0] - story.px, arcPos[2] - story.pz);
       sfx.click();
-      flappyPress();
-      showProximityToast("Bắt đầu game Flappy.DEV! Bấm Space hoặc Click để bay", "🕹️");
+      flappyOpen();
+      showProximityToast("Đang chơi máy Arcade Flappy.DEV! Bấm Space / Click để bay", "🕹️");
       break;
     }
 

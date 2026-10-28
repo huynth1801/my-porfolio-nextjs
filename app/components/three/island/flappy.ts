@@ -1,9 +1,13 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
+import { sfx } from "@/lib/audio";
+
 /**
  * Flappy.DEV — a tiny playable Flappy Bird that lives on the arcade door
- * screen. Pure canvas-2D pixel art rendered into a CanvasTexture; physics
- * runs in the arcade's useFrame. Score persists in localStorage.
+ * screen and expands into an authentic arcade cabinet HUD. Pure canvas-2D
+ * pixel art rendered into a CanvasTexture; physics runs in the arcade's useFrame.
+ * Score persists in localStorage.
  *
  * Modes: "attract" (idle blink screen) → press → "play" → death →
  * "over" (shows score) → press → restart. Press = flappyPress().
@@ -21,7 +25,15 @@ const PIPE_W = 44;
 const GAP = 96;
 const SPAWN_DIST = 148;
 
+export interface FlappySnapshot {
+  isOpen: boolean;
+  mode: FlappyMode;
+  score: number;
+  best: number;
+}
+
 export const flappy = {
+  isOpen: false,
   mode: "attract" as FlappyMode,
   score: 0,
   best: 0,
@@ -46,6 +58,37 @@ function saveBest() {
   } catch {}
 }
 
+const listeners = new Set<() => void>();
+let snapshot: FlappySnapshot = {
+  isOpen: false,
+  mode: "attract",
+  score: 0,
+  best: flappy.best,
+};
+
+export function emitFlappy() {
+  snapshot = {
+    isOpen: flappy.isOpen,
+    mode: flappy.mode,
+    score: flappy.score,
+    best: flappy.best,
+  };
+  listeners.forEach((fn) => fn());
+}
+
+export function subscribeFlappy(fn: () => void) {
+  listeners.add(fn);
+  return () => listeners.delete(fn);
+}
+
+export function getFlappySnapshot() {
+  return snapshot;
+}
+
+export function useFlappy() {
+  return useSyncExternalStore(subscribeFlappy, getFlappySnapshot, getFlappySnapshot);
+}
+
 function reset() {
   birdY = H * 0.45;
   vel = 0;
@@ -61,11 +104,28 @@ export function flappyPress() {
   if (flappy.mode !== "play") {
     reset();
     flappy.mode = "play";
+    vel = FLAP_V * 0.72; // initial gentle hop upward so bird doesn't fall immediately
   } else {
     vel = FLAP_V;
   }
+  sfx.flap();
   flappy.flapPulse = 1;
   flappy.dirty = true;
+  emitFlappy();
+}
+
+/** Open arcade zoom and start playing */
+export function flappyOpen() {
+  flappy.isOpen = true;
+  flappyPress();
+  emitFlappy();
+}
+
+/** Close arcade session and return to island exploration */
+export function flappyClose() {
+  flappy.isOpen = false;
+  flappyExitToAttract();
+  emitFlappy();
 }
 
 /** Leave the game (called when navigating away) — back to attract mode. */
@@ -73,6 +133,7 @@ export function flappyExitToAttract() {
   flappy.mode = "attract";
   flappy.dirty = true;
   _idleAt = 0;
+  emitFlappy();
 }
 
 export function flappyUpdate(dt: number, now: number): boolean {
@@ -89,6 +150,8 @@ export function flappyUpdate(dt: number, now: number): boolean {
         p.passed = true;
         flappy.score++;
         flappy.dirty = true;
+        sfx.point();
+        emitFlappy();
       }
     }
     if (pipes[0].x < -PIPE_W) {
@@ -124,12 +187,14 @@ export function flappyUpdate(dt: number, now: number): boolean {
   function die(nowTs: number): boolean {
     flappy.mode = "over";
     _overAt = nowTs;
+    sfx.hit();
     if (flappy.score > flappy.best) {
       flappy.best = flappy.score;
       saveBest();
     }
     import("@/lib/achievements").then((m) => m.noteFlappyScore(flappy.score));
     draw(nowTs);
+    emitFlappy();
     return true;
   }
 }
@@ -139,12 +204,26 @@ export function flappyUpdate(dt: number, now: number): boolean {
 /* ------------------------------------------------------------------ */
 
 let ctx: CanvasRenderingContext2D | null = null;
+let hudCtx: CanvasRenderingContext2D | null = null;
 
 export function attachFlappyCanvas(canvas: HTMLCanvasElement) {
   canvas.width = W;
   canvas.height = H;
   ctx = canvas.getContext("2d");
   draw(0);
+}
+
+export function attachFlappyHudCanvas(canvas: HTMLCanvasElement | null) {
+  if (canvas) {
+    canvas.width = W;
+    canvas.height = H;
+    hudCtx = canvas.getContext("2d");
+    if (ctx && hudCtx) {
+      hudCtx.drawImage(ctx.canvas, 0, 0);
+    }
+  } else {
+    hudCtx = null;
+  }
 }
 
 function px(x: number, y: number, w: number, h: number, color: string) {
@@ -167,6 +246,7 @@ function draw(now: number) {
     drawTitle("FLAPPY.DEV", W / 2, 52, "#67e8f9");
     if (Math.floor(now * 2) % 2 === 0) drawTitle("CLICK TO PLAY", W / 2, H - 52, "#f2ead9", 13);
     drawBest(W / 2, H - 30);
+    if (hudCtx) hudCtx.drawImage(ctx.canvas, 0, 0);
     return;
   }
 
@@ -195,6 +275,10 @@ function draw(now: number) {
     drawTitle("GAME OVER", W / 2, H * 0.3 + 34, "#ff5f56", 22);
     drawTitle(`SCORE ${flappy.score} — BEST ${flappy.best}`, W / 2, H * 0.3 + 62, "#f2ead9", 13);
     if (Math.floor(now * 2) % 2 === 0) drawTitle("CLICK TO RETRY", W / 2, H * 0.3 + 90, "#67e8f9", 13);
+  }
+
+  if (hudCtx) {
+    hudCtx.drawImage(ctx.canvas, 0, 0);
   }
 }
 

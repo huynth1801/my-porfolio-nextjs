@@ -12,6 +12,7 @@ import { StoryPlayer } from "./components/three/island/story-player";
 import { AchievementToasts } from "./components/achievements/achievement-toasts";
 import { TourHud } from "./components/journey/tour-hud";
 import { ProximityPrompt } from "./components/journey/proximity-prompt";
+import { ArcadeCabinetOverlay } from "./components/three/island/arcade-cabinet-overlay";
 import { educations } from "@/lib/content";
 
 export default function Home() {
@@ -39,6 +40,7 @@ export default function Home() {
       <AchievementToasts />
       <TourHud />
       <ProximityPrompt />
+      <ArcadeCabinetOverlay />
     </>
   );
 }

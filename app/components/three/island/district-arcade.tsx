@@ -6,7 +6,7 @@ import { useFrame } from "@react-three/fiber";
 import { Hotspot } from "./hotspots";
 import { getRig } from "./lighting";
 import { boot } from "./boot";
-import { attachFlappyCanvas, flappy, flappyUpdate, flappyPress } from "./flappy";
+import { attachFlappyCanvas, flappy, flappyUpdate, flappyPress, flappyOpen } from "./flappy";
 import { useEffect, useMemo } from "react";
 
 /**
@@ -31,10 +31,10 @@ export function DistrictArcade() {
     return tex;
   }, [gameCanvas]);
   useEffect(() => () => gameTex.dispose(), [gameTex]);
-  // Space = flap while a game is running
+  // Space = flap while a game is running without overlay
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.code === "Space" && flappy.mode !== "attract") {
+      if (e.code === "Space" && flappy.mode === "play" && !flappy.isOpen) {
         e.preventDefault();
         flappyPress();
       }
@@ -155,7 +155,20 @@ export function DistrictArcade() {
         {/* Entrance Portal with Neon Arch */}
         <group position={[0, 0.55, 0.92]}>
           {/* Flappy.DEV game screen (the recessed door) */}
-          <mesh position={[0, 0, -0.04]}>
+          <mesh
+            position={[0, 0, -0.04]}
+            onClick={(e) => {
+              e.stopPropagation();
+              flappyOpen();
+            }}
+            onPointerOver={(e) => {
+              e.stopPropagation();
+              document.body.style.cursor = "pointer";
+            }}
+            onPointerOut={() => {
+              document.body.style.cursor = "";
+            }}
+          >
             <planeGeometry args={[0.9, 1.05]} />
             <meshBasicMaterial map={gameTex} toneMapped={false} />
           </mesh>
