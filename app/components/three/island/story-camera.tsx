@@ -67,6 +67,7 @@ export function StoryCamera() {
 
     const fovTarget = shot.fov;
     if (Math.abs(camera.fov - fovTarget) > 0.05) {
+      // eslint-disable-next-line react-hooks/immutability
       camera.fov += (fovTarget - camera.fov) * k;
       camera.updateProjectionMatrix();
     }

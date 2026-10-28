@@ -14,7 +14,7 @@ export function AchievementToasts() {
 
   useEffect(() => {
     if (!last) return;
-    setVisibleId(last.id);
+    queueMicrotask(() => setVisibleId(last.id));
     const timer = setTimeout(() => setVisibleId((cur) => (cur === last.id ? null : cur)), 4500);
     return () => clearTimeout(timer);
   }, [last]);

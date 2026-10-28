@@ -144,8 +144,8 @@ export function DistrictSchool() {
         ))}
       </Hotspot>
 
-      {/* Flagpole in front courtyard */}
-      <group position={[0.8, 0, 1.3]}>
+      {/* Flagpole in courtyard (placed gracefully to the side, framing the entrance) */}
+      <group position={[-1.25, 0, 1.05]}>
         <mesh position={[0, 0.75, 0]} castShadow>
           <cylinderGeometry args={[0.02, 0.03, 1.5, 6]} />
           <meshStandardMaterial color="#e2e8f0" metalness={0.8} roughness={0.3} />

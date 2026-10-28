@@ -32,9 +32,9 @@ export const flappy = {
 let birdY = H * 0.45;
 let vel = 0;
 let pipes: Array<{ x: number; gapY: number; passed: boolean }> = [];
-let overAt = 0;
+let _overAt = 0;
 let blinkAcc = 0;
-let idleAt = 0;
+let _idleAt = 0;
 
 try {
   flappy.best = Number(localStorage.getItem("huy:flappy-best")) || 0;
@@ -72,7 +72,7 @@ export function flappyPress() {
 export function flappyExitToAttract() {
   flappy.mode = "attract";
   flappy.dirty = true;
-  idleAt = 0;
+  _idleAt = 0;
 }
 
 export function flappyUpdate(dt: number, now: number): boolean {
@@ -123,7 +123,7 @@ export function flappyUpdate(dt: number, now: number): boolean {
 
   function die(nowTs: number): boolean {
     flappy.mode = "over";
-    overAt = nowTs;
+    _overAt = nowTs;
     if (flappy.score > flappy.best) {
       flappy.best = flappy.score;
       saveBest();

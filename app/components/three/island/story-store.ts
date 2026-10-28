@@ -278,7 +278,7 @@ export function buildStoryTimeline(): gsap.core.Timeline {
   let cur = STOPS.spawn;
   jump(STOPS.school, 1.15, 2.6, { superman: true });
   cur = STOPS.school;
-  walk({ x: cur.x, y: cur.y, z: cur.z }, 0.55);
+  turn(0.25, 0.4);
   call(() => {
     S.pose = "study";
     S.props.book = 1;

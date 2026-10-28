@@ -70,6 +70,7 @@ export function DistrictArcade() {
     }
     // drive the door-screen game; redraw the texture when it rendered
     const redrew = flappyUpdate(dt, t);
+    // eslint-disable-next-line react-hooks/immutability
     if (redrew || flappy.dirty) gameTex.needsUpdate = true;
     flappy.dirty = false;
   });

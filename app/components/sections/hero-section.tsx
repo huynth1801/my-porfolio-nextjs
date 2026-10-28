@@ -3,10 +3,11 @@
 import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { ChevronDown, FileDown, MousePointerClick, Rocket } from "lucide-react";
+import { ChevronDown, FileDown, MousePointerClick, Play, Rocket } from "lucide-react";
 import { profile } from "@/lib/content";
 import { journey } from "@/lib/journey-store";
 import { useAchievements } from "@/lib/achievements";
+import { startStory } from "@/app/components/three/island/story-store";
 
 gsap.registerPlugin(useGSAP);
 
@@ -82,7 +83,13 @@ export function HeroSection() {
             <FileDown className="size-4" />
             Download CV
           </a>
-          {/* Story mode entry — temporarily hidden (re-enable via startStory) */}
+          <button
+            onClick={() => startStory(0)}
+            className="inline-flex cursor-pointer items-center gap-2 rounded-full btn-story px-5 py-2.5 text-sm font-semibold transition-transform duration-200 hover:scale-[1.04] active:scale-95"
+          >
+            <Play className="size-4" />
+            Watch my story
+          </button>
         </div>
 
         <p className="mt-3 text-xs text-gray-500">
@@ -90,7 +97,7 @@ export function HeroSection() {
         </p>
         <p className="mt-2 flex items-center gap-2 text-xs text-gray-400">
           <MousePointerClick className="size-3.5 shrink-0 text-cyan-400" />
-          Drag to orbit the island — click districts to explore the journey
+          Drag to orbit the island · WASD to explore · Click districts for details
         </p>
       </div>
 

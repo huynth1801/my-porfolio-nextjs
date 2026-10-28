@@ -13,7 +13,6 @@ import type { PanelKey } from "@/lib/content";
 export const dragState = { moved: 0 };
 
 const PITCH = { min: 0.22, max: 0.85, home: 0.5 };
-const YAW_SPEED = 0.045;
 
 type FocusTarget = {
   pivot: THREE.Vector3;

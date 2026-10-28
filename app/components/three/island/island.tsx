@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useBoot } from "./boot";
 import { CameraRig } from "./camera-rig";
 import { IslandLighting } from "./lighting";
@@ -43,8 +44,10 @@ export function Island() {
       <DistrictArcade />
       <DistrictRadio />
 
-      {/* Story mode — "The Developer's Odyssey" */}
-      <BoyCharacter />
+      {/* Story mode & interactive mascot character */}
+      <Suspense fallback={null}>
+        <BoyCharacter />
+      </Suspense>
       <StoryFx />
       <StoryCamera />
       <AchievementCelebration />
