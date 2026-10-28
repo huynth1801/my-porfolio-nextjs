@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Header } from "./components/header";
+import { Analytics } from "@vercel/analytics/next"
 
 const display = Space_Grotesk({
   subsets: ["latin"],
@@ -59,6 +60,7 @@ export default function RootLayout({
       <body className="antialiased">
         <Header />
         {children}
+        <Analytics />
       </body>
     </html>
   );
