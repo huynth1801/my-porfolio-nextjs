@@ -244,7 +244,7 @@ export function BoyCharacter() {
     spine.current.rotation.y = ch.spineY;
     hips.current.rotation.z = Math.sin(ph) * 0.05 * stride;
     hips.current.position.y =
-      0.3 - ch.kneeL * 0.03 + Math.abs(Math.cos(ph)) * 0.03 * stride + Math.sin(t * 2) * 0.006;
+      0.15 - ch.kneeL * 0.025 + Math.abs(Math.cos(ph)) * 0.03 * stride + Math.sin(t * 2) * 0.006;
 
     head.current.rotation.x = ch.headX;
 
