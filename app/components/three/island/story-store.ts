@@ -126,19 +126,20 @@ function headingTo(from: { x: number; z: number }, to: { x: number; z: number })
 /* ------------------------------------------------------------------ */
 
 let timeline: gsap.core.Timeline | null = null;
+let actAt: number[] = [0, 9, 19, 27];
 
 /** Caption track — the UI polls `captionFor(time)`. */
 export const CAPTIONS: Array<{ t: number; text: string }> = [
   { t: 0, text: "Once upon a build — a curious kid wakes up in Saigon." },
-  { t: 3.4, text: "First teammate: one very smug cat." },
-  { t: 5.6, text: "Level up! School time." },
-  { t: 9.4, text: "Jump #1 — the academic leap of faith." },
-  { t: 12.4, text: "4 years of algorithms, UX and all-nighters." },
-  { t: 16.2, text: "B.Sc. unlocked. Hat toss: flawless." },
-  { t: 19.4, text: "Then the arcade called — games, not just apps." },
-  { t: 23.2, text: "Shipped: Flappy Bird · Sunfix · MyShop…" },
-  { t: 26.6, text: "Career towers: TGM · CAS · Likelion · Onechain." },
-  { t: 30.4, text: "Sẵn sàng cho dự án tiếp theo cùng bạn!" },
+  { t: 2.7, text: "First teammate: one very smug cat." },
+  { t: 4.8, text: "Level up! School time." },
+  { t: 8.3, text: "Jump #1 — the academic leap of faith." },
+  { t: 11.3, text: "4 years of algorithms, UX and all-nighters." },
+  { t: 14.9, text: "B.Sc. unlocked. Hat toss: flawless." },
+  { t: 18.5, text: "Then the arcade called — games, not just apps." },
+  { t: 22.2, text: "Shipped: Flappy Bird · Sunfix · MyShop…" },
+  { t: 26.5, text: "Career towers: TGM · CAS · Likelion · Onechain." },
+  { t: 32.4, text: "Sẵn sàng cho dự án tiếp theo cùng bạn!" },
 ];
 
 export function captionFor(time: number): string {
@@ -153,11 +154,16 @@ if (typeof window !== "undefined") {
 }
 
 export const STORY_ACTS = [
-  { label: "Tuổi thơ", icon: "🏡", at: 0 },
-  { label: "Đại học", icon: "🎓", at: 9.2 },
-  { label: "Dự án", icon: "🕹️", at: 19.2 },
-  { label: "Sự nghiệp", icon: "🏢", at: 26.4 },
+  { label: "Tuổi thơ", icon: "🏡" },
+  { label: "Đại học", icon: "🎓" },
+  { label: "Dự án", icon: "🕹️" },
+  { label: "Sự nghiệp", icon: "🏢" },
 ];
+
+/** Timeline time at which each act begins (filled during build). */
+export function getActTimes(): number[] {
+  return [...actAt];
+}
 
 export function buildStoryTimeline(): gsap.core.Timeline {
   if (timeline) return timeline;
@@ -168,50 +174,71 @@ export function buildStoryTimeline(): gsap.core.Timeline {
     },
   });
   const S = story;
-  // ground position helper: walk to a stop
-  const walk = (to: { x: number; z: number }, dur: number, at?: number) => {
-    tl.to(S, { px: to.x, pz: to.z, speed: 1, duration: dur, ease: "none" }, at);
-    tl.to(S, { speed: 0, duration: 0.15 }, at === undefined ? ">" : (at as number) + dur);
+  let c = 0; // sequential cursor — every helper advances it
+  actAt = [];
+
+  const hold = (dur: number) => {
+    c += dur;
   };
+  const call = (fn: () => void) => {
+    tl.call(fn, undefined, c);
+  };
+  const tween = (vars: gsap.TweenVars, dur: number, ease = "power2.inOut") => {
+    tl.to(S, { ...vars, duration: dur, ease }, c);
+    c += dur;
+  };
+  const turn = (dir: number, dur = 0.3) => {
+    tl.to(S, { heading: dir, duration: dur, ease: "power2.inOut" }, c);
+    c += dur;
+  };
+  // walk = turn toward target + speed ramp + move + stop (no instant velocity)
+  const walk = (to: { x: number; y: number; z: number }, dur: number) => {
+    turn(headingTo(cur, to), 0.3);
+    tl.to(S, { speed: 1, duration: 0.25, ease: "power1.in" }, c);
+    c += 0.25;
+    tl.to(S, { px: to.x, pz: to.z, duration: dur, ease: "none" }, c);
+    c += dur;
+    tl.to(S, { speed: 0, duration: 0.3, ease: "power2.out" }, c);
+    c += 0.3;
+  };
+  // jump = turn + anticipation crouch + parabola + landing squash. All in one
+  // helper so every leap gets the same anticipation/overshoot treatment, and
+  // jumpT is driven by exactly one tween (tl.set, not a competing .to).
   const jump = (
     to: { x: number; y: number; z: number },
     dur: number,
     h: number,
-    at: number,
     opts: { flip?: boolean; superman?: boolean } = {},
   ) => {
-    tl.call(
-      () => {
-        S.heading = headingTo({ x: S.px, z: S.pz }, to);
-        S.pose = "jump";
-        S.squash = 1;
-      },
-      undefined,
-      at,
-    );
-    tl.to(S, { squash: 0, duration: 0.18, ease: "power2.out" }, at + 0.02);
-    tl.to(S, { px: to.x, pz: to.z, jumpT: 1, duration: dur, ease: "none" }, at);
-    tl.fromTo(S, { jumpT: 0, jumpH: h }, { jumpH: h, duration: dur, ease: "none" }, at);
-    if (opts.flip) tl.fromTo(S, { flip: 0 }, { flip: 1, duration: dur, ease: "power1.inOut" }, at);
-    tl.call(
-      () => {
-        S.fx.dust++;
-        S.py = to.y;
-        S.jumpT = 1;
-        S.jumpH = 0;
-        S.flip = 0;
-        S.pose = "land";
-        S.squash = 1;
-        sfx.click();
-      },
-      undefined,
-      at + dur,
-    );
-    tl.to(S, { squash: 0, duration: 0.3, ease: "elastic.out(1, 0.4)" }, at + dur + 0.02);
+    turn(headingTo(cur, to), 0.28);
+    call(() => {
+      S.pose = "prep";
+      S.squash = 1;
+    });
+    hold(0.28);
+    tl.to(S, { squash: 0, duration: 0.16, ease: "power2.out" }, c);
+    tl.set(S, { jumpT: 0, jumpH: h }, c);
+    const js = c;
+    tl.to(S, { px: to.x, pz: to.z, jumpT: 1, duration: dur, ease: "none" }, c);
+    c += dur;
+    if (opts.flip) tl.fromTo(S, { flip: 0 }, { flip: 1, duration: dur, ease: "power1.inOut" }, js);
+    call(() => {
+      S.fx.dust++;
+      S.py = to.y;
+      S.jumpT = 1;
+      S.jumpH = 0;
+      S.flip = 0;
+      S.pose = "land";
+      S.squash = 1;
+      sfx.click();
+    });
+    tl.to(S, { squash: 0, duration: 0.35, ease: "elastic.out(1, 0.45)" }, c);
+    c += 0.35;
   };
 
   /* ---------------- ACT 1 — Origins (house) ---------------- */
-  tl.call(() => {
+  actAt.push(0);
+  call(() => {
     S.px = STOPS.spawn.x;
     S.py = STOPS.spawn.y;
     S.pz = STOPS.spawn.z;
@@ -220,102 +247,104 @@ export function buildStoryTimeline(): gsap.core.Timeline {
     S.pose = "sleep";
     S.heading = 2.4;
   });
-  tl.to(S, { rise: 1, duration: 1.4, ease: "power2.inOut" }, 0.8);
-  tl.call(() => {
+  hold(0.8);
+  tween({ rise: 1 }, 1.4);
+  call(() => {
     S.pose = "idle";
-  }, undefined, 2.3);
-  // pet the cat
-  tl.call(() => {
+  });
+  hold(0.5);
+  call(() => {
     S.pose = "pet";
     toyStore.catPokes++;
     sfx.meow();
-  }, undefined, 3.4);
-  tl.to(S, { duration: 1.8 }); // hold the pet moment
-  tl.call(() => {
+  });
+  hold(1.8);
+  call(() => {
     S.pose = "idle";
-  }, undefined, 5.3);
+  });
+  hold(0.3);
   // level-up: ring + grow + backpack
-  tl.call(() => {
+  call(() => {
     S.pose = "prep";
-  }, undefined, 5.6);
-  tl.to(S.fx, { levelUp: 1, duration: 0.7, ease: "power2.out" }, 5.6);
-  tl.to(S, { scale: 0.78, duration: 1.3, ease: "power2.inOut" }, 5.7);
-  tl.to(S.props, { backpack: 1, duration: 0.5 }, 6.1);
-  tl.to(S.fx, { levelUp: 0, duration: 0.7, ease: "power2.in" }, 6.5);
-  tl.call(() => {
-    S.heading = headingTo(STOPS.spawn, STOPS.school);
-  }, undefined, 8.2);
-  tl.to(S, { duration: 1 }); // anticipation beat
+  });
+  tween({ fx: { ...S.fx, levelUp: 1 } }, 0.7, "power2.out");
+  tween({ scale: 0.78 }, 1.3);
+  tween({ props: { ...S.props, backpack: 1 } }, 0.5);
+  tween({ fx: { ...S.fx, levelUp: 0 } }, 0.7, "power2.in");
+  hold(0.3);
+
   /* ---------------- ACT 2 — School ---------------- */
-  jump(STOPS.school, 1.15, 2.6, 9.4, { superman: true });
-  walk({ x: STOPS.school.x, z: STOPS.school.z }, 0.7, 10.6);
-  // study: book up, tech cubes flow into him
-  tl.call(() => {
+  actAt.push(c);
+  let cur = STOPS.spawn;
+  jump(STOPS.school, 1.15, 2.6, { superman: true });
+  cur = STOPS.school;
+  walk({ x: cur.x, y: cur.y, z: cur.z }, 0.55);
+  call(() => {
     S.pose = "study";
     S.props.book = 1;
     S.fx.cubes = 1;
-  }, undefined, 11.5);
-  tl.to(S, { duration: 3.6 });
-  tl.call(() => {
+  });
+  hold(3.4);
+  call(() => {
     S.fx.cubes = 0;
     S.props.book = 0;
-  }, undefined, 15.2);
-  // graduation: cheer hop + cap + toss with golden sparkles
-  tl.call(() => {
+  });
+  hold(0.2);
+  call(() => {
     S.pose = "cheer";
     S.props.gradCap = 1;
     S.fx.sparkle++;
-    sfx.meow(); // playful chirp substitute
-  }, undefined, 15.8);
-  tl.to(S, { py: 0.55, duration: 0.3, yoyo: true, repeat: 1, ease: "power2.out" }, 15.9);
-  tl.to(S, { duration: 0.8 });
-  // cap toss: the cap itself is animated in boy.tsx from tossT-like beat
-  tl.call(() => {
+    sfx.meow();
+  });
+  tween({ py: 0.55 }, 0.3, "power2.out");
+  tween({ py: 0.3 }, 0.3, "power2.in");
+  hold(0.7);
+  call(() => {
     S.fx.sparkle++;
-  }, undefined, 17.3);
-  tl.to(S, { duration: 1.6 }); // bask in glory, look toward arcade
-  tl.call(() => {
-    S.heading = headingTo(STOPS.school, STOPS.arcade);
-  }, undefined, 18.6);
+  });
+  hold(1.5);
+  hold(0.4);
+
   /* ---------------- ACT 3 — Arcade ---------------- */
-  jump(STOPS.arcade, 1.25, 2.4, 19.4, { flip: true });
-  tl.call(() => {
+  actAt.push(c);
+  jump(STOPS.arcade, 1.25, 2.4, { flip: true });
+  cur = STOPS.arcade;
+  call(() => {
     S.pose = "idle";
     S.props.hoodie = 1;
-  }, undefined, 20.9);
-  walk({ x: STOPS.arcade.x + 0.55, z: STOPS.arcade.z + 0.75 }, 0.8, 21.0);
-  // dev mode at the joystick: type + neon confetti bursts
-  tl.call(() => {
+  });
+  walk({ x: cur.x + 0.55, y: 0.3, z: cur.z + 0.75 }, 0.6);
+  call(() => {
     S.pose = "type";
     S.fx.confetti++;
-  }, undefined, 22.4);
-  tl.to(S, { duration: 2.2 });
-  tl.call(() => {
+  });
+  hold(2.2);
+  call(() => {
     S.fx.confetti++;
-  }, undefined, 24.6);
-  tl.to(S, { duration: 1.6 }); // marquee blinking moment
-  tl.call(() => {
-    S.heading = headingTo(STOPS.arcade, STOPS.towerBase);
-  }, undefined, 25.6);
+  });
+  hold(1.4);
+  hold(0.4);
+
   /* ---------------- ACT 4 — Career towers ---------------- */
-  walk({ x: STOPS.towerBase.x - 0.6, z: STOPS.towerBase.z + 0.5 }, 1.3, 26.4);
-  tl.call(() => {
+  actAt.push(c);
+  cur = STOPS.towerBase;
+  walk({ x: cur.x - 0.6, y: 0.3, z: cur.z + 0.5 }, 1.1);
+  call(() => {
     S.props.glasses = 1;
     S.props.badge = 1;
     S.props.laptop = 1;
     S.pose = "idle";
-  }, undefined, 27.9);
-  // climb: ledge hop then rooftop
-  jump(STOPS.ledge, 0.85, 1.2, 28.6);
-  jump(STOPS.roof, 1.05, 1.6, 29.8);
-  // rooftop hero pose
-  tl.call(() => {
+  });
+  hold(0.5);
+  jump(STOPS.ledge, 0.85, 1.2);
+  jump(STOPS.roof, 1.05, 1.6);
+  call(() => {
     S.pose = "peace";
     S.fx.confetti++;
     S.fx.sparkle++;
     sfx.meow();
-  }, undefined, 31.2);
-  tl.to(S, { duration: 6 }); // hold the closing shot
+  });
+  hold(6);
 
   timeline = tl;
   return timeline;
@@ -326,20 +355,17 @@ export function buildStoryTimeline(): gsap.core.Timeline {
 /* ------------------------------------------------------------------ */
 
 export function startStory(actIndex = 0) {
-  const tl = buildStoryTimeline();
-  const at = STORY_ACTS[actIndex]?.at ?? 0;
-  if (!story.playing) {
-    tl.timeScale(1);
-    tl.play(0);
-    if (at > 0) tl.seek(at, false);
+  buildStoryTimeline();
+  if (actIndex === 0) {
+    timeline!.play(0);
     story.playing = true;
+    act = 0;
+    paused = false;
+    uiOpen = true;
+    emitUi();
   } else {
-    tl.seek(at, false);
+    seekAct(actIndex);
   }
-  act = actIndex;
-  paused = false;
-  uiOpen = true;
-  emitUi();
 }
 
 export function exitStory() {
@@ -349,9 +375,9 @@ export function exitStory() {
   timeline?.pause();
   // put the boy back on his feet at the house porch
   const S = story;
-  S.px = -2.7;
-  S.py = 0.3;
-  S.pz = 1.75;
+  S.px = STOPS.spawn.x;
+  S.py = STOPS.spawn.y;
+  S.pz = STOPS.spawn.z;
   S.scale = 0.78;
   S.rise = 1;
   S.pose = "idle";
@@ -381,9 +407,9 @@ export function togglePause() {
 }
 
 export function replayStory() {
-  const tl = buildStoryTimeline();
-  tl.timeScale(1);
-  tl.play(0);
+  buildStoryTimeline();
+  timeline!.timeScale(1);
+  timeline!.play(0);
   paused = false;
   story.playing = true;
   uiOpen = true;
@@ -393,14 +419,33 @@ export function replayStory() {
 
 export function seekAct(actIndex: number) {
   const tl = buildStoryTimeline();
-  if (!story.playing) {
-    story.playing = true;
-    uiOpen = true;
-  }
-  tl.play(STORY_ACTS[actIndex]?.at ?? 0);
-  paused = false;
+  story.playing = true;
+  uiOpen = true;
   act = actIndex;
+  paused = false;
   emitUi();
+
+  // glide the boy to the act entry point before handing control back —
+  // a raw tl.seek() would teleport him across the island
+  tl.pause();
+  const at = getActTimes()[actIndex] ?? 0;
+  const entries = [
+    { x: STOPS.spawn.x, z: STOPS.spawn.z },
+    { x: STOPS.school.x, z: STOPS.school.z },
+    { x: STOPS.arcade.x, z: STOPS.arcade.z },
+    { x: STOPS.towerBase.x, z: STOPS.towerBase.z },
+  ];
+  const entry = entries[actIndex] ?? entries[0];
+  gsap.to(story, {
+    px: entry.x,
+    pz: entry.z,
+    py: 0.3,
+    duration: 0.55,
+    ease: "power2.inOut",
+    onComplete: () => {
+      tl.play(at, false);
+    },
+  });
 }
 
 export function storyTime(): number {

@@ -40,15 +40,23 @@ export function StoryCamera() {
     const act = storyUiAct();
     const shot = SHOTS[act] ?? SHOTS[0];
 
+    const airborne = story.jumpT < 1;
+    // pull back while airborne so the jump stays in frame
+    const pull = airborne ? 1.55 : 1;
+
     const bx = story.px;
-    const by = story.py + 0.6 * story.scale + (story.jumpT < 1 ? story.jumpH * story.jumpT * 0.6 : 0);
+    const by = story.py + 0.6 * story.scale + (airborne ? story.jumpH * story.jumpT * 0.6 : 0);
     const bz = story.pz;
 
     // handheld micro-drift
     const hx = Math.sin(t * 0.9) * 0.05 + Math.sin(t * 2.3) * 0.02;
     const hy = Math.cos(t * 1.1) * 0.04;
 
-    target.current.set(bx + shot.off[0] + hx, by + shot.off[1] + hy, bz + shot.off[2]);
+    target.current.set(
+      bx + shot.off[0] * pull + hx,
+      by + shot.off[1] * pull + hy,
+      bz + shot.off[2] * pull,
+    );
     const k = 1 - Math.exp(-2.4 * dt);
     pos.current.lerp(target.current, k);
     camera.position.copy(pos.current);
