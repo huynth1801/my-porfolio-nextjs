@@ -6,6 +6,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { journey, tourState } from "@/lib/journey-store";
 import { story } from "./story-store";
 import { panelStore } from "@/lib/panel-store";
+import { flappy } from "./flappy";
 import type { PanelKey } from "@/lib/content";
 
 /** Drag distance of the current/last pointer gesture — hotspots read this
@@ -128,7 +129,13 @@ export function CameraRig() {
     let pitchTarget: number;
     let radiusTarget: number;
 
-    if (focus) {
+    if (flappy.isOpen) {
+      // Zoom right into the retro arcade entrance & screen
+      yawTarget = shortestAngle(yaw.current, -0.8);
+      pitchTarget = 0.14;
+      radiusTarget = 2.4;
+      pivotTarget.current.set(-3.86, 0.85, -1.56);
+    } else if (focus) {
       // Zoom and focus into district close-up for opened panel
       yawTarget = shortestAngle(yaw.current, focus.yaw);
       pitchTarget = focus.pitch;

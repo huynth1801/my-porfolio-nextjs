@@ -8,6 +8,8 @@ import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { story, type StoryPose } from "./story-store";
+import { proximityStore, PROXIMITY_TARGETS, type ProximityTarget } from "@/lib/proximity-store";
+import { flappy } from "./flappy";
 
 useGLTF.preload("/models/player.glb");
 
@@ -245,6 +247,10 @@ export function BoyCharacter() {
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (isInputActive()) return;
+      if (flappy.isOpen) return;
+      if (e.code === "KeyE") {
+        proximityStore.triggerActive();
+      }
       if (e.code === "KeyW" || e.code === "ArrowUp") keys.current.forward = true;
       if (e.code === "KeyS" || e.code === "ArrowDown") keys.current.backward = true;
       if (e.code === "KeyA" || e.code === "ArrowLeft") keys.current.left = true;
@@ -288,7 +294,7 @@ export function BoyCharacter() {
     const s = story;
 
     /* ---------- Keyboard locomotion during free exploration ---------- */
-    if (!s.playing) {
+    if (!s.playing && !flappy.isOpen) {
       const k = keys.current;
       let dx = 0;
       let dz = 0;
@@ -310,16 +316,40 @@ export function BoyCharacter() {
         const targetHeading = Math.atan2(dx, dz);
         s.heading = targetHeading;
 
-        const nextX = s.px + dx * moveSpeed * dt;
-        const nextZ = s.pz + dz * moveSpeed * dt;
-        // Keep within island bounds
-        if (Math.hypot(nextX, nextZ) < 5.6) {
-          s.px = nextX;
-          s.pz = nextZ;
+        if (s.py > 3.0) {
+          // Constrain movement on the rooftop observatory
+          s.px = Math.max(2.55, Math.min(3.15, s.px + dx * moveSpeed * dt));
+          s.pz = Math.max(-1.15, Math.min(-0.45, s.pz + dz * moveSpeed * dt));
+        } else {
+          const nextX = s.px + dx * moveSpeed * dt;
+          const nextZ = s.pz + dz * moveSpeed * dt;
+          // Keep within island bounds
+          if (Math.hypot(nextX, nextZ) < 5.6) {
+            s.px = nextX;
+            s.pz = nextZ;
+          }
         }
       } else {
         s.speed = Math.max(0, s.speed - dt * 5);
       }
+
+      // Detect closest interactive proximity target
+      let closest: ProximityTarget | null = null;
+      let minDistance = Infinity;
+      for (const target of PROXIMITY_TARGETS) {
+        if (target.check && !target.check(s.py)) continue;
+        const dist = Math.hypot(s.px - target.pos[0], s.pz - target.pos[2]);
+        if (dist <= target.radius && dist < minDistance) {
+          minDistance = dist;
+          closest = target;
+        }
+      }
+      proximityStore.setActive(closest);
+    } else if (flappy.isOpen) {
+      s.speed = 0;
+      proximityStore.setActive(null);
+    } else {
+      proximityStore.setActive(null);
     }
 
     /* ---------- World Transform ---------- */

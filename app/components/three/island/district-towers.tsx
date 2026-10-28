@@ -65,26 +65,103 @@ export function DistrictTowers() {
               </mesh>
             )),
           )}
-          {/* Upper setback crown */}
-          <mesh position={[0, 3.3, 0]} castShadow>
-            <boxGeometry args={[0.75, 0.5, 0.75]} />
-            <meshStandardMaterial color="#0369a1" metalness={0.7} roughness={0.2} />
-          </mesh>
-          {/* Spire mast */}
-          <mesh position={[0, 3.8, 0]} castShadow>
-            <cylinderGeometry args={[0.02, 0.05, 0.8, 5]} />
-            <meshStandardMaterial color="#e2e8f0" metalness={0.9} roughness={0.2} />
-          </mesh>
-          {/* Pulsing aviation beacon tip */}
-          <mesh position={[0, 4.22, 0]}>
-            <sphereGeometry args={[0.065, 8, 8]} />
-            <meshStandardMaterial
-              ref={spireLightRef}
-              color="#38bdf8"
-              emissive="#0284c7"
-              emissiveIntensity={rig.neon * 2.8}
-            />
-          </mesh>
+          {/* Ground Floor Elevator Entrance */}
+          <group position={[0, 0.35, 0.51]}>
+            <mesh>
+              <boxGeometry args={[0.42, 0.68, 0.04]} />
+              <meshStandardMaterial color="#1e293b" metalness={0.8} roughness={0.2} />
+            </mesh>
+            {/* Sliding door seam */}
+            <mesh position={[0, 0, 0.022]}>
+              <planeGeometry args={[0.015, 0.6]} />
+              <meshBasicMaterial color="#0f172a" />
+            </mesh>
+            {/* Floor indicator display */}
+            <mesh position={[0, 0.28, 0.025]}>
+              <planeGeometry args={[0.26, 0.07]} />
+              <meshStandardMaterial
+                color="#38bdf8"
+                emissive="#0284c7"
+                emissiveIntensity={rig.neon * 2.8}
+              />
+            </mesh>
+            {/* Elevator call button */}
+            <mesh position={[0.24, -0.02, 0.02]}>
+              <cylinderGeometry args={[0.016, 0.016, 0.01, 8]} />
+              <meshStandardMaterial
+                color="#38bdf8"
+                emissive="#38bdf8"
+                emissiveIntensity={rig.neon * 3.0}
+              />
+            </mesh>
+          </group>
+
+          {/* Upper setback crown & Sky Observatory Deck */}
+          <group position={[0, 3.325, 0]}>
+            {/* Observatory deck slab */}
+            <mesh castShadow receiveShadow>
+              <boxGeometry args={[0.96, 0.45, 0.96]} />
+              <meshStandardMaterial color="#0369a1" metalness={0.7} roughness={0.2} />
+            </mesh>
+
+            {/* Safety glass balustrade around edges */}
+            {[-0.46, 0.46].map((z, idx) => (
+              <mesh key={`rail-z-${idx}`} position={[0, 0.34, z]}>
+                <boxGeometry args={[0.92, 0.22, 0.02]} />
+                <meshStandardMaterial
+                  color="#bae6fd"
+                  emissive="#0284c7"
+                  emissiveIntensity={rig.neon * 0.8}
+                  transparent
+                  opacity={0.65}
+                />
+              </mesh>
+            ))}
+            {[-0.46, 0.46].map((x, idx) => (
+              <mesh key={`rail-x-${idx}`} position={[x, 0.34, 0]}>
+                <boxGeometry args={[0.02, 0.22, 0.92]} />
+                <meshStandardMaterial
+                  color="#bae6fd"
+                  emissive="#0284c7"
+                  emissiveIntensity={rig.neon * 0.8}
+                  transparent
+                  opacity={0.65}
+                />
+              </mesh>
+            ))}
+
+            {/* Rooftop Elevator Penthouse */}
+            <group position={[0, 0.42, -0.3]}>
+              <mesh castShadow>
+                <boxGeometry args={[0.38, 0.4, 0.26]} />
+                <meshStandardMaterial color="#0f172a" metalness={0.8} roughness={0.3} />
+              </mesh>
+              {/* Rooftop elevator door frame */}
+              <mesh position={[0, -0.04, 0.132]}>
+                <planeGeometry args={[0.22, 0.3]} />
+                <meshStandardMaterial
+                  color="#38bdf8"
+                  emissive="#0284c7"
+                  emissiveIntensity={rig.neon * 1.5}
+                />
+              </mesh>
+              {/* Spire mast atop penthouse */}
+              <mesh position={[0, 0.55, 0]} castShadow>
+                <cylinderGeometry args={[0.02, 0.045, 0.7, 5]} />
+                <meshStandardMaterial color="#e2e8f0" metalness={0.9} roughness={0.2} />
+              </mesh>
+              {/* Pulsing aviation beacon tip */}
+              <mesh position={[0, 0.92, 0]}>
+                <sphereGeometry args={[0.065, 8, 8]} />
+                <meshStandardMaterial
+                  ref={spireLightRef}
+                  color="#38bdf8"
+                  emissive="#0284c7"
+                  emissiveIntensity={rig.neon * 2.8}
+                />
+              </mesh>
+            </group>
+          </group>
 
           {/* Luminous window bands */}
           {[0.6, 1.1, 1.6, 2.1, 2.6].map((y, row) => (
@@ -232,6 +309,22 @@ export function DistrictTowers() {
               />
             </mesh>
           ))}
+        </group>
+
+        {/* Plaza Entrance Elevator Totem */}
+        <group position={[0.05, 0.3, 1.15]}>
+          <mesh castShadow>
+            <boxGeometry args={[0.18, 0.4, 0.08]} />
+            <meshStandardMaterial color="#0f172a" metalness={0.8} roughness={0.2} />
+          </mesh>
+          <mesh position={[0, 0.04, 0.042]}>
+            <planeGeometry args={[0.14, 0.24]} />
+            <meshStandardMaterial
+              color="#38bdf8"
+              emissive="#0284c7"
+              emissiveIntensity={rig.neon * 2.2}
+            />
+          </mesh>
         </group>
       </Hotspot>
     </group>

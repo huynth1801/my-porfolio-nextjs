@@ -5,7 +5,7 @@ import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { profile, type PanelKey } from "@/lib/content";
 import { visitDistrict, noteCatPoke } from "@/lib/achievements";
-import { flappyPress } from "./flappy";
+import { flappyOpen } from "./flappy";
 import { panelStore } from "@/lib/panel-store";
 import { sfx } from "@/lib/audio";
 import { hotspotStore, toyStore } from "./hotspot-store";
@@ -96,7 +96,7 @@ export function Hotspot({
           }
           if (target === "flappy") {
             sfx.click();
-            flappyPress();
+            flappyOpen();
             return;
           }
           sfx.click();

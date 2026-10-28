@@ -7,6 +7,7 @@ import { Hotspot } from "./hotspots";
 import { Cat } from "./cat";
 import { getRig } from "./lighting";
 import { boot } from "./boot";
+import { useProximity } from "@/lib/proximity-store";
 
 /** Low-poly cartoon smoke puffs rising from the chimney */
 function ChimneySmoke() {
@@ -56,12 +57,36 @@ function ChimneySmoke() {
  */
 export function DistrictHouse() {
   const windowMat = useRef<THREE.MeshStandardMaterial>(null!);
+  const mailFlagRef = useRef<THREE.Mesh>(null!);
+  const envelopeRef = useRef<THREE.Mesh>(null!);
   const rig = getRig();
+  const { mailboxOpen } = useProximity();
 
-  useFrame(() => {
+  useFrame((_, delta) => {
+    const dt = Math.min(delta, 0.05);
     if (windowMat.current) {
       const b = boot.value;
       windowMat.current.emissiveIntensity = rig.neon * b * 2.4;
+    }
+    if (mailFlagRef.current) {
+      const targetAngle = mailboxOpen ? 1.55 : 0.4;
+      mailFlagRef.current.rotation.z = THREE.MathUtils.damp(
+        mailFlagRef.current.rotation.z,
+        targetAngle,
+        8,
+        dt,
+      );
+    }
+    if (envelopeRef.current) {
+      const targetY = mailboxOpen ? 0.48 : 0.35;
+      const targetScale = mailboxOpen ? 1 : 0.001;
+      envelopeRef.current.position.y = THREE.MathUtils.damp(
+        envelopeRef.current.position.y,
+        targetY,
+        8,
+        dt,
+      );
+      envelopeRef.current.scale.setScalar(targetScale);
     }
   });
 
@@ -214,9 +239,15 @@ export function DistrictHouse() {
           <boxGeometry args={[0.16, 0.14, 0.24]} />
           <meshStandardMaterial color="#0284c7" roughness={0.4} metalness={0.4} />
         </mesh>
-        <mesh position={[0.09, 0.47, -0.04]} rotation={[0, 0, 0.4]}>
+        {/* Animated Mailbox Flag */}
+        <mesh ref={mailFlagRef} position={[0.09, 0.47, -0.04]} rotation={[0, 0, 0.4]}>
           <boxGeometry args={[0.02, 0.1, 0.04]} />
           <meshStandardMaterial color="#ef4444" roughness={0.4} />
+        </mesh>
+        {/* Golden peek envelope emerging on interaction */}
+        <mesh ref={envelopeRef} position={[0, 0.35, 0.08]} rotation={[-0.2, 0, 0]}>
+          <boxGeometry args={[0.11, 0.015, 0.13]} />
+          <meshStandardMaterial color="#fef08a" roughness={0.3} emissive="#fef08a" emissiveIntensity={0.25} />
         </mesh>
       </Hotspot>
 

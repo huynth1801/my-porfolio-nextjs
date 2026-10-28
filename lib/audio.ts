@@ -283,6 +283,79 @@ class Sfx {
     o.stop(t + 0.6);
     lfo.stop(t + 0.6);
   }
+
+  /** pleasant harmonic chime for elevator / rewards */
+  chime() {
+    const ctx = this.ensure();
+    if (!ctx) return;
+    if (ctx.state === "suspended") void ctx.resume();
+    const t = ctx.currentTime;
+    [1046.5, 1318.51, 1567.98].forEach((freq, i) => {
+      const o = ctx.createOscillator();
+      o.type = "sine";
+      o.frequency.setValueAtTime(freq, t + i * 0.08);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.08, t + i * 0.08);
+      g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.08 + 0.4);
+      o.connect(g).connect(ctx.destination);
+      o.start(t + i * 0.08);
+      o.stop(t + i * 0.08 + 0.45);
+    });
+  }
+
+  /** flap sound: snappy retro spring chirp */
+  flap() {
+    const ctx = this.ensure();
+    if (!ctx) return;
+    if (ctx.state === "suspended") void ctx.resume();
+    const t = ctx.currentTime;
+    const o = ctx.createOscillator();
+    o.type = "sine";
+    o.frequency.setValueAtTime(360, t);
+    o.frequency.exponentialRampToValueAtTime(740, t + 0.07);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.09, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+    o.connect(g).connect(ctx.destination);
+    o.start(t);
+    o.stop(t + 0.09);
+  }
+
+  /** score point sound: bright double ping */
+  point() {
+    const ctx = this.ensure();
+    if (!ctx) return;
+    if (ctx.state === "suspended") void ctx.resume();
+    const t = ctx.currentTime;
+    const o = ctx.createOscillator();
+    o.type = "sine";
+    o.frequency.setValueAtTime(987.77, t); // B5
+    o.frequency.setValueAtTime(1318.51, t + 0.06); // E6
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.08, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+    o.connect(g).connect(ctx.destination);
+    o.start(t);
+    o.stop(t + 0.22);
+  }
+
+  /** hit / crash sound: retro thud */
+  hit() {
+    const ctx = this.ensure();
+    if (!ctx) return;
+    if (ctx.state === "suspended") void ctx.resume();
+    const t = ctx.currentTime;
+    const o = ctx.createOscillator();
+    o.type = "sawtooth";
+    o.frequency.setValueAtTime(150, t);
+    o.frequency.exponentialRampToValueAtTime(35, t + 0.16);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.12, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+    o.connect(g).connect(ctx.destination);
+    o.start(t);
+    o.stop(t + 0.2);
+  }
 }
 
 export const lofi = new LofiEngine();
