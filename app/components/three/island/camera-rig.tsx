@@ -142,9 +142,9 @@ export function CameraRig() {
 
       // On desktop, shift pivot to the right in camera view so desk/boy are framed in the open left 55%
       if (isMobile) {
-        pivotTarget.current.set(-2.65, 0.44, 3.25);
+        pivotTarget.current.set(-2.66, 0.44, 3.22);
       } else {
-        pivotTarget.current.set(-2.45, 0.44, 2.63);
+        pivotTarget.current.set(-2.47, 0.44, 2.65);
       }
     } else if (flappy.isOpen) {
       // Zoom right into the retro arcade entrance & screen

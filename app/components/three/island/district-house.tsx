@@ -140,56 +140,56 @@ function DevDesk() {
   return (
     <group>
       {/* Wooden Table Top */}
-      <mesh position={[0, 0.32, 0]} castShadow receiveShadow>
-        <boxGeometry args={[0.52, 0.028, 0.3]} />
+      <mesh position={[0, 0.28, 0]} castShadow receiveShadow>
+        <boxGeometry args={[0.52, 0.024, 0.3]} />
         <meshStandardMaterial color="#6b4423" roughness={0.7} />
       </mesh>
 
       {/* Under-desk Drawer */}
-      <mesh position={[0.12, 0.28, 0]} castShadow receiveShadow>
-        <boxGeometry args={[0.18, 0.05, 0.26]} />
+      <mesh position={[0.12, 0.24, 0]} castShadow receiveShadow>
+        <boxGeometry args={[0.18, 0.045, 0.26]} />
         <meshStandardMaterial color="#553518" roughness={0.8} />
       </mesh>
       {/* Drawer brass handle */}
-      <mesh position={[0.12, 0.28, 0.135]}>
+      <mesh position={[0.12, 0.24, 0.135]}>
         <boxGeometry args={[0.04, 0.008, 0.01]} />
         <meshStandardMaterial color="#fcd34d" metalness={0.8} roughness={0.3} />
       </mesh>
 
       {/* 4 Wooden Table Legs */}
       {[
-        [-0.23, 0.16, -0.12],
-        [0.23, 0.16, -0.12],
-        [-0.23, 0.16, 0.12],
-        [0.23, 0.16, 0.12],
+        [-0.23, 0.14, -0.12],
+        [0.23, 0.14, -0.12],
+        [-0.23, 0.14, 0.12],
+        [0.23, 0.14, 0.12],
       ].map(([x, y, z], i) => (
         <mesh key={i} position={[x, y, z]} castShadow>
-          <cylinderGeometry args={[0.014, 0.014, 0.32, 5]} />
+          <cylinderGeometry args={[0.014, 0.014, 0.28, 5]} />
           <meshStandardMaterial color="#553518" roughness={0.8} />
         </mesh>
       ))}
 
-      {/* Stool with cushion */}
-      <group position={[0, 0, 0.36]}>
-        <mesh position={[0, 0.17, 0]} castShadow>
+      {/* Stool with cushion (tucked in close to desk) */}
+      <group position={[0, 0, 0.22]}>
+        <mesh position={[0, 0.16, 0]} castShadow>
           <cylinderGeometry args={[0.09, 0.09, 0.024, 12]} />
           <meshStandardMaterial color="#1e293b" roughness={0.8} />
         </mesh>
         {[
-          [-0.06, 0.085, -0.06],
-          [0.06, 0.085, -0.06],
-          [-0.06, 0.085, 0.06],
-          [0.06, 0.085, 0.06],
+          [-0.06, 0.08, -0.06],
+          [0.06, 0.08, -0.06],
+          [-0.06, 0.08, 0.06],
+          [0.06, 0.08, 0.06],
         ].map(([x, y, z], i) => (
           <mesh key={i} position={[x, y, z]} castShadow>
-            <cylinderGeometry args={[0.009, 0.009, 0.17, 5]} />
+            <cylinderGeometry args={[0.009, 0.009, 0.16, 5]} />
             <meshStandardMaterial color="#553518" roughness={0.8} />
           </mesh>
         ))}
       </group>
 
-      {/* Laptop (Enlarged & ergonomic for 3D terminal reading) */}
-      <group position={[-0.03, 0.334, 0.02]}>
+      {/* Laptop (Ergonomic height & position right under hands) */}
+      <group position={[0, 0.292, 0.06]}>
         {/* Base chassis */}
         <mesh position={[0, 0.008, 0]} castShadow>
           <boxGeometry args={[0.24, 0.014, 0.16]} />
@@ -238,7 +238,7 @@ function DevDesk() {
       </group>
 
       {/* Cozy Desk Gooseneck Lamp */}
-      <group position={[-0.19, 0.334, -0.06]}>
+      <group position={[-0.19, 0.292, -0.06]}>
         {/* Base */}
         <mesh position={[0, 0.006, 0]} castShadow>
           <cylinderGeometry args={[0.028, 0.028, 0.012, 8]} />
@@ -269,7 +269,7 @@ function DevDesk() {
       </group>
 
       {/* Steaming Coffee Mug */}
-      <group position={[0.17, 0.334, 0.04]}>
+      <group position={[0.17, 0.292, 0.04]}>
         {/* Mug body */}
         <mesh position={[0, 0.022, 0]} castShadow>
           <cylinderGeometry args={[0.02, 0.016, 0.044, 10]} />
@@ -304,7 +304,7 @@ function DevDesk() {
       </group>
 
       {/* Tiny Succulent Pot on Desk */}
-      <group position={[0.18, 0.334, -0.08]}>
+      <group position={[0.18, 0.292, -0.08]}>
         <mesh position={[0, 0.015, 0]} castShadow>
           <cylinderGeometry args={[0.018, 0.013, 0.03, 8]} />
           <meshStandardMaterial color="#c2410c" roughness={0.8} />

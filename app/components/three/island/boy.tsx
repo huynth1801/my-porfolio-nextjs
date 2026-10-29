@@ -451,6 +451,10 @@ export function BoyCharacter() {
     /* ---------- Typing pose: Seated upright at laptop with hands tapping keys ---------- */
     if (s.pose === "type") {
       const t = state.clock.elapsedTime;
+      const leftArm = (scene.getObjectByName("mixamorigLeftArm") ||
+        scene.getObjectByName("mixamorig:LeftArm")) as THREE.Bone | null;
+      const rightArm = (scene.getObjectByName("mixamorigRightArm") ||
+        scene.getObjectByName("mixamorig:RightArm")) as THREE.Bone | null;
       const leftForeArm = (scene.getObjectByName("mixamorigLeftForeArm") ||
         scene.getObjectByName("mixamorig:LeftForeArm")) as THREE.Bone | null;
       const rightForeArm = (scene.getObjectByName("mixamorigRightForeArm") ||
@@ -469,22 +473,32 @@ export function BoyCharacter() {
         head.rotation.x = -0.22;
       }
 
-      // Forearms angled gently forward toward keyboard
-      if (leftForeArm) {
-        leftForeArm.rotation.x = -0.45;
+      // Upper arms reach forward and inward toward laptop keyboard on the table
+      if (leftArm) {
+        leftArm.rotation.z += 0.44;
+        leftArm.rotation.x += 0.12;
       }
-      if (rightForeArm) {
-        rightForeArm.rotation.x = -0.45;
+      if (rightArm) {
+        rightArm.rotation.z -= 0.44;
+        rightArm.rotation.x += 0.12;
       }
 
-      // Alternating rhythmic tap of hands typing on keys
+      // Forearms rest horizontally directly on the tabletop at keyboard height
+      if (leftForeArm) {
+        leftForeArm.rotation.z += 0.15;
+      }
+      if (rightForeArm) {
+        rightForeArm.rotation.z -= 0.15;
+      }
+
+      // Alternating rhythmic tap of hands and fingers directly onto the keyboard keys
       const tapL = Math.sin(t * 18);
       const tapR = Math.sin(t * 18 + Math.PI);
       if (leftHand) {
-        leftHand.rotation.x = 0.15 + tapL * 0.12;
+        leftHand.rotation.x = -0.2 + tapL * 0.14;
       }
       if (rightHand) {
-        rightHand.rotation.x = 0.15 + tapR * 0.12;
+        rightHand.rotation.x = -0.2 + tapR * 0.14;
       }
     }
   });

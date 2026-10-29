@@ -76,13 +76,13 @@ export function openTerminal() {
   state.isOpen = true;
   story.pose = "type";
   // Smoothly glide onto the desk stool facing the 3D laptop
-  const dist = Math.hypot(story.px - -2.58, story.pz - 3.43);
+  const dist = Math.hypot(story.px - -2.632, story.pz - 3.297);
   const dur = dist < 1.2 ? 0.35 : dist < 4 ? 0.5 : 0.65;
   gsap.to(story, {
-    px: -2.58,
-    pz: 3.43,
+    px: -2.632,
+    pz: 3.297,
     py: 0.32,
-    heading: -2.704,
+    heading: -2.79,
     duration: dur,
     ease: "power2.out",
   });
