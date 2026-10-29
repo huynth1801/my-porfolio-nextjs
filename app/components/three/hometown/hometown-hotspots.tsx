@@ -68,9 +68,12 @@ export const HOMETOWN_HOTSPOTS: HometownHotspotData[] = [
 type Props = {
   activeId: HotspotId | null;
   onSelect: (hotspot: HometownHotspotData) => void;
+  visible?: boolean;
 };
 
-export function HometownHotspots({ activeId, onSelect }: Props) {
+export function HometownHotspots({ activeId, onSelect, visible = true }: Props) {
+  if (!visible) return null;
+
   return (
     <group>
       {HOMETOWN_HOTSPOTS.map((spot) => (

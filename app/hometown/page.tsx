@@ -130,6 +130,7 @@ export default function HometownPage() {
           desiredTarget={cameraTarget}
           isTransitioning={isTransitioning}
           activeHotspotId={activeHotspot?.id || null}
+          hideHotspots={showSpecialties || showPhotoRef}
           onSelectHotspot={handleSelectHotspot}
           onTransitionEnd={() => setIsTransitioning(false)}
         />
@@ -283,7 +284,7 @@ export default function HometownPage() {
 
       {/* Specialties Modal / Drawer */}
       {showSpecialties && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
           <div
             className="relative w-full max-w-3xl rounded-3xl border border-amber-500/40 bg-gradient-to-b from-[#241108] to-[#140803] p-5 sm:p-7 shadow-2xl max-h-[90vh] overflow-y-auto"
             role="dialog"
@@ -397,7 +398,7 @@ export default function HometownPage() {
 
       {/* Photo Reference Modal */}
       {showPhotoRef && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
           <div
             className="relative w-full max-w-2xl rounded-3xl border border-amber-500/40 bg-[#1e0d06] p-4 sm:p-6 shadow-2xl"
             role="dialog"

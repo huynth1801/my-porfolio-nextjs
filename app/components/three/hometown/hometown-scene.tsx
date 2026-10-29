@@ -15,6 +15,7 @@ type HometownSceneProps = {
   desiredTarget: [number, number, number];
   isTransitioning: boolean;
   activeHotspotId: HotspotId | null;
+  hideHotspots?: boolean;
   onSelectHotspot: (spot: HometownHotspotData) => void;
   onTransitionEnd?: () => void;
 };
@@ -34,6 +35,7 @@ export function HometownScene({
   desiredTarget,
   isTransitioning,
   activeHotspotId,
+  hideHotspots = false,
   onSelectHotspot,
   onTransitionEnd,
 }: HometownSceneProps) {
@@ -61,7 +63,11 @@ export function HometownScene({
           <RiverLandscape />
 
           {/* Interactive 3D Heritage Markers */}
-          <HometownHotspots activeId={activeHotspotId} onSelect={onSelectHotspot} />
+          <HometownHotspots
+            activeId={activeHotspotId}
+            onSelect={onSelectHotspot}
+            visible={!hideHotspots}
+          />
 
           {/* Smooth Camera Rig & Orbit Controls */}
           <HometownCameraRig
