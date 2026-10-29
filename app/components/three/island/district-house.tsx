@@ -219,8 +219,10 @@ function DevDesk() {
               map={terminalTex}
               emissiveMap={terminalTex}
               emissive="#ffffff"
-              emissiveIntensity={2.0}
-              roughness={0.2}
+              emissiveIntensity={2.5}
+              roughness={0.15}
+              toneMapped={false}
+              side={THREE.DoubleSide}
             />
           </mesh>
           {/* Screen Light illuminating the desk & keyboard */}

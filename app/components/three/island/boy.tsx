@@ -297,7 +297,7 @@ export function BoyCharacter() {
     const s = story;
 
     /* ---------- Keyboard locomotion during free exploration ---------- */
-    if (!s.playing && !flappy.isOpen) {
+    if (!s.playing && !flappy.isOpen && !getTerminalSnapshot().isOpen) {
       const k = keys.current;
       let dx = 0;
       let dz = 0;

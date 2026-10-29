@@ -14,6 +14,7 @@ import {
 import { sfx } from "@/lib/audio";
 import { Terminal, X, Sparkles, CornerDownLeft } from "lucide-react";
 import { SittingTypingBoy } from "./sitting-typing-boy";
+import { dragState } from "@/app/components/three/island/camera-rig";
 
 const QUICK_COMMANDS = [
   { label: "help", cmd: "help", desc: "Tất cả lệnh" },
@@ -157,9 +158,16 @@ export function TerminalOverlay() {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center md:justify-end p-3 sm:p-6 md:pr-10 bg-black/40 backdrop-blur-[2px] pointer-events-auto">
-          {/* Subtle backdrop dismiss */}
-          <div className="absolute inset-0 -z-10" onClick={handleClose} />
+        <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center md:justify-end p-3 sm:p-6 md:pr-8 lg:pr-12">
+          {/* Transparent dismiss area for outside clicks (zero dark tint, zero blur over 3D world) */}
+          <div
+            className="absolute inset-0 pointer-events-auto"
+            onClick={() => {
+              if (dragState.moved < 6) {
+                handleClose();
+              }
+            }}
+          />
 
           {/* Full Interactive Terminal Window */}
           <motion.div
@@ -167,7 +175,7 @@ export function TerminalOverlay() {
             animate={{ opacity: 1, scale: 1, x: 0 }}
             exit={{ opacity: 0, scale: 0.94, x: 25 }}
             transition={{ type: "spring", stiffness: 360, damping: 28 }}
-            className={`relative flex h-[76vh] max-h-[580px] w-full max-w-lg lg:max-w-xl flex-col rounded-2xl border bg-black/90 font-mono text-xs sm:text-sm ${currentTheme.windowBorder} ${currentTheme.glowShadow}`}
+            className={`pointer-events-auto relative flex h-[76vh] max-h-[580px] w-full max-w-lg lg:max-w-xl flex-col rounded-2xl border bg-black/92 backdrop-blur-xl font-mono text-xs sm:text-sm ${currentTheme.windowBorder} ${currentTheme.glowShadow}`}
           >
             {/* Cute Sitting Typing Dev Mascot perched atop the CRT Monitor Screen */}
             <div className="absolute -top-15 right-8 sm:right-14 z-40 scale-85 sm:scale-100 origin-bottom pointer-events-auto">
