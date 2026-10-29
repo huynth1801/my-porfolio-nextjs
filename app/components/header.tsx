@@ -13,6 +13,11 @@ export function Header() {
   const pathname = usePathname();
   const [musicOn, setMusicOn] = useState(false);
 
+  // Dedicated full-screen controls on /hometown page
+  if (pathname === "/hometown") {
+    return null;
+  }
+
   const toggleMusic = async () => {
     const on = await lofi.toggle();
     setMusicOn(on);
@@ -70,6 +75,16 @@ export function Header() {
           >
             CV
           </a>
+
+          {/* Hometown Mang Thit 3D Experience */}
+          <Link
+            href="/hometown"
+            className="group flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 sm:px-3 py-1 text-xs font-medium text-amber-300 transition-all duration-200 hover:border-amber-400 hover:bg-amber-500/20 hover:text-amber-200"
+            title="Khám phá Lò gốm Mang Thít 3D & Đặc sản Vĩnh Long"
+          >
+            <span className="text-xs">🏺</span>
+            <span className="hidden xs:inline sm:inline">Quê hương</span>
+          </Link>
 
           {/* Contact Pill Button */}
           <Link
