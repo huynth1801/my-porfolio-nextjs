@@ -7,6 +7,7 @@ import { journey, tourState } from "@/lib/journey-store";
 import { story } from "./story-store";
 import { panelStore } from "@/lib/panel-store";
 import { flappy } from "./flappy";
+import { getTerminalSnapshot } from "@/lib/terminal-store";
 import type { PanelKey } from "@/lib/content";
 
 /** Drag distance of the current/last pointer gesture — hotspots read this
@@ -129,7 +130,15 @@ export function CameraRig() {
     let pitchTarget: number;
     let radiusTarget: number;
 
-    if (flappy.isOpen) {
+    const term = getTerminalSnapshot();
+
+    if (term.isOpen) {
+      // Zoom close into 3D laptop screen & boy sitting at desk
+      yawTarget = shortestAngle(yaw.current, 0.38);
+      pitchTarget = 0.28;
+      radiusTarget = 1.45;
+      pivotTarget.current.set(-2.7, 0.65, 3.16);
+    } else if (flappy.isOpen) {
       // Zoom right into the retro arcade entrance & screen
       yawTarget = shortestAngle(yaw.current, -0.8);
       pitchTarget = 0.14;

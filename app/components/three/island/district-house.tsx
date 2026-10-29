@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { Hotspot } from "./hotspots";
@@ -8,6 +8,8 @@ import { Cat } from "./cat";
 import { getRig } from "./lighting";
 import { boot } from "./boot";
 import { useProximity } from "@/lib/proximity-store";
+import { createTerminalCanvas, drawTerminalToCanvas } from "./terminal-canvas";
+import { getTerminalSnapshot } from "@/lib/terminal-store";
 
 /** Low-poly cartoon smoke puffs rising from the chimney */
 function ChimneySmoke() {
@@ -78,6 +80,18 @@ function ChimneySmoke() {
 function DevDesk() {
   const steam1 = useRef<THREE.Mesh>(null!);
   const steam2 = useRef<THREE.Mesh>(null!);
+  const screenLightRef = useRef<THREE.PointLight>(null!);
+  const lastBlink = useRef(0);
+  const cursorVis = useRef(true);
+
+  const terminalCanvas = useMemo(() => createTerminalCanvas(), []);
+  const terminalTex = useMemo(() => {
+    const tex = new THREE.CanvasTexture(terminalCanvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
+  }, [terminalCanvas]);
+
+  useEffect(() => () => terminalTex.dispose(), [terminalTex]);
 
   useFrame((state) => {
     const t = state.clock.elapsedTime;
@@ -96,6 +110,30 @@ function DevDesk() {
       const m2 = steam2.current.material as THREE.MeshStandardMaterial;
       m2.opacity = Math.sin(p2 * Math.PI) * 0.45;
       steam2.current.scale.setScalar(0.008 + p2 * 0.012);
+    }
+
+    // Blink cursor every 0.42s
+    if (t - lastBlink.current > 0.42) {
+      lastBlink.current = t;
+      cursorVis.current = !cursorVis.current;
+    }
+
+    const term = getTerminalSnapshot();
+    drawTerminalToCanvas(
+      terminalCanvas,
+      term.theme,
+      term.lines,
+      term.currentInput,
+      cursorVis.current,
+    );
+    // eslint-disable-next-line react-hooks/immutability
+    terminalTex.needsUpdate = true;
+
+    if (screenLightRef.current) {
+      const themeColor =
+        term.theme === "green" ? "#22c55e" : term.theme === "cyan" ? "#06b6d4" : "#ffb000";
+      screenLightRef.current.color.set(themeColor);
+      screenLightRef.current.intensity = term.isOpen ? 1.4 : 0.6;
     }
   });
 
@@ -174,16 +212,26 @@ function DevDesk() {
             <boxGeometry args={[0.18, 0.12, 0.008]} />
             <meshStandardMaterial color="#1e293b" metalness={0.5} roughness={0.4} />
           </mesh>
-          {/* Glowing Lo-Fi Amber Display */}
+          {/* Live Dynamic 3D CRT Terminal Display Screen */}
           <mesh position={[0, 0.06, 0.005]}>
-            <planeGeometry args={[0.16, 0.1]} />
+            <planeGeometry args={[0.164, 0.104]} />
             <meshStandardMaterial
-              color="#ffb000"
-              emissive="#ff9900"
-              emissiveIntensity={2.2}
+              map={terminalTex}
+              emissiveMap={terminalTex}
+              emissive="#ffffff"
+              emissiveIntensity={1.8}
               roughness={0.2}
             />
           </mesh>
+          {/* Screen Light illuminating the desk & keyboard */}
+          <pointLight
+            ref={screenLightRef}
+            position={[0, 0.06, 0.08]}
+            color="#ffb000"
+            intensity={0.6}
+            distance={1.2}
+            decay={2}
+          />
         </group>
       </group>
 

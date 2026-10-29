@@ -18,6 +18,7 @@ interface TerminalState {
   isOpen: boolean;
   theme: TerminalTheme;
   lines: TerminalLine[];
+  currentInput: string;
 }
 
 const WELCOME_BANNER: TerminalLine[] = [
@@ -42,6 +43,7 @@ const state: TerminalState = {
   isOpen: false,
   theme: "amber",
   lines: [...WELCOME_BANNER],
+  currentInput: "",
 };
 
 const listeners = new Set<() => void>();
@@ -50,6 +52,11 @@ let snapshot = { ...state };
 function emit() {
   snapshot = { ...state, lines: [...state.lines] };
   listeners.forEach((fn) => fn());
+}
+
+export function setTerminalInput(input: string) {
+  state.currentInput = input;
+  emit();
 }
 
 export function subscribeTerminal(fn: () => void) {
@@ -125,6 +132,7 @@ export function executeCommand(rawInput: string) {
   if (!input) return;
 
   commandHistory.push(input);
+  state.currentInput = "";
 
   // Echo user input
   appendLine("input", `$ ${input}`);
