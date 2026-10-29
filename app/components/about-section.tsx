@@ -58,7 +58,7 @@ const AboutSection = memo(function AboutSection() {
               src="/huy.jpg"
               alt={`${profile.name} portrait`}
               fill
-              quality={100}
+              quality={85}
               sizes="(max-width: 768px) 100vw, 320px"
               className="object-cover object-center"
               priority
@@ -73,7 +73,7 @@ const AboutSection = memo(function AboutSection() {
               src="/working.jpg"
               alt="Working"
               fill
-              quality={90}
+              quality={85}
               sizes="(max-width: 768px) 50vw, 300px"
               className="object-cover object-center"
             />
@@ -87,7 +87,7 @@ const AboutSection = memo(function AboutSection() {
               src="/play-sport.jpg"
               alt="Playing sport"
               fill
-              quality={90}
+              quality={85}
               sizes="(max-width: 768px) 50vw, 300px"
               className="object-cover object-top"
             />
@@ -120,9 +120,9 @@ const AboutSection = memo(function AboutSection() {
 
           <p className="mb-4 text-[15px] leading-relaxed text-gray-300">
             I came to the web from game development — I care as much about how an interface{" "}
-            <span className="text-white font-medium">feels</span> as how it looks. These days I build
-            scalable, high-performance products with React, Next.js and TypeScript, and I reach for
-            WebGL when a page deserves to be memorable.
+            <span className="text-white font-medium">feels</span> as how it looks. These days I
+            build scalable, high-performance products with React, Next.js and TypeScript, and I
+            reach for WebGL when a page deserves to be memorable.
           </p>
 
           <p className="mb-6 text-[15px] leading-relaxed text-gray-300">
