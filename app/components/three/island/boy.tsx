@@ -10,6 +10,7 @@ import { useGLTF, useAnimations } from "@react-three/drei";
 import { story, type StoryPose } from "./story-store";
 import { proximityStore, PROXIMITY_TARGETS, type ProximityTarget } from "@/lib/proximity-store";
 import { flappy } from "./flappy";
+import { getTerminalSnapshot } from "@/lib/terminal-store";
 
 useGLTF.preload("/models/player.glb");
 
@@ -42,6 +43,7 @@ function getStoryAnim(pose: StoryPose, speed: number, airborne: boolean): AnimNa
     case "peace":
       return "Greeting";
     case "study":
+    case "type":
       return "Sit";
     case "walk":
       return "Walk";
@@ -248,6 +250,7 @@ export function BoyCharacter() {
     const onKeyDown = (e: KeyboardEvent) => {
       if (isInputActive()) return;
       if (flappy.isOpen) return;
+      if (getTerminalSnapshot().isOpen) return;
       if (e.code === "KeyE") {
         proximityStore.triggerActive();
       }

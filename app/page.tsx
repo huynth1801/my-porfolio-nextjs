@@ -13,6 +13,7 @@ import { AchievementToasts } from "./components/achievements/achievement-toasts"
 import { TourHud } from "./components/journey/tour-hud";
 import { ProximityPrompt } from "./components/journey/proximity-prompt";
 import { ArcadeCabinetOverlay } from "./components/three/island/arcade-cabinet-overlay";
+import { TerminalOverlay } from "./components/terminal/terminal-overlay";
 import { educations } from "@/lib/content";
 
 export default function Home() {
@@ -41,6 +42,7 @@ export default function Home() {
       <TourHud />
       <ProximityPrompt />
       <ArcadeCabinetOverlay />
+      <TerminalOverlay />
     </>
   );
 }

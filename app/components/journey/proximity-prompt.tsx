@@ -28,7 +28,7 @@ export function ProximityPrompt() {
         )}
       </AnimatePresence>
 
-      {/* Proximity Action Prompt [E] */}
+      {/* Proximity Action Prompt [E / ~] */}
       <AnimatePresence>
         {active && (
           <motion.div
@@ -41,11 +41,21 @@ export function ProximityPrompt() {
           >
             <button
               onClick={() => proximityStore.triggerActive()}
-              className="glass pointer-events-auto group flex items-center gap-3 rounded-full border border-white/20 bg-black/80 px-4 py-2.5 shadow-[0_10px_35px_rgba(0,0,0,0.6),0_0_25px_rgba(56,189,248,0.25)] backdrop-blur-xl transition-all duration-200 hover:scale-105 hover:border-cyan-400/60 active:scale-95 cursor-pointer"
+              className={`glass pointer-events-auto group flex items-center gap-3 rounded-full border px-4 py-2.5 shadow-[0_10px_35px_rgba(0,0,0,0.6)] backdrop-blur-xl transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer ${
+                active.id === "dev-desk"
+                  ? "border-amber-400/40 bg-black/85 shadow-[0_0_25px_rgba(245,158,11,0.25)] hover:border-amber-400/80"
+                  : "border-white/20 bg-black/80 shadow-[0_0_25px_rgba(56,189,248,0.25)] hover:border-cyan-400/60"
+              }`}
             >
-              {/* Keyboard badge [E] */}
-              <div className="flex size-7 items-center justify-center rounded-lg border border-cyan-400/60 bg-cyan-400/20 text-xs font-black tracking-wider text-cyan-200 shadow-[0_0_12px_rgba(34,211,238,0.4)] group-hover:bg-cyan-400 group-hover:text-black transition-colors duration-200">
-                E
+              {/* Keyboard badge [~ or E] */}
+              <div
+                className={`flex size-7 items-center justify-center rounded-lg border text-xs font-black tracking-wider transition-colors duration-200 ${
+                  active.id === "dev-desk"
+                    ? "border-amber-400/60 bg-amber-400/20 text-amber-200 shadow-[0_0_12px_rgba(245,158,11,0.4)] group-hover:bg-amber-400 group-hover:text-black"
+                    : "border-cyan-400/60 bg-cyan-400/20 text-cyan-200 shadow-[0_0_12px_rgba(34,211,238,0.4)] group-hover:bg-cyan-400 group-hover:text-black"
+                }`}
+              >
+                {active.id === "dev-desk" ? "~" : "E"}
               </div>
 
               {/* Icon & Label */}
@@ -56,8 +66,10 @@ export function ProximityPrompt() {
 
               {/* Hint badge */}
               <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-medium text-gray-300">
-                <Sparkles className="size-2.5 text-cyan-400" />
-                Click / Bấm E
+                <Sparkles
+                  className={`size-2.5 ${active.id === "dev-desk" ? "text-amber-400" : "text-cyan-400"}`}
+                />
+                {active.id === "dev-desk" ? "Bấm ~ / Click" : "Click / Bấm E"}
               </span>
             </button>
           </motion.div>

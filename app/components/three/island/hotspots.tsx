@@ -6,6 +6,7 @@ import { useFrame } from "@react-three/fiber";
 import { profile, type PanelKey } from "@/lib/content";
 import { visitDistrict, noteCatPoke } from "@/lib/achievements";
 import { flappyOpen } from "./flappy";
+import { openTerminal } from "@/lib/terminal-store";
 import { panelStore } from "@/lib/panel-store";
 import { sfx } from "@/lib/audio";
 import { hotspotStore, toyStore } from "./hotspot-store";
@@ -34,8 +35,8 @@ export function Hotspot({
   /** local y for the glow disc; defaults to just under the hit cylinder */
   glowY?: number;
   label: string;
-  /** panel to open, CV download, a room toy, or the arcade game */
-  target: PanelKey | "resume" | "spin" | "meow" | "flappy";
+  /** panel to open, CV download, a room toy, arcade game, or dev desk terminal */
+  target: PanelKey | "resume" | "spin" | "meow" | "flappy" | "desk";
   children?: ReactNode;
 }) {
   const [hovered, setHovered] = useState(false);
@@ -97,6 +98,11 @@ export function Hotspot({
           if (target === "flappy") {
             sfx.click();
             flappyOpen();
+            return;
+          }
+          if (target === "desk") {
+            sfx.click();
+            openTerminal();
             return;
           }
           sfx.click();
