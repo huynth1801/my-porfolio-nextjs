@@ -1,11 +1,52 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useProximity, proximityStore } from "@/lib/proximity-store";
 import { Sparkles } from "lucide-react";
+import { tourState } from "@/lib/journey-store";
 
 export function ProximityPrompt() {
   const { active, toast } = useProximity();
+  const [inContactSection, setInContactSection] = useState(false);
+
+  useEffect(() => {
+    const contactEl = document.getElementById("contact");
+    if (!contactEl) return;
+
+    const checkVisibility = () => {
+      const rect = contactEl.getBoundingClientRect();
+      // Hide button when contact section enters view (upper 85% of screen) or waypoint is contact
+      const isVisible =
+        (rect.top < window.innerHeight * 0.85 && rect.bottom > 0) ||
+        tourState.activeWaypointId === "contact";
+      setInContactSection(isVisible);
+    };
+
+    checkVisibility();
+
+    const observer = new IntersectionObserver(
+      () => {
+        checkVisibility();
+      },
+      {
+        threshold: [0, 0.1, 0.25],
+        rootMargin: "0px 0px -50px 0px",
+      },
+    );
+
+    observer.observe(contactEl);
+    window.addEventListener("scroll", checkVisibility, { passive: true });
+    window.addEventListener("resize", checkVisibility);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", checkVisibility);
+      window.removeEventListener("resize", checkVisibility);
+    };
+  }, []);
+
+  const showPrompt = Boolean(active && !inContactSection);
 
   return (
     <>
@@ -30,7 +71,7 @@ export function ProximityPrompt() {
 
       {/* Proximity Action Prompt [E / ~] */}
       <AnimatePresence>
-        {active && (
+        {showPrompt && active && (
           <motion.div
             key={`prompt-${active.id}`}
             initial={{ opacity: 0, y: 30, scale: 0.85 }}

@@ -11,6 +11,7 @@ import { story, type StoryPose } from "./story-store";
 import { proximityStore, PROXIMITY_TARGETS, type ProximityTarget } from "@/lib/proximity-store";
 import { flappy } from "./flappy";
 import { getTerminalSnapshot } from "@/lib/terminal-store";
+import { tourState } from "@/lib/journey-store";
 
 useGLTF.preload("/models/player.glb");
 
@@ -336,15 +337,17 @@ export function BoyCharacter() {
         s.speed = Math.max(0, s.speed - dt * 5);
       }
 
-      // Detect closest interactive proximity target
+      // Detect closest interactive proximity target (suppressed during contact section)
       let closest: ProximityTarget | null = null;
       let minDistance = Infinity;
-      for (const target of PROXIMITY_TARGETS) {
-        if (target.check && !target.check(s.py)) continue;
-        const dist = Math.hypot(s.px - target.pos[0], s.pz - target.pos[2]);
-        if (dist <= target.radius && dist < minDistance) {
-          minDistance = dist;
-          closest = target;
+      if (tourState.activeWaypointId !== "contact") {
+        for (const target of PROXIMITY_TARGETS) {
+          if (target.check && !target.check(s.py)) continue;
+          const dist = Math.hypot(s.px - target.pos[0], s.pz - target.pos[2]);
+          if (dist <= target.radius && dist < minDistance) {
+            minDistance = dist;
+            closest = target;
+          }
         }
       }
       proximityStore.setActive(closest);
