@@ -11,7 +11,7 @@ export const profile = {
   email: "huuhuy1801@gmail.com",
   github: "https://github.com/huynth1801",
   linkedin: "https://www.linkedin.com/in/huy-nguyen-085382206/",
-  resume: "/NguyenThaiHuuHuy_FrontEndDeveloper.pdf",
+  resume: "/NguyenThaiHuuHuy_FrontEndDeveloper_2026.pdf",
   tagline:
     "I build playful, high-performance web experiences with React and Next.js — and a game developer's sense of feel.",
 };
@@ -67,7 +67,15 @@ export const experiences: Experience[] = [
       "Collaborate with design and backend teams to deliver high-quality products.",
       "Work in an agile development environment.",
     ],
-    skills: ["React", "Next.js", "Tailwind CSS", "Shadcn", "MaterialUI", "Zustand", "Redux Toolkit"],
+    skills: [
+      "React",
+      "Next.js",
+      "Tailwind CSS",
+      "Shadcn",
+      "MaterialUI",
+      "Zustand",
+      "Redux Toolkit",
+    ],
   },
   {
     id: "prof-exp-2",
@@ -221,7 +229,16 @@ export const skillGroups: Array<{ title: string; items: string[] }> = [
   },
   {
     title: "Frameworks & libraries",
-    items: ["React", "Next.js", "Angular", "TailwindCSS", "MaterialUI", "shadcn/ui", "Redux Toolkit", "Zustand"],
+    items: [
+      "React",
+      "Next.js",
+      "Angular",
+      "TailwindCSS",
+      "MaterialUI",
+      "shadcn/ui",
+      "Redux Toolkit",
+      "Zustand",
+    ],
   },
   {
     title: "Creative & tools",

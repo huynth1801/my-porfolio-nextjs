@@ -164,7 +164,7 @@ function executeInteraction(id: ProximityId) {
       // Trigger actual download of CV
       const a = document.createElement("a");
       a.href = profile.resume;
-      a.download = "NguyenThaiHuuHuy_FrontEndDeveloper.pdf";
+      a.download = "NguyenThaiHuuHuy_FrontEndDeveloper_2026.pdf";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
