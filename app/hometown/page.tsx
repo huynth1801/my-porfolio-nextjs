@@ -97,6 +97,7 @@ export default function HometownPage() {
     VINH_LONG_SPECIALTIES[0],
   );
   const [showPhotoRef, setShowPhotoRef] = useState(false);
+  const [galleryTab, setGalleryTab] = useState<"cute" | "real">("cute");
   const [audioActive, setAudioActive] = useState(false);
   const mounted = useSyncExternalStore(
     () => () => {},
@@ -189,13 +190,13 @@ export default function HometownPage() {
             </span>
           </button>
 
-          {/* Photo Reference Toggle */}
+          {/* Photo & Illustration Reference Toggle */}
           <button
             onClick={() => setShowPhotoRef(true)}
             className="flex items-center gap-1.5 rounded-full border border-amber-600/30 bg-black/60 px-3 py-1.5 text-xs font-medium text-amber-200 shadow-xl backdrop-blur-xl transition-all duration-200 hover:border-amber-500/60 hover:bg-black/80 hover:text-white cursor-pointer"
           >
             <Camera className="size-3.5 text-amber-400" />
-            <span className="hidden sm:inline">Ảnh di sản thực tế</span>
+            <span className="hidden sm:inline">Tranh 3D & Ảnh gốc</span>
           </button>
 
           {/* Specialties Modal Toggle */}
@@ -418,10 +419,14 @@ export default function HometownPage() {
               <div className="flex items-center justify-between pb-3 border-b border-amber-600/25">
                 <div>
                   <h3 className="text-base sm:text-lg font-bold text-white">
-                    Ảnh Di Sản Lò Gốm Mang Thít Thực Tế
+                    {galleryTab === "cute"
+                      ? "Tranh Minh Họa 3D Pixar & Claymation"
+                      : "Ảnh Di Sản Lò Gốm Mang Thít Thực Tế"}
                   </h3>
                   <p className="text-xs text-amber-300/80">
-                    Nguồn cảm hứng thiết kế không gian 3D tại bờ kênh Thầy Cai, Vĩnh Long
+                    {galleryTab === "cute"
+                      ? "5 lò gạch kawaii mắt to long lanh, khói trái tim & thợ nón lá bên sông Cổ Chiên"
+                      : "Nguồn cảm hứng thiết kế không gian 3D tại bờ kênh Thầy Cai, Vĩnh Long"}
                   </p>
                 </div>
                 <button
@@ -433,20 +438,54 @@ export default function HometownPage() {
                 </button>
               </div>
 
-              <div className="mt-4 relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-amber-500/30 shadow-inner">
-                <Image
-                  src="/hometown/mang-thit-kilns.png"
-                  alt="Lò gốm Mang Thít, Vĩnh Long"
-                  fill
-                  className="object-cover"
-                  priority
-                />
+              {/* Tab Switcher */}
+              <div className="mt-3.5 flex items-center gap-2">
+                <button
+                  onClick={() => setGalleryTab("cute")}
+                  className={`px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer ${
+                    galleryTab === "cute"
+                      ? "bg-amber-500 text-neutral-950 shadow-md font-bold"
+                      : "bg-white/10 text-amber-200 hover:bg-white/20"
+                  }`}
+                >
+                  🎨 Tranh 3D Cute (Pixar)
+                </button>
+                <button
+                  onClick={() => setGalleryTab("real")}
+                  className={`px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer ${
+                    galleryTab === "real"
+                      ? "bg-amber-500 text-neutral-950 shadow-md font-bold"
+                      : "bg-white/10 text-amber-200 hover:bg-white/20"
+                  }`}
+                >
+                  📷 Ảnh chụp thực tế
+                </button>
+              </div>
+
+              <div className="mt-4 relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-amber-500/30 shadow-inner bg-black/50">
+                {galleryTab === "cute" ? (
+                  <Image
+                    src="/hometown/mang-thit-cute-illustration.jpg"
+                    alt="Tranh 3D hoạt hình cute lò gốm Mang Thít"
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                ) : (
+                  <Image
+                    src="/hometown/mang-thit-kilns.png"
+                    alt="Lò gốm Mang Thít, Vĩnh Long"
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                )}
               </div>
 
               <p className="mt-3 text-xs text-neutral-300 leading-relaxed">
-                Các lò gạch có hình dáng parabol đặc trưng, xây dựng bằng gạch thô đỏ au. Qua hàng
-                chục năm nung lửa, bề mặt lò xuất hiện các vệt muối phong hóa màu trắng bạc hòa cùng
-                khói lam chiều bên dòng sông Cổ Chiên.
+                {galleryTab === "cute"
+                  ? "Bức tranh 3D phong cách Pixar và đất nặn claymation tái hiện 5 chiếc lò gạch nung Mang Thít với đôi mắt to tròn long lanh, má hồng rạng rỡ, khói bốc hình trái tim yêu thương, các chú thợ chibi non la đẩy xe gạch và ghe thuyền dập dềnh trên sông."
+                  : "Các lò gạch có hình dáng parabol đặc trưng, xây dựng bằng gạch thô đỏ au. Qua hàng chục năm nung lửa, bề mặt lò xuất hiện các vệt muối phong hóa màu trắng bạc hòa cùng khói lam chiều bên dòng sông Cổ Chiên."}
               </p>
             </div>
           </div>,
