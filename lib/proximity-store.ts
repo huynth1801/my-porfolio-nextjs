@@ -144,11 +144,21 @@ function executeInteraction(id: ProximityId) {
 
   switch (id) {
     case "dev-desk": {
-      const deskPos = PROXIMITY_TARGETS.find((t) => t.id === "dev-desk")!.pos;
-      story.heading = Math.atan2(deskPos[0] - story.px, deskPos[2] - story.pz);
+      isInteracting = true;
+      gsap.to(story, {
+        px: -2.62,
+        pz: 3.32,
+        py: 0.36,
+        heading: 3.49,
+        duration: 0.35,
+        ease: "power2.out",
+        onComplete: () => {
+          isInteracting = false;
+        },
+      });
       sfx.click();
       openTerminal();
-      showProximityToast("Đã mở Lo-Fi Indie Dev Terminal (~)", "💻");
+      showProximityToast("Đang ngồi lập trình tại bàn máy tính (~)", "💻");
       break;
     }
 

@@ -68,6 +68,18 @@ export function useTerminal() {
 export function openTerminal() {
   state.isOpen = true;
   story.pose = "type";
+  // If player is near the house / desk, smoothly glide onto the stool facing laptop
+  const dist = Math.hypot(story.px - -2.62, story.pz - 3.32);
+  if (dist < 3.2) {
+    gsap.to(story, {
+      px: -2.62,
+      pz: 3.32,
+      py: 0.36,
+      heading: 3.49,
+      duration: 0.35,
+      ease: "power2.out",
+    });
+  }
   emit();
 }
 
@@ -75,6 +87,11 @@ export function closeTerminal() {
   state.isOpen = false;
   if (story.pose === "type") {
     story.pose = "idle";
+    gsap.to(story, {
+      py: 0.3,
+      duration: 0.25,
+      ease: "power1.out",
+    });
   }
   emit();
 }

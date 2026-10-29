@@ -12,6 +12,7 @@ import {
 } from "@/lib/terminal-store";
 import { sfx } from "@/lib/audio";
 import { Terminal, X, Sparkles, CornerDownLeft } from "lucide-react";
+import { SittingTypingBoy } from "./sitting-typing-boy";
 
 const QUICK_COMMANDS = [
   { label: "help", cmd: "help", desc: "Tất cả lệnh" },
@@ -167,163 +168,173 @@ export function TerminalOverlay() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.94, y: 15 }}
             transition={{ type: "spring", stiffness: 360, damping: 28 }}
-            className={`relative flex h-[85vh] max-h-[640px] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border bg-black/90 font-mono text-xs sm:text-sm ${currentTheme.windowBorder} ${currentTheme.glowShadow}`}
+            className={`relative flex h-[85vh] max-h-[640px] w-full max-w-2xl flex-col rounded-2xl border bg-black/90 font-mono text-xs sm:text-sm ${currentTheme.windowBorder} ${currentTheme.glowShadow}`}
           >
-            {/* Retro CRT Scanlines Overlay */}
-            <div
-              className="pointer-events-none absolute inset-0 z-20 opacity-40 mix-blend-overlay"
-              style={{
-                backgroundImage: `repeating-linear-gradient(
-                  0deg,
-                  transparent,
-                  transparent 2px,
-                  ${currentTheme.scanlineTint} 2px,
-                  ${currentTheme.scanlineTint} 4px
-                )`,
-              }}
-            />
+            {/* Cute Sitting Typing Dev Mascot perched atop the CRT Monitor Screen */}
+            <div className="absolute -top-15 right-8 sm:right-16 z-40 scale-90 sm:scale-100 origin-bottom pointer-events-auto">
+              <SittingTypingBoy theme={theme} isTyping={inputValue.length > 0} />
+            </div>
 
-            {/* Window Title Bar */}
-            <div className="relative z-30 flex items-center justify-between border-b border-white/10 bg-zinc-950/90 px-4 py-2.5 backdrop-blur-sm select-none">
-              <div className="flex items-center gap-2">
-                {/* Vintage Mac/Linux Terminal dots */}
-                <div className="flex items-center gap-1.5 mr-2">
+            {/* Screen Inner Container (Scanlines, Header, Output, Input) */}
+            <div className="relative flex flex-col flex-1 overflow-hidden rounded-2xl">
+              {/* Retro CRT Scanlines Overlay */}
+              <div
+                className="pointer-events-none absolute inset-0 z-20 opacity-40 mix-blend-overlay"
+                style={{
+                  backgroundImage: `repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    ${currentTheme.scanlineTint} 2px,
+                    ${currentTheme.scanlineTint} 4px
+                  )`,
+                }}
+              />
+
+              {/* Window Title Bar */}
+              <div className="relative z-30 flex items-center justify-between border-b border-white/10 bg-zinc-950/90 px-4 py-2.5 backdrop-blur-sm select-none">
+                <div className="flex items-center gap-2">
+                  {/* Vintage Mac/Linux Terminal dots */}
+                  <div className="flex items-center gap-1.5 mr-2">
+                    <button
+                      onClick={handleClose}
+                      className="size-3 rounded-full bg-rose-500/80 hover:bg-rose-400 transition-colors cursor-pointer"
+                      title="Close"
+                    />
+                    <div className="size-3 rounded-full bg-amber-500/80" />
+                    <div className="size-3 rounded-full bg-emerald-500/80" />
+                  </div>
+                  <Terminal className="size-4 text-zinc-400" />
+                  <span className="font-semibold text-zinc-200 tracking-wide">HUY-OS v2.6.0</span>
+                  <span className="hidden sm:inline-block text-[11px] text-zinc-500">
+                    (tty1 — lo-fi dev terminal)
+                  </span>
+                </div>
+
+                {/* Theme Selector & Close */}
+                <div className="flex items-center gap-2">
+                  <div className="hidden sm:flex items-center gap-1 rounded-lg border border-white/10 bg-zinc-900/60 p-0.5 text-[10px]">
+                    {(["amber", "green", "cyan"] as TerminalTheme[]).map((t) => (
+                      <button
+                        key={t}
+                        onClick={() => {
+                          sfx.click();
+                          setTerminalTheme(t);
+                        }}
+                        className={`rounded px-1.5 py-0.5 font-bold uppercase transition-colors cursor-pointer ${
+                          theme === t
+                            ? "bg-white/20 text-white"
+                            : "text-zinc-500 hover:text-zinc-300"
+                        }`}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+
                   <button
                     onClick={handleClose}
-                    className="size-3 rounded-full bg-rose-500/80 hover:bg-rose-400 transition-colors cursor-pointer"
-                    title="Close"
-                  />
-                  <div className="size-3 rounded-full bg-amber-500/80" />
-                  <div className="size-3 rounded-full bg-emerald-500/80" />
+                    className="flex items-center gap-1 rounded-lg border border-white/10 bg-zinc-900/80 px-2 py-1 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors cursor-pointer"
+                  >
+                    <X className="size-3.5" />
+                    <span className="hidden sm:inline">ESC</span>
+                  </button>
                 </div>
-                <Terminal className="size-4 text-zinc-400" />
-                <span className="font-semibold text-zinc-200 tracking-wide">HUY-OS v2.6.0</span>
-                <span className="hidden sm:inline-block text-[11px] text-zinc-500">
-                  (tty1 — lo-fi dev terminal)
-                </span>
               </div>
 
-              {/* Theme Selector & Close */}
-              <div className="flex items-center gap-2">
-                <div className="hidden sm:flex items-center gap-1 rounded-lg border border-white/10 bg-zinc-900/60 p-0.5 text-[10px]">
-                  {(["amber", "green", "cyan"] as TerminalTheme[]).map((t) => (
-                    <button
-                      key={t}
-                      onClick={() => {
+              {/* Terminal Body / Output History */}
+              <div
+                ref={scrollRef}
+                className={`relative z-10 flex-1 overflow-y-auto p-4 space-y-2 select-text leading-relaxed ${currentTheme.primaryText}`}
+              >
+                {lines.map((line) => {
+                  if (line.type === "system") {
+                    return (
+                      <div key={line.id} className="text-zinc-400 text-xs italic tracking-wide">
+                        [sys] {line.text}
+                      </div>
+                    );
+                  }
+                  if (line.type === "input") {
+                    return (
+                      <div key={line.id} className={`font-semibold ${currentTheme.accentText}`}>
+                        {line.text}
+                      </div>
+                    );
+                  }
+                  if (line.type === "error") {
+                    return (
+                      <div key={line.id} className="text-rose-400 whitespace-pre-wrap">
+                        ✖ {line.text}
+                      </div>
+                    );
+                  }
+                  if (line.type === "ascii") {
+                    return (
+                      <pre
+                        key={line.id}
+                        className={`whitespace-pre font-mono text-[11px] sm:text-xs leading-none overflow-x-auto py-1 ${currentTheme.accentText}`}
+                      >
+                        {line.text}
+                      </pre>
+                    );
+                  }
+                  return (
+                    <div key={line.id} className="whitespace-pre-wrap text-zinc-200">
+                      {line.text}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Prompt Input Line */}
+              <div className="relative z-30 border-t border-white/10 bg-zinc-950/95 px-4 py-2.5">
+                <div className="flex items-center gap-2">
+                  <span className={`shrink-0 ${currentTheme.promptText}`}>guest@diorama:~$</span>
+                  <input
+                    ref={inputRef}
+                    id="terminal-input"
+                    type="text"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Nhập lệnh (vd: help, skills, hire, teleport towers)..."
+                    className="w-full bg-transparent text-white outline-none placeholder:text-zinc-600 font-mono text-xs sm:text-sm"
+                    autoComplete="off"
+                    spellCheck="false"
+                  />
+                  <button
+                    onClick={() => {
+                      if (inputValue.trim()) {
                         sfx.click();
-                        setTerminalTheme(t);
-                      }}
-                      className={`rounded px-1.5 py-0.5 font-bold uppercase transition-colors cursor-pointer ${
-                        theme === t ? "bg-white/20 text-white" : "text-zinc-500 hover:text-zinc-300"
-                      }`}
+                        executeCommand(inputValue.trim());
+                        setInputValue("");
+                      }
+                    }}
+                    className="rounded bg-white/10 p-1 text-zinc-400 hover:bg-white/20 hover:text-white transition-colors cursor-pointer"
+                    title="Gửi lệnh (Enter)"
+                  >
+                    <CornerDownLeft className="size-3.5" />
+                  </button>
+                </div>
+
+                {/* Quick Command Chips */}
+                <div className="mt-2.5 flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                  <span className="shrink-0 text-[10px] uppercase tracking-wider text-zinc-500 font-bold mr-1 flex items-center gap-1">
+                    <Sparkles className="size-2.5 text-amber-400" />
+                    Lệnh nhanh:
+                  </span>
+                  {QUICK_COMMANDS.map((item) => (
+                    <button
+                      key={item.label}
+                      onClick={() => handleChipClick(item.cmd)}
+                      className={`shrink-0 rounded-md border px-2 py-0.5 text-[11px] font-medium transition-all duration-150 cursor-pointer ${currentTheme.activeChip}`}
+                      title={item.desc}
                     >
-                      {t}
+                      {item.label}
                     </button>
                   ))}
                 </div>
-
-                <button
-                  onClick={handleClose}
-                  className="flex items-center gap-1 rounded-lg border border-white/10 bg-zinc-900/80 px-2 py-1 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors cursor-pointer"
-                >
-                  <X className="size-3.5" />
-                  <span className="hidden sm:inline">ESC</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Terminal Body / Output History */}
-            <div
-              ref={scrollRef}
-              className={`relative z-10 flex-1 overflow-y-auto p-4 space-y-2 select-text leading-relaxed ${currentTheme.primaryText}`}
-            >
-              {lines.map((line) => {
-                if (line.type === "system") {
-                  return (
-                    <div key={line.id} className="text-zinc-400 text-xs italic tracking-wide">
-                      [sys] {line.text}
-                    </div>
-                  );
-                }
-                if (line.type === "input") {
-                  return (
-                    <div key={line.id} className={`font-semibold ${currentTheme.accentText}`}>
-                      {line.text}
-                    </div>
-                  );
-                }
-                if (line.type === "error") {
-                  return (
-                    <div key={line.id} className="text-rose-400 whitespace-pre-wrap">
-                      ✖ {line.text}
-                    </div>
-                  );
-                }
-                if (line.type === "ascii") {
-                  return (
-                    <pre
-                      key={line.id}
-                      className={`whitespace-pre font-mono text-[11px] sm:text-xs leading-none overflow-x-auto py-1 ${currentTheme.accentText}`}
-                    >
-                      {line.text}
-                    </pre>
-                  );
-                }
-                return (
-                  <div key={line.id} className="whitespace-pre-wrap text-zinc-200">
-                    {line.text}
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Prompt Input Line */}
-            <div className="relative z-30 border-t border-white/10 bg-zinc-950/95 px-4 py-2.5">
-              <div className="flex items-center gap-2">
-                <span className={`shrink-0 ${currentTheme.promptText}`}>guest@diorama:~$</span>
-                <input
-                  ref={inputRef}
-                  id="terminal-input"
-                  type="text"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Nhập lệnh (vd: help, skills, hire, teleport towers)..."
-                  className="w-full bg-transparent text-white outline-none placeholder:text-zinc-600 font-mono text-xs sm:text-sm"
-                  autoComplete="off"
-                  spellCheck="false"
-                />
-                <button
-                  onClick={() => {
-                    if (inputValue.trim()) {
-                      sfx.click();
-                      executeCommand(inputValue.trim());
-                      setInputValue("");
-                    }
-                  }}
-                  className="rounded bg-white/10 p-1 text-zinc-400 hover:bg-white/20 hover:text-white transition-colors cursor-pointer"
-                  title="Gửi lệnh (Enter)"
-                >
-                  <CornerDownLeft className="size-3.5" />
-                </button>
-              </div>
-
-              {/* Quick Command Chips */}
-              <div className="mt-2.5 flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-                <span className="shrink-0 text-[10px] uppercase tracking-wider text-zinc-500 font-bold mr-1 flex items-center gap-1">
-                  <Sparkles className="size-2.5 text-amber-400" />
-                  Lệnh nhanh:
-                </span>
-                {QUICK_COMMANDS.map((item) => (
-                  <button
-                    key={item.label}
-                    onClick={() => handleChipClick(item.cmd)}
-                    className={`shrink-0 rounded-md border px-2 py-0.5 text-[11px] font-medium transition-all duration-150 cursor-pointer ${currentTheme.activeChip}`}
-                    title={item.desc}
-                  >
-                    {item.label}
-                  </button>
-                ))}
               </div>
             </div>
           </motion.div>

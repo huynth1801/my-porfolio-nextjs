@@ -292,7 +292,7 @@ export function BoyCharacter() {
     }
   }, [actions]);
 
-  useFrame((_state, rawDelta) => {
+  useFrame((state, rawDelta) => {
     const dt = Math.min(rawDelta, 0.05);
     const s = story;
 
@@ -445,6 +445,70 @@ export function BoyCharacter() {
       if (head) {
         head.parent!.worldToLocal(headTarget);
         head.lookAt(headTarget);
+      }
+    }
+
+    /* ---------- Typing pose: Seated at laptop with hands tapping keys ---------- */
+    if (s.pose === "type") {
+      const t = state.clock.elapsedTime;
+      const leftArm = (scene.getObjectByName("mixamorigLeftArm") ||
+        scene.getObjectByName("mixamorig:LeftArm")) as THREE.Bone | null;
+      const rightArm = (scene.getObjectByName("mixamorigRightArm") ||
+        scene.getObjectByName("mixamorig:RightArm")) as THREE.Bone | null;
+      const leftForeArm = (scene.getObjectByName("mixamorigLeftForeArm") ||
+        scene.getObjectByName("mixamorig:LeftForeArm")) as THREE.Bone | null;
+      const rightForeArm = (scene.getObjectByName("mixamorigRightForeArm") ||
+        scene.getObjectByName("mixamorig:RightForeArm")) as THREE.Bone | null;
+      const leftHand = (scene.getObjectByName("mixamorigLeftHand") ||
+        scene.getObjectByName("mixamorig:LeftHand")) as THREE.Bone | null;
+      const rightHand = (scene.getObjectByName("mixamorigRightHand") ||
+        scene.getObjectByName("mixamorig:RightHand")) as THREE.Bone | null;
+      const head = (scene.getObjectByName("mixamorigHead") ||
+        scene.getObjectByName("mixamorig:Head")) as THREE.Bone | null;
+      const spine = (scene.getObjectByName("mixamorigSpine1") ||
+        scene.getObjectByName("mixamorigSpine")) as THREE.Bone | null;
+
+      // Lean torso slightly forward towards desk
+      if (spine) {
+        spine.rotation.x = THREE.MathUtils.degToRad(16);
+      }
+
+      // Head nods gently to the lo-fi beat & looks down at the laptop
+      if (head) {
+        head.rotation.x = THREE.MathUtils.degToRad(20) + Math.sin(t * 7) * 0.04;
+        head.rotation.y = Math.sin(t * 3.5) * 0.03;
+      }
+
+      // Position upper arms angled forward
+      if (leftArm) {
+        leftArm.rotation.x = THREE.MathUtils.degToRad(-45);
+        leftArm.rotation.y = THREE.MathUtils.degToRad(-15);
+        leftArm.rotation.z = THREE.MathUtils.degToRad(20);
+      }
+      if (rightArm) {
+        rightArm.rotation.x = THREE.MathUtils.degToRad(-45);
+        rightArm.rotation.y = THREE.MathUtils.degToRad(15);
+        rightArm.rotation.z = THREE.MathUtils.degToRad(-20);
+      }
+
+      // Forearms angled forward toward keyboard
+      if (leftForeArm) {
+        leftForeArm.rotation.x = THREE.MathUtils.degToRad(-48);
+      }
+      if (rightForeArm) {
+        rightForeArm.rotation.x = THREE.MathUtils.degToRad(-48);
+      }
+
+      // Alternating clatter of hands/wrists typing (10-12 Hz tap tap tap)
+      const tapL = Math.sin(t * 22);
+      const tapR = Math.sin(t * 22 + Math.PI);
+      if (leftHand) {
+        leftHand.rotation.x = THREE.MathUtils.degToRad(12) + tapL * 0.18;
+        leftHand.rotation.z = tapL * 0.06;
+      }
+      if (rightHand) {
+        rightHand.rotation.x = THREE.MathUtils.degToRad(12) + tapR * 0.18;
+        rightHand.rotation.z = -tapR * 0.06;
       }
     }
   });
