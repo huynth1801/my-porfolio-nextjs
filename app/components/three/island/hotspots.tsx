@@ -6,6 +6,7 @@ import { useFrame } from "@react-three/fiber";
 import { profile, type PanelKey } from "@/lib/content";
 import { visitDistrict, noteCatPoke } from "@/lib/achievements";
 import { flappyOpen } from "./flappy";
+import { openTerminal, getTerminalSnapshot } from "@/lib/terminal-store";
 import { panelStore } from "@/lib/panel-store";
 import { sfx } from "@/lib/audio";
 import { hotspotStore, toyStore } from "./hotspot-store";
@@ -34,8 +35,8 @@ export function Hotspot({
   /** local y for the glow disc; defaults to just under the hit cylinder */
   glowY?: number;
   label: string;
-  /** panel to open, CV download, a room toy, or the arcade game */
-  target: PanelKey | "resume" | "spin" | "meow" | "flappy";
+  /** panel to open, CV download, a room toy, arcade game, or dev desk terminal */
+  target: PanelKey | "resume" | "spin" | "meow" | "flappy" | "desk";
   children?: ReactNode;
 }) {
   const [hovered, setHovered] = useState(false);
@@ -43,8 +44,9 @@ export function Hotspot({
   const glowTexture = useMemo(() => getGlowTexture(), []);
 
   useFrame((state, delta) => {
+    const isTermOpen = getTerminalSnapshot().isOpen;
     const m = glow.current.material as THREE.MeshBasicMaterial;
-    const targetOpacity = hovered ? 0.45 : 0;
+    const targetOpacity = hovered && !isTermOpen ? 0.45 : 0;
     m.opacity += (targetOpacity - m.opacity) * Math.min(1, delta * 10);
     const pulse = 1 + Math.sin(state.clock.elapsedTime * 2) * 0.05;
     glow.current.scale.setScalar(radius * pulse);
@@ -57,6 +59,7 @@ export function Hotspot({
           visible={false}, so it still receives raycasts) */}
       <mesh
         onPointerOver={(e) => {
+          if (getTerminalSnapshot().isOpen) return;
           e.stopPropagation();
           setHovered(true);
           hotspotStore.active = true;
@@ -64,6 +67,7 @@ export function Hotspot({
           document.body.style.cursor = "pointer";
         }}
         onPointerMove={(e) => {
+          if (getTerminalSnapshot().isOpen) return;
           hotspotStore.x = e.clientX;
           hotspotStore.y = e.clientY;
         }}
@@ -97,6 +101,11 @@ export function Hotspot({
           if (target === "flappy") {
             sfx.click();
             flappyOpen();
+            return;
+          }
+          if (target === "desk") {
+            sfx.click();
+            openTerminal();
             return;
           }
           sfx.click();

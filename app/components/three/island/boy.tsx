@@ -10,6 +10,7 @@ import { useGLTF, useAnimations } from "@react-three/drei";
 import { story, type StoryPose } from "./story-store";
 import { proximityStore, PROXIMITY_TARGETS, type ProximityTarget } from "@/lib/proximity-store";
 import { flappy } from "./flappy";
+import { getTerminalSnapshot } from "@/lib/terminal-store";
 
 useGLTF.preload("/models/player.glb");
 
@@ -42,6 +43,7 @@ function getStoryAnim(pose: StoryPose, speed: number, airborne: boolean): AnimNa
     case "peace":
       return "Greeting";
     case "study":
+    case "type":
       return "Sit";
     case "walk":
       return "Walk";
@@ -248,6 +250,7 @@ export function BoyCharacter() {
     const onKeyDown = (e: KeyboardEvent) => {
       if (isInputActive()) return;
       if (flappy.isOpen) return;
+      if (getTerminalSnapshot().isOpen) return;
       if (e.code === "KeyE") {
         proximityStore.triggerActive();
       }
@@ -289,12 +292,12 @@ export function BoyCharacter() {
     }
   }, [actions]);
 
-  useFrame((_state, rawDelta) => {
+  useFrame((state, rawDelta) => {
     const dt = Math.min(rawDelta, 0.05);
     const s = story;
 
     /* ---------- Keyboard locomotion during free exploration ---------- */
-    if (!s.playing && !flappy.isOpen) {
+    if (!s.playing && !flappy.isOpen && !getTerminalSnapshot().isOpen) {
       const k = keys.current;
       let dx = 0;
       let dz = 0;
@@ -442,6 +445,60 @@ export function BoyCharacter() {
       if (head) {
         head.parent!.worldToLocal(headTarget);
         head.lookAt(headTarget);
+      }
+    }
+
+    /* ---------- Typing pose: Seated upright at laptop with hands tapping keys ---------- */
+    if (s.pose === "type") {
+      const t = state.clock.elapsedTime;
+      const leftArm = (scene.getObjectByName("mixamorigLeftArm") ||
+        scene.getObjectByName("mixamorig:LeftArm")) as THREE.Bone | null;
+      const rightArm = (scene.getObjectByName("mixamorigRightArm") ||
+        scene.getObjectByName("mixamorig:RightArm")) as THREE.Bone | null;
+      const leftForeArm = (scene.getObjectByName("mixamorigLeftForeArm") ||
+        scene.getObjectByName("mixamorig:LeftForeArm")) as THREE.Bone | null;
+      const rightForeArm = (scene.getObjectByName("mixamorigRightForeArm") ||
+        scene.getObjectByName("mixamorig:RightForeArm")) as THREE.Bone | null;
+      const leftHand = (scene.getObjectByName("mixamorigLeftHand") ||
+        scene.getObjectByName("mixamorig:LeftHand")) as THREE.Bone | null;
+      const rightHand = (scene.getObjectByName("mixamorigRightHand") ||
+        scene.getObjectByName("mixamorig:RightHand")) as THREE.Bone | null;
+      const head = (scene.getObjectByName("mixamorigHead") ||
+        scene.getObjectByName("mixamorig:Head")) as THREE.Bone | null;
+
+      // Lock head straight forward with zero sideways yaw/roll, gazing comfortably down at 3D screen
+      if (head) {
+        head.rotation.y = 0;
+        head.rotation.z = 0;
+        head.rotation.x = -0.22;
+      }
+
+      // Upper arms reach forward and inward toward laptop keyboard on the table
+      if (leftArm) {
+        leftArm.rotation.z += 0.44;
+        leftArm.rotation.x += 0.12;
+      }
+      if (rightArm) {
+        rightArm.rotation.z -= 0.44;
+        rightArm.rotation.x += 0.12;
+      }
+
+      // Forearms rest horizontally directly on the tabletop at keyboard height
+      if (leftForeArm) {
+        leftForeArm.rotation.z += 0.15;
+      }
+      if (rightForeArm) {
+        rightForeArm.rotation.z -= 0.15;
+      }
+
+      // Alternating rhythmic tap of hands and fingers directly onto the keyboard keys
+      const tapL = Math.sin(t * 18);
+      const tapR = Math.sin(t * 18 + Math.PI);
+      if (leftHand) {
+        leftHand.rotation.x = -0.2 + tapL * 0.14;
+      }
+      if (rightHand) {
+        rightHand.rotation.x = -0.2 + tapR * 0.14;
       }
     }
   });

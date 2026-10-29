@@ -8,8 +8,15 @@ import { sfx } from "@/lib/audio";
 import { profile } from "@/lib/content";
 import { flappyOpen } from "@/app/components/three/island/flappy";
 import { toyStore } from "@/app/components/three/island/hotspot-store";
+import { openTerminal } from "@/lib/terminal-store";
 
-export type ProximityId = "cat" | "mailbox" | "arcade" | "elevator-up" | "elevator-down";
+export type ProximityId =
+  | "cat"
+  | "mailbox"
+  | "arcade"
+  | "elevator-up"
+  | "elevator-down"
+  | "dev-desk";
 
 export interface ProximityTarget {
   id: ProximityId;
@@ -21,6 +28,14 @@ export interface ProximityTarget {
 }
 
 export const PROXIMITY_TARGETS: ProximityTarget[] = [
+  {
+    id: "dev-desk",
+    label: "Lập trình (~ / CLI)",
+    icon: "💻",
+    pos: [-2.75, 0.3, 3.1],
+    radius: 1.4,
+    check: (py) => py < 1.0,
+  },
   {
     id: "cat",
     label: "Vuốt ve Mèo cưng",
@@ -128,6 +143,25 @@ function executeInteraction(id: ProximityId) {
   if (isInteracting) return;
 
   switch (id) {
+    case "dev-desk": {
+      isInteracting = true;
+      gsap.to(story, {
+        px: -2.58,
+        pz: 3.43,
+        py: 0.32,
+        heading: -2.74,
+        duration: 0.35,
+        ease: "power2.out",
+        onComplete: () => {
+          isInteracting = false;
+        },
+      });
+      sfx.click();
+      openTerminal();
+      showProximityToast("Đang ngồi lập trình tại bàn máy tính (~)", "💻");
+      break;
+    }
+
     case "cat": {
       isInteracting = true;
       // Face the cat

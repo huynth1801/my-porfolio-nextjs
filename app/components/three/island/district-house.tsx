@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { Hotspot } from "./hotspots";
@@ -8,6 +8,8 @@ import { Cat } from "./cat";
 import { getRig } from "./lighting";
 import { boot } from "./boot";
 import { useProximity } from "@/lib/proximity-store";
+import { createTerminalCanvas, drawTerminalToCanvas } from "./terminal-canvas";
+import { getTerminalSnapshot } from "@/lib/terminal-store";
 
 /** Low-poly cartoon smoke puffs rising from the chimney */
 function ChimneySmoke() {
@@ -36,16 +38,282 @@ function ChimneySmoke() {
     <group>
       <mesh ref={p1} position={[0.55, 1.95, -0.4]}>
         <sphereGeometry args={[1, 7, 7]} />
-        <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={0.3} transparent opacity={0.65} roughness={0.6} flatShading />
+        <meshStandardMaterial
+          color="#ffffff"
+          emissive="#ffffff"
+          emissiveIntensity={0.3}
+          transparent
+          opacity={0.65}
+          roughness={0.6}
+          flatShading
+        />
       </mesh>
       <mesh ref={p2} position={[0.55, 1.95, -0.4]}>
         <sphereGeometry args={[1, 7, 7]} />
-        <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={0.3} transparent opacity={0.65} roughness={0.6} flatShading />
+        <meshStandardMaterial
+          color="#ffffff"
+          emissive="#ffffff"
+          emissiveIntensity={0.3}
+          transparent
+          opacity={0.65}
+          roughness={0.6}
+          flatShading
+        />
       </mesh>
       <mesh ref={p3} position={[0.55, 1.95, -0.4]}>
         <sphereGeometry args={[1, 7, 7]} />
-        <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={0.3} transparent opacity={0.65} roughness={0.6} flatShading />
+        <meshStandardMaterial
+          color="#ffffff"
+          emissive="#ffffff"
+          emissiveIntensity={0.3}
+          transparent
+          opacity={0.65}
+          roughness={0.6}
+          flatShading
+        />
       </mesh>
+    </group>
+  );
+}
+
+/** Cozy Lo-Fi Indie Dev Desk setup in the cottage garden */
+function DevDesk() {
+  const steam1 = useRef<THREE.Mesh>(null!);
+  const steam2 = useRef<THREE.Mesh>(null!);
+  const screenLightRef = useRef<THREE.PointLight>(null!);
+  const lastBlink = useRef(0);
+  const cursorVis = useRef(true);
+
+  const terminalCanvas = useMemo(() => createTerminalCanvas(), []);
+  const terminalTex = useMemo(() => {
+    const tex = new THREE.CanvasTexture(terminalCanvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
+  }, [terminalCanvas]);
+
+  useEffect(() => () => terminalTex.dispose(), [terminalTex]);
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    if (steam1.current) {
+      const p1 = (t * 0.7) % 1;
+      steam1.current.position.y = 0.38 + p1 * 0.08;
+      steam1.current.position.x = 0.17 + Math.sin(t * 3) * 0.008;
+      const m1 = steam1.current.material as THREE.MeshStandardMaterial;
+      m1.opacity = Math.sin(p1 * Math.PI) * 0.45;
+      steam1.current.scale.setScalar(0.008 + p1 * 0.012);
+    }
+    if (steam2.current) {
+      const p2 = (t * 0.7 + 0.5) % 1;
+      steam2.current.position.y = 0.38 + p2 * 0.08;
+      steam2.current.position.x = 0.17 + Math.sin(t * 3 + 2) * 0.008;
+      const m2 = steam2.current.material as THREE.MeshStandardMaterial;
+      m2.opacity = Math.sin(p2 * Math.PI) * 0.45;
+      steam2.current.scale.setScalar(0.008 + p2 * 0.012);
+    }
+
+    // Blink cursor every 0.42s
+    if (t - lastBlink.current > 0.42) {
+      lastBlink.current = t;
+      cursorVis.current = !cursorVis.current;
+    }
+
+    const term = getTerminalSnapshot();
+    drawTerminalToCanvas(
+      terminalCanvas,
+      term.theme,
+      term.lines,
+      term.currentInput,
+      cursorVis.current,
+    );
+    // eslint-disable-next-line react-hooks/immutability
+    terminalTex.needsUpdate = true;
+
+    if (screenLightRef.current) {
+      const themeColor =
+        term.theme === "green" ? "#22c55e" : term.theme === "cyan" ? "#06b6d4" : "#ffb000";
+      screenLightRef.current.color.set(themeColor);
+      screenLightRef.current.intensity = term.isOpen ? 1.4 : 0.6;
+    }
+  });
+
+  return (
+    <group>
+      {/* Wooden Table Top */}
+      <mesh position={[0, 0.28, 0]} castShadow receiveShadow>
+        <boxGeometry args={[0.52, 0.024, 0.3]} />
+        <meshStandardMaterial color="#6b4423" roughness={0.7} />
+      </mesh>
+
+      {/* Under-desk Drawer */}
+      <mesh position={[0.12, 0.24, 0]} castShadow receiveShadow>
+        <boxGeometry args={[0.18, 0.045, 0.26]} />
+        <meshStandardMaterial color="#553518" roughness={0.8} />
+      </mesh>
+      {/* Drawer brass handle */}
+      <mesh position={[0.12, 0.24, 0.135]}>
+        <boxGeometry args={[0.04, 0.008, 0.01]} />
+        <meshStandardMaterial color="#fcd34d" metalness={0.8} roughness={0.3} />
+      </mesh>
+
+      {/* 4 Wooden Table Legs */}
+      {[
+        [-0.23, 0.14, -0.12],
+        [0.23, 0.14, -0.12],
+        [-0.23, 0.14, 0.12],
+        [0.23, 0.14, 0.12],
+      ].map(([x, y, z], i) => (
+        <mesh key={i} position={[x, y, z]} castShadow>
+          <cylinderGeometry args={[0.014, 0.014, 0.28, 5]} />
+          <meshStandardMaterial color="#553518" roughness={0.8} />
+        </mesh>
+      ))}
+
+      {/* Stool with cushion (tucked in close to desk) */}
+      <group position={[0, 0, 0.22]}>
+        <mesh position={[0, 0.16, 0]} castShadow>
+          <cylinderGeometry args={[0.09, 0.09, 0.024, 12]} />
+          <meshStandardMaterial color="#1e293b" roughness={0.8} />
+        </mesh>
+        {[
+          [-0.06, 0.08, -0.06],
+          [0.06, 0.08, -0.06],
+          [-0.06, 0.08, 0.06],
+          [0.06, 0.08, 0.06],
+        ].map(([x, y, z], i) => (
+          <mesh key={i} position={[x, y, z]} castShadow>
+            <cylinderGeometry args={[0.009, 0.009, 0.16, 5]} />
+            <meshStandardMaterial color="#553518" roughness={0.8} />
+          </mesh>
+        ))}
+      </group>
+
+      {/* Laptop (Ergonomic height & position right under hands) */}
+      <group position={[0, 0.292, 0.06]}>
+        {/* Base chassis */}
+        <mesh position={[0, 0.008, 0]} castShadow>
+          <boxGeometry args={[0.24, 0.014, 0.16]} />
+          <meshStandardMaterial color="#334155" metalness={0.5} roughness={0.4} />
+        </mesh>
+        {/* Keyboard recess */}
+        <mesh position={[0, 0.016, 0.015]}>
+          <boxGeometry args={[0.2, 0.004, 0.09]} />
+          <meshStandardMaterial color="#0f172a" roughness={0.9} />
+        </mesh>
+        {/* Trackpad */}
+        <mesh position={[0, 0.016, 0.06]}>
+          <boxGeometry args={[0.07, 0.002, 0.04]} />
+          <meshStandardMaterial color="#1e293b" roughness={0.6} />
+        </mesh>
+
+        {/* Screen Lid (angled slightly backward) */}
+        <group position={[0, 0.014, -0.078]} rotation={[-0.35, 0, 0]}>
+          <mesh position={[0, 0.075, 0]} castShadow>
+            <boxGeometry args={[0.24, 0.15, 0.008]} />
+            <meshStandardMaterial color="#1e293b" metalness={0.5} roughness={0.4} />
+          </mesh>
+          {/* Live Dynamic 3D CRT Terminal Display Screen */}
+          <mesh position={[0, 0.075, 0.005]}>
+            <planeGeometry args={[0.22, 0.13]} />
+            <meshStandardMaterial
+              map={terminalTex}
+              emissiveMap={terminalTex}
+              emissive="#ffffff"
+              emissiveIntensity={2.5}
+              roughness={0.15}
+              toneMapped={false}
+              side={THREE.DoubleSide}
+            />
+          </mesh>
+          {/* Screen Light illuminating the desk & keyboard */}
+          <pointLight
+            ref={screenLightRef}
+            position={[0, 0.08, 0.1]}
+            color="#ffb000"
+            intensity={0.8}
+            distance={1.4}
+            decay={2}
+          />
+        </group>
+      </group>
+
+      {/* Cozy Desk Gooseneck Lamp */}
+      <group position={[-0.19, 0.292, -0.06]}>
+        {/* Base */}
+        <mesh position={[0, 0.006, 0]} castShadow>
+          <cylinderGeometry args={[0.028, 0.028, 0.012, 8]} />
+          <meshStandardMaterial color="#475569" metalness={0.7} roughness={0.3} />
+        </mesh>
+        {/* Stem */}
+        <mesh position={[0.015, 0.06, 0]} rotation={[0, 0, -0.25]} castShadow>
+          <cylinderGeometry args={[0.005, 0.005, 0.11, 6]} />
+          <meshStandardMaterial color="#475569" metalness={0.7} roughness={0.3} />
+        </mesh>
+        {/* Lamp Shade */}
+        <mesh position={[0.035, 0.11, 0.02]} rotation={[0.4, 0, -0.5]} castShadow>
+          <coneGeometry args={[0.025, 0.04, 8]} />
+          <meshStandardMaterial color="#e2e8f0" roughness={0.4} />
+        </mesh>
+        {/* Lamp Bulb & Warm Point Light */}
+        <mesh position={[0.035, 0.105, 0.02]}>
+          <sphereGeometry args={[0.01, 8, 8]} />
+          <meshStandardMaterial color="#fef08a" emissive="#fef08a" emissiveIntensity={3} />
+        </mesh>
+        <pointLight
+          position={[0.035, 0.105, 0.02]}
+          color="#fef08a"
+          intensity={0.65}
+          distance={0.9}
+          decay={2}
+        />
+      </group>
+
+      {/* Steaming Coffee Mug */}
+      <group position={[0.17, 0.292, 0.04]}>
+        {/* Mug body */}
+        <mesh position={[0, 0.022, 0]} castShadow>
+          <cylinderGeometry args={[0.02, 0.016, 0.044, 10]} />
+          <meshStandardMaterial color="#fed7aa" roughness={0.6} />
+        </mesh>
+        {/* Dark espresso coffee inside */}
+        <mesh position={[0, 0.038, 0]}>
+          <cylinderGeometry args={[0.017, 0.017, 0.004, 10]} />
+          <meshStandardMaterial color="#2d1b0d" roughness={0.3} />
+        </mesh>
+        {/* Steam Puffs */}
+        <mesh ref={steam1} position={[0, 0.05, 0]}>
+          <sphereGeometry args={[1, 6, 6]} />
+          <meshStandardMaterial
+            color="#ffffff"
+            transparent
+            opacity={0.4}
+            roughness={0.9}
+            flatShading
+          />
+        </mesh>
+        <mesh ref={steam2} position={[0, 0.05, 0]}>
+          <sphereGeometry args={[1, 6, 6]} />
+          <meshStandardMaterial
+            color="#ffffff"
+            transparent
+            opacity={0.4}
+            roughness={0.9}
+            flatShading
+          />
+        </mesh>
+      </group>
+
+      {/* Tiny Succulent Pot on Desk */}
+      <group position={[0.18, 0.292, -0.08]}>
+        <mesh position={[0, 0.015, 0]} castShadow>
+          <cylinderGeometry args={[0.018, 0.013, 0.03, 8]} />
+          <meshStandardMaterial color="#c2410c" roughness={0.8} />
+        </mesh>
+        <mesh position={[0, 0.035, 0]} castShadow>
+          <dodecahedronGeometry args={[0.02, 0]} />
+          <meshStandardMaterial color="#15803d" roughness={0.7} flatShading />
+        </mesh>
+      </group>
     </group>
   );
 }
@@ -208,6 +476,18 @@ export function DistrictHouse() {
         </mesh>
       </Hotspot>
 
+      {/* Lo-Fi Indie Dev Desk */}
+      <Hotspot
+        position={[0.38, 0.02, 0.98]}
+        radius={0.42}
+        height={0.7}
+        glowY={0.01}
+        label="Lập trình (~ / CLI)"
+        target="desk"
+      >
+        <DevDesk />
+      </Hotspot>
+
       {/* Cat mascot loafing on the porch deck */}
       <Hotspot
         position={[-0.15, 0.16, 1.08]}
@@ -247,7 +527,12 @@ export function DistrictHouse() {
         {/* Golden peek envelope emerging on interaction */}
         <mesh ref={envelopeRef} position={[0, 0.35, 0.08]} rotation={[-0.2, 0, 0]}>
           <boxGeometry args={[0.11, 0.015, 0.13]} />
-          <meshStandardMaterial color="#fef08a" roughness={0.3} emissive="#fef08a" emissiveIntensity={0.25} />
+          <meshStandardMaterial
+            color="#fef08a"
+            roughness={0.3}
+            emissive="#fef08a"
+            emissiveIntensity={0.25}
+          />
         </mesh>
       </Hotspot>
 

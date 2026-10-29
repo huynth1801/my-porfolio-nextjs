@@ -380,6 +380,25 @@ class Sfx {
       o.stop(t + delay + 0.1);
     });
   }
+
+  /** sci-fi warp / teleport sound */
+  warp() {
+    const ctx = this.ensure();
+    if (!ctx) return;
+    if (ctx.state === "suspended") void ctx.resume();
+    const t = ctx.currentTime;
+    const o = ctx.createOscillator();
+    o.type = "sine";
+    o.frequency.setValueAtTime(220, t);
+    o.frequency.exponentialRampToValueAtTime(1400, t + 0.18);
+    o.frequency.exponentialRampToValueAtTime(440, t + 0.35);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.09, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.38);
+    o.connect(g).connect(ctx.destination);
+    o.start(t);
+    o.stop(t + 0.4);
+  }
 }
 
 export const lofi = new LofiEngine();

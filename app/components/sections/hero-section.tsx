@@ -8,6 +8,7 @@ import { profile } from "@/lib/content";
 import { journey } from "@/lib/journey-store";
 import { useAchievements } from "@/lib/achievements";
 import { startStory } from "@/app/components/three/island/story-store";
+import { useTerminal } from "@/lib/terminal-store";
 
 gsap.registerPlugin(useGSAP);
 
@@ -18,6 +19,7 @@ gsap.registerPlugin(useGSAP);
  */
 export function HeroSection() {
   const ach = useAchievements();
+  const { isOpen: isTerminalOpen } = useTerminal();
   const scope = useRef<HTMLElement>(null);
 
   useGSAP(
@@ -48,7 +50,12 @@ export function HeroSection() {
         className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-black/45 to-transparent pointer-events-none"
       />
 
-      <div data-hero-reveal className="relative max-w-xl mb-4">
+      <div
+        data-hero-reveal
+        className={`relative max-w-xl mb-4 transition-opacity duration-300 ${
+          isTerminalOpen ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
+      >
         {/* Breadcrumb Tagline */}
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center gap-1.5 font-mono text-[10px] font-semibold tracking-wider text-cyan-300 uppercase px-2.5 py-0.5 rounded-full bg-black/45 border border-white/15 backdrop-blur-md shadow-md">

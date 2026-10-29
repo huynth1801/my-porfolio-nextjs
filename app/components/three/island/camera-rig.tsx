@@ -7,6 +7,7 @@ import { journey, tourState } from "@/lib/journey-store";
 import { story } from "./story-store";
 import { panelStore } from "@/lib/panel-store";
 import { flappy } from "./flappy";
+import { getTerminalSnapshot } from "@/lib/terminal-store";
 import type { PanelKey } from "@/lib/content";
 
 /** Drag distance of the current/last pointer gesture — hotspots read this
@@ -129,7 +130,23 @@ export function CameraRig() {
     let pitchTarget: number;
     let radiusTarget: number;
 
-    if (flappy.isOpen) {
+    const term = getTerminalSnapshot();
+
+    if (term.isOpen) {
+      // Cinematic 3/4 side angle clearly framing both boy typing & 3D laptop screen on the left
+      const isMobile = state.size.width < 768;
+      const baseYaw = 1.25 + userYaw.current;
+      yawTarget = shortestAngle(yaw.current, baseYaw);
+      pitchTarget = THREE.MathUtils.clamp(0.38 + userPitch.current * 0.7, 0.18, 0.85);
+      radiusTarget = isMobile ? 2.5 : 2.25;
+
+      // On desktop, shift pivot to the right in camera view so desk/boy are framed in the open left 55%
+      if (isMobile) {
+        pivotTarget.current.set(-2.66, 0.44, 3.22);
+      } else {
+        pivotTarget.current.set(-2.47, 0.44, 2.65);
+      }
+    } else if (flappy.isOpen) {
       // Zoom right into the retro arcade entrance & screen
       yawTarget = shortestAngle(yaw.current, -0.8);
       pitchTarget = 0.14;

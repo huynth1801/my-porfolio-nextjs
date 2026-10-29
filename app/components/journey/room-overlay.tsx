@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { journey, clamp01 } from "@/lib/journey-store";
 import { hotspotStore } from "@/app/components/three/island/hotspot-store";
+import { getTerminalSnapshot } from "@/lib/terminal-store";
 
 /** Floating label that follows the cursor while a 3D hotspot is hovered. */
 export function HotspotTooltip() {
@@ -13,7 +14,7 @@ export function HotspotTooltip() {
     const tick = () => {
       const el = ref.current;
       if (el) {
-        if (hotspotStore.active) {
+        if (hotspotStore.active && !getTerminalSnapshot().isOpen) {
           el.textContent = hotspotStore.label;
           // keep the tooltip inside the viewport: flip above the cursor near
           // the bottom edge, pull left near the right edge (the tour HUD and
