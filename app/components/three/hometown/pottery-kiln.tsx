@@ -4,89 +4,63 @@ import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { KilnSmoke } from "./kiln-smoke";
+import { Cat } from "../island/cat";
 
 /**
- * Creates a procedural high-res terracotta brick texture
- * with characteristic Mang Thit horizontal circular brick courses,
- * weathered lime/salt efflorescence streaks, and soot darkening.
+ * Creates a cozy, warm, stylized terracotta texture
+ * with soft friendly rings and warm baked clay hues.
  */
-function createKilnTexture(): THREE.CanvasTexture {
+function createCuteKilnTexture(): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
   canvas.width = 1024;
   canvas.height = 512;
   const ctx = canvas.getContext("2d");
-  if (!ctx) {
-    return new THREE.CanvasTexture(canvas);
-  }
+  if (!ctx) return new THREE.CanvasTexture(canvas);
 
-  // Base warm terracotta tone
-  const baseGrad = ctx.createLinearGradient(0, 0, 0, 512);
-  baseGrad.addColorStop(0, "#4a1e12"); // soot darkened top
-  baseGrad.addColorStop(0.15, "#8d3016");
-  baseGrad.addColorStop(0.45, "#b5441d");
-  baseGrad.addColorStop(0.75, "#c24b22");
-  baseGrad.addColorStop(1, "#8e3519"); // ground footing
-  ctx.fillStyle = baseGrad;
+  // Soft warm terracotta gradient
+  const grad = ctx.createLinearGradient(0, 0, 0, 512);
+  grad.addColorStop(0, "#732410"); // warm roasted top
+  grad.addColorStop(0.18, "#b9421e");
+  grad.addColorStop(0.5, "#d65327");
+  grad.addColorStop(0.82, "#e26436");
+  grad.addColorStop(1, "#c44c23");
+  ctx.fillStyle = grad;
   ctx.fillRect(0, 0, 1024, 512);
 
-  // Horizontal brick courses
-  const rows = 48;
+  // Friendly soft brick course bands
+  const rows = 32;
   const rowHeight = 512 / rows;
   for (let r = 0; r < rows; r++) {
     const y = r * rowHeight;
-    // Course mortar line
-    ctx.strokeStyle = "rgba(40, 18, 12, 0.4)";
-    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = "rgba(70, 20, 10, 0.25)";
+    ctx.lineWidth = 2.0;
     ctx.beginPath();
     ctx.moveTo(0, y);
     ctx.lineTo(1024, y);
     ctx.stroke();
 
-    // Subtle individual brick hue variations
-    const bricksInRow = 40;
-    const brickWidth = 1024 / bricksInRow;
-    const offset = (r % 2) * (brickWidth * 0.5);
-
-    for (let c = 0; c < bricksInRow; c++) {
-      const x = (c * brickWidth + offset) % 1024;
-      const noise = Math.random();
-      if (noise > 0.55) {
-        ctx.fillStyle = noise > 0.8 ? "rgba(220, 100, 50, 0.12)" : "rgba(80, 25, 12, 0.12)";
-        ctx.fillRect(x + 1, y + 1, brickWidth - 2, rowHeight - 2);
+    // Subtle gentle hue highlights
+    const bricks = 28;
+    const bw = 1024 / bricks;
+    const offset = (r % 2) * (bw * 0.5);
+    for (let c = 0; c < bricks; c++) {
+      const x = (c * bw + offset) % 1024;
+      if (Math.sin(c * 13.5 + r * 7.2) > 0.3) {
+        ctx.fillStyle = "rgba(255, 170, 120, 0.08)";
+        ctx.fillRect(x + 2, y + 2, bw - 4, rowHeight - 4);
       }
     }
   }
 
-  // Mang Thit iconic weathered white salt / lime efflorescence patches
-  // (Decades of thermal baking & mineral precipitation)
-  ctx.fillStyle = "rgba(235, 226, 215, 0.28)";
-  for (let i = 0; i < 22; i++) {
-    const cx = Math.random() * 1024;
-    const cy = 180 + Math.random() * 260;
-    const rw = 40 + Math.random() * 90;
-    const rh = 30 + Math.random() * 80;
+  // Soft, cute cloudy efflorescence patches
+  ctx.fillStyle = "rgba(255, 240, 225, 0.22)";
+  for (let i = 0; i < 16; i++) {
+    const cx = (i * 64 + 32) % 1024;
+    const cy = 200 + Math.sin(i * 4.3) * 120;
     ctx.beginPath();
-    ctx.ellipse(cx, cy, rw, rh, Math.random() * Math.PI, 0, Math.PI * 2);
+    ctx.ellipse(cx, cy, 55, 45, 0, 0, Math.PI * 2);
     ctx.fill();
   }
-
-  // Additional fine vertical drip streaks of lime wash
-  ctx.fillStyle = "rgba(240, 235, 225, 0.18)";
-  for (let s = 0; s < 30; s++) {
-    const sx = Math.random() * 1024;
-    const sy = 160 + Math.random() * 150;
-    const sw = 3 + Math.random() * 8;
-    const sh = 40 + Math.random() * 120;
-    ctx.fillRect(sx, sy, sw, sh);
-  }
-
-  // Soot wash near top
-  const sootGrad = ctx.createLinearGradient(0, 0, 0, 120);
-  sootGrad.addColorStop(0, "rgba(25, 15, 12, 0.75)");
-  sootGrad.addColorStop(0.5, "rgba(45, 20, 15, 0.35)");
-  sootGrad.addColorStop(1, "rgba(60, 25, 18, 0)");
-  ctx.fillStyle = sootGrad;
-  ctx.fillRect(0, 0, 1024, 120);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.wrapS = THREE.RepeatWrapping;
@@ -96,14 +70,15 @@ function createKilnTexture(): THREE.CanvasTexture {
 }
 
 /**
- * Procedural profile of a Mang Thit bell kiln:
- * Wide footing -> paraboloid curved flank -> narrow top aperture rim.
+ * Chubby, round bell-shaped profile:
+ * Plumper belly, soft rounded shoulders, cute donut collar rim.
  */
-function getKilnRadiusAtHeight(y: number, maxHeight: number, baseRadius: number): number {
+function getCuteKilnRadius(y: number, maxHeight: number, baseRadius: number): number {
   const normY = THREE.MathUtils.clamp(y / maxHeight, 0, 1);
-  // Parabolic bell curve: starts wide, curves inward faster near the top
-  const factor = 1 - Math.pow(normY, 1.35) * 0.76;
-  return baseRadius * factor;
+  // Chubby cute bell curve: slight plump waist then smooth round taper
+  const belly = Math.sin(normY * Math.PI * 0.9) * 0.2;
+  const taper = Math.pow(normY, 1.45) * 0.72;
+  return baseRadius * (1 + belly - taper);
 }
 
 export type KilnProps = {
@@ -115,7 +90,7 @@ export type KilnProps = {
   hasSpiralStairs?: boolean;
 };
 
-export function PotteryKiln({
+export function CutePotteryKiln({
   position = [0, 0, 0],
   scale = 1,
   rotation = [0, 0, 0],
@@ -125,92 +100,86 @@ export function PotteryKiln({
 }: KilnProps) {
   const fireLightRef = useRef<THREE.PointLight>(null!);
 
-  const height = 9.2;
-  const baseRadius = 3.6;
+  const height = 7.6;
+  const baseRadius = 3.4;
 
-  // Bell-shaped Lathe silhouette points
+  // Chubby Lathe profile
   const lathePoints = useMemo(() => {
     const pts: THREE.Vector2[] = [];
     const segments = 32;
 
-    // Outer profile
     for (let i = 0; i <= segments; i++) {
       const y = (i / segments) * height;
-      const r = getKilnRadiusAtHeight(y, height, baseRadius);
+      const r = getCuteKilnRadius(y, height, baseRadius);
       pts.push(new THREE.Vector2(r, y));
     }
 
     // Top rim lip
-    pts.push(new THREE.Vector2(baseRadius * 0.28, height + 0.15));
-    pts.push(new THREE.Vector2(baseRadius * 0.22, height + 0.15));
-    // Inner hollow chimney
-    pts.push(new THREE.Vector2(baseRadius * 0.2, height - 1.2));
+    pts.push(new THREE.Vector2(baseRadius * 0.32, height + 0.12));
+    pts.push(new THREE.Vector2(baseRadius * 0.25, height + 0.12));
+    // Inner shaft
+    pts.push(new THREE.Vector2(baseRadius * 0.22, height - 0.9));
 
     return pts;
   }, [height, baseRadius]);
 
-  // Spiral stairs spiraling up the outer dome
+  // Cute rounded spiral stepping stones
   const spiralSteps = useMemo(() => {
     if (!hasSpiralStairs) return [];
-    const steps: { pos: [number, number, number]; rotY: number; width: number }[] = [];
-    const stepCount = 28;
-    const startAngle = 0.4;
-    const turns = 0.85; // ~300 degree spiral around one side
+    const steps: { pos: [number, number, number]; rotY: number; scale: number }[] = [];
+    const count = 22;
+    const startAngle = 0.35;
+    const turns = 0.78;
 
-    for (let i = 0; i < stepCount; i++) {
-      const frac = i / stepCount;
-      const y = 0.5 + frac * (height * 0.75);
+    for (let i = 0; i < count; i++) {
+      const frac = i / count;
+      const y = 0.45 + frac * (height * 0.72);
       const angle = startAngle + frac * Math.PI * 2 * turns;
-      const r = getKilnRadiusAtHeight(y, height, baseRadius) + 0.14;
+      const r = getCuteKilnRadius(y, height, baseRadius) + 0.16;
 
       steps.push({
         pos: [Math.cos(angle) * r, y, Math.sin(angle) * r],
         rotY: -angle + Math.PI / 2,
-        width: 0.55 - frac * 0.15,
+        scale: 0.95 - frac * 0.15,
       });
     }
     return steps;
   }, [hasSpiralStairs, height, baseRadius]);
 
-  // Terracotta & brick material
   const kilnTexture = useMemo(() => {
     if (typeof window === "undefined") return null;
-    return createKilnTexture();
+    return createCuteKilnTexture();
   }, []);
 
-  // Flickering fire in combustion chamber
+  // Soft cozy fire flicker
   useFrame((state) => {
     if (fireLightRef.current && hasFire) {
       const time = state.clock.getElapsedTime();
-      const flicker =
-        Math.sin(time * 12.0) * 0.25 +
-        Math.cos(time * 23.0) * 0.15 +
-        Math.sin(time * 7.5) * 0.35 +
-        1.0;
-      fireLightRef.current.intensity = 2.4 * Math.max(0.6, flicker);
+      const flicker = Math.sin(time * 9.0) * 0.2 + Math.cos(time * 16.0) * 0.15 + 1.0;
+      fireLightRef.current.intensity = 2.2 * Math.max(0.7, flicker);
     }
   });
 
   return (
     <group position={position} scale={scale} rotation={rotation}>
-      {/* Kiln Main Bell Dome */}
+      {/* Plump Bell Kiln Dome */}
       <mesh castShadow receiveShadow>
-        <latheGeometry args={[lathePoints, 36]} />
+        <latheGeometry args={[lathePoints, 40]} />
         <meshStandardMaterial
-          color="#b5441d"
+          color="#d95427"
           map={kilnTexture || undefined}
-          roughness={0.88}
-          metalness={0.06}
+          roughness={0.75}
+          metalness={0.05}
         />
       </mesh>
 
-      {/* Top Rim Brick Cap / Chimney Collar */}
+      {/* Cute Rounded Donut Collar Rim on Chimney */}
       <mesh position={[0, height + 0.08, 0]} castShadow>
-        <torusGeometry args={[baseRadius * 0.25, 0.12, 10, 24]} />
-        <meshStandardMaterial color="#4a1e12" roughness={0.92} />
+        <torusGeometry args={[baseRadius * 0.29, 0.18, 12, 28]} />
+        <meshStandardMaterial color="#8a2e15" roughness={0.7} />
       </mesh>
 
-      {/* Exterior Spiral Climbing Steps */}
+      {/* Cute Rounded Stepping Stones Spiraling Up */}
       {hasSpiralStairs && (
         <group>
           {spiralSteps.map((step, idx) => (
@@ -218,132 +187,178 @@ export function PotteryKiln({
               key={idx}
               position={step.pos}
               rotation={[0, step.rotY, 0]}
+              scale={step.scale}
               castShadow
               receiveShadow
             >
-              <boxGeometry args={[step.width, 0.14, 0.35]} />
-              <meshStandardMaterial color="#8e3519" roughness={0.9} />
+              {/* Cute rounded disc stepping stone */}
+              <cylinderGeometry args={[0.32, 0.36, 0.14, 14]} />
+              <meshStandardMaterial color="#9c3a1c" roughness={0.8} />
             </mesh>
           ))}
         </group>
       )}
 
-      {/* Arched Lower Combustion Doorway (Cửa Lò Nung) */}
-      <group position={[0, 0.85, baseRadius - 0.1]}>
-        {/* Dark interior chamber recess */}
-        <mesh position={[0, 0, -0.45]}>
-          <boxGeometry args={[1.5, 1.8, 1.2]} />
-          <meshStandardMaterial color="#180b06" roughness={1.0} />
+      {/* Arched Cute Combustion Doorway */}
+      <group position={[0, 0.78, baseRadius * 0.96]}>
+        {/* Dark interior chamber */}
+        <mesh position={[0, 0, -0.4]}>
+          <boxGeometry args={[1.4, 1.6, 1.0]} />
+          <meshStandardMaterial color="#1f0e08" roughness={1.0} />
         </mesh>
 
-        {/* Arch Frame Left Post */}
-        <mesh position={[-0.7, 0, 0]} castShadow receiveShadow>
-          <boxGeometry args={[0.26, 1.7, 0.35]} />
-          <meshStandardMaterial color="#6e2511" roughness={0.9} />
+        {/* Cute Arched Architrave Portal */}
+        <mesh position={[-0.65, 0, 0]} castShadow receiveShadow>
+          <cylinderGeometry args={[0.15, 0.16, 1.5, 10]} />
+          <meshStandardMaterial color="#873016" roughness={0.75} />
         </mesh>
-        {/* Arch Frame Right Post */}
-        <mesh position={[0.7, 0, 0]} castShadow receiveShadow>
-          <boxGeometry args={[0.26, 1.7, 0.35]} />
-          <meshStandardMaterial color="#6e2511" roughness={0.9} />
+        <mesh position={[0.65, 0, 0]} castShadow receiveShadow>
+          <cylinderGeometry args={[0.15, 0.16, 1.5, 10]} />
+          <meshStandardMaterial color="#873016" roughness={0.75} />
         </mesh>
-        {/* Arch Top Lintelle */}
-        <mesh position={[0, 0.9, 0]} castShadow>
-          <boxGeometry args={[1.66, 0.28, 0.38]} />
-          <meshStandardMaterial color="#5a1e0d" roughness={0.9} />
+        {/* Rounded Top Arch */}
+        <mesh position={[0, 0.78, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
+          <cylinderGeometry args={[0.15, 0.15, 1.3, 10]} />
+          <meshStandardMaterial color="#73250f" roughness={0.75} />
         </mesh>
 
-        {/* Interior Fire Flame PointLight & Inner Embers */}
+        {/* Cozy Warm Fireplace Glow & Glowing Coal Bed */}
         {hasFire && (
           <>
             <pointLight
               ref={fireLightRef}
-              color="#ff6a00"
-              distance={6.5}
+              color="#ff7b1a"
+              distance={6.0}
               decay={2}
-              position={[0, 0.1, -0.3]}
-              intensity={2.8}
+              position={[0, 0.1, -0.2]}
+              intensity={2.6}
             />
-            {/* Glowing coal / rice husk embers bed */}
-            <mesh position={[0, -0.7, -0.2]}>
-              <boxGeometry args={[1.1, 0.18, 0.8]} />
+            {/* Glowing Embers */}
+            <mesh position={[0, -0.65, -0.2]}>
+              <boxGeometry args={[1.0, 0.16, 0.7]} />
               <meshStandardMaterial
-                color="#ff3b00"
-                emissive="#ff4500"
-                emissiveIntensity={2.2}
-                roughness={0.6}
+                color="#ff4d00"
+                emissive="#ff5e00"
+                emissiveIntensity={2.5}
+                roughness={0.5}
               />
             </mesh>
           </>
         )}
 
-        {/* Pile of firewood / trấu bags outside door */}
-        <mesh position={[-1.15, -0.65, 0.4]} rotation={[0, 0.4, 0.1]} castShadow>
-          <cylinderGeometry args={[0.09, 0.09, 1.1, 8]} />
-          <meshStandardMaterial color="#3e2723" roughness={0.95} />
+        {/* Cute Little Firewood Sticks by Door */}
+        <mesh position={[-1.0, -0.62, 0.35]} rotation={[0, 0.35, 0.12]} castShadow>
+          <cylinderGeometry args={[0.08, 0.08, 0.9, 8]} />
+          <meshStandardMaterial color="#503527" roughness={0.85} />
         </mesh>
-        <mesh position={[-1.25, -0.55, 0.42]} rotation={[0.2, -0.3, 0]} castShadow>
-          <cylinderGeometry args={[0.08, 0.08, 0.95, 8]} />
-          <meshStandardMaterial color="#4e342e" roughness={0.95} />
+        <mesh position={[-1.08, -0.54, 0.38]} rotation={[0.2, -0.25, 0]} castShadow>
+          <cylinderGeometry args={[0.07, 0.07, 0.85, 8]} />
+          <meshStandardMaterial color="#624231" roughness={0.85} />
         </mesh>
       </group>
 
-      {/* Chimney Billowing Smoke */}
-      {hasSmoke && <KilnSmoke position={[0, height + 0.3, 0]} intensity={1.1} />}
+      {/* Billowing Cute Marshmallow Smoke Puffs */}
+      {hasSmoke && <KilnSmoke position={[0, height + 0.25, 0]} intensity={1.1} />}
     </group>
   );
 }
 
 /**
- * Cluster of Mang Thit Kilns:
- * Creates the vast "Vương Quốc Đỏ" skyline with multiple clustered kilns,
- * brick sheds with terracotta tile roofs, drying racks, and ceramic jars.
+ * Chubby Ceramic Jar (Lu gốm chibi):
+ * Plump round belly, flared neck, and two cute little side handles!
+ */
+export function CutePotteryJar({
+  position = [0, 0, 0],
+  scale = 1,
+  color = "#df5c2c",
+}: {
+  position?: [number, number, number];
+  scale?: number;
+  color?: string;
+}) {
+  return (
+    <group position={position} scale={scale}>
+      {/* Plump Round Belly */}
+      <mesh position={[0, 0.36, 0]} castShadow receiveShadow>
+        <sphereGeometry args={[0.38, 16, 16]} />
+        <meshStandardMaterial color={color} roughness={0.65} metalness={0.08} />
+      </mesh>
+
+      {/* Cute Flared Neck */}
+      <mesh position={[0, 0.65, 0]} castShadow>
+        <cylinderGeometry args={[0.24, 0.3, 0.22, 16]} />
+        <meshStandardMaterial color={color} roughness={0.7} />
+      </mesh>
+      {/* Collar Rim */}
+      <mesh position={[0, 0.76, 0]} castShadow>
+        <torusGeometry args={[0.24, 0.045, 8, 16]} />
+        <meshStandardMaterial color="#913618" roughness={0.65} />
+      </mesh>
+
+      {/* Two Cute Little Ear-Handles */}
+      <mesh position={[-0.34, 0.44, 0]} rotation={[0, 0, 0.3]} castShadow>
+        <torusGeometry args={[0.09, 0.03, 8, 12]} />
+        <meshStandardMaterial color="#913618" roughness={0.7} />
+      </mesh>
+      <mesh position={[0.34, 0.44, 0]} rotation={[0, 0, -0.3]} castShadow>
+        <torusGeometry args={[0.09, 0.03, 8, 12]} />
+        <meshStandardMaterial color="#913618" roughness={0.7} />
+      </mesh>
+    </group>
+  );
+}
+
+/**
+ * Cluster of Cute Mang Thit Kilns:
+ * Adorable diorama landscape with chubby bell kilns, cute jars,
+ * a cozy brick drying shed, and a friendly mascot cat enjoying the river view!
  */
 export function MangThitKilnCluster() {
   return (
     <group position={[0, 0, 0]}>
-      {/* Main Hero Kiln (Front Center-Left) */}
-      <PotteryKiln
-        position={[-1.5, 0, 1.2]}
-        scale={1.05}
+      {/* Main Hero Chubby Kiln */}
+      <CutePotteryKiln
+        position={[-1.2, 0, 1.4]}
+        scale={1.08}
         rotation={[0, -0.35, 0]}
         hasSmoke={true}
         hasFire={true}
         hasSpiralStairs={true}
       />
 
-      {/* Secondary Kiln (Right, slightly behind, tall) */}
-      <PotteryKiln
-        position={[4.6, 0, -1.8]}
-        scale={1.18}
-        rotation={[0, 0.7, 0]}
+      {/* Secondary Cute Kiln (Right, friendly plump dome) */}
+      <CutePotteryKiln
+        position={[4.6, 0, -1.5]}
+        scale={1.15}
+        rotation={[0, 0.65, 0]}
         hasSmoke={true}
         hasFire={true}
         hasSpiralStairs={true}
       />
 
-      {/* Third Kiln (Back Left, deep background) */}
-      <PotteryKiln
-        position={[-6.2, 0, -3.5]}
-        scale={0.95}
-        rotation={[0, 1.2, 0]}
+      {/* Third Cute Kiln (Back left) */}
+      <CutePotteryKiln
+        position={[-5.8, 0, -2.8]}
+        scale={0.94}
+        rotation={[0, 1.1, 0]}
         hasSmoke={true}
         hasFire={false}
         hasSpiralStairs={false}
       />
 
-      {/* Fourth Kiln (Far Right Background) */}
-      <PotteryKiln
-        position={[9.5, 0, -6.0]}
+      {/* Fourth Cute Kiln (Far right background) */}
+      <CutePotteryKiln
+        position={[9.0, 0, -5.2]}
         scale={0.88}
-        rotation={[0, -0.8, 0]}
+        rotation={[0, -0.7, 0]}
         hasSmoke={false}
         hasFire={false}
         hasSpiralStairs={false}
       />
 
-      {/* Fifth Kiln (Far Center-Back) */}
-      <PotteryKiln
-        position={[0.8, 0, -8.2]}
+      {/* Fifth Cute Kiln (Far center-back) */}
+      <CutePotteryKiln
+        position={[0.6, 0, -7.0]}
         scale={0.92}
         rotation={[0, 0.4, 0]}
         hasSmoke={true}
@@ -351,60 +366,50 @@ export function MangThitKilnCluster() {
         hasSpiralStairs={false}
       />
 
-      {/* Traditional brick shed with pitched terracotta roof (Nhà chứa gạch mộc) */}
-      <group position={[-5.8, 0, 2.8]} rotation={[0, 0.25, 0]}>
-        {/* Pillars */}
+      {/* Cozy Chibi Brick Drying Shed (Nhà chứa gạch mộc chibi) */}
+      <group position={[-5.4, 0, 2.6]} rotation={[0, 0.22, 0]}>
+        {/* Chunky rounded wooden pillars */}
         {[
-          [-2.2, -1.6],
-          [-2.2, 1.6],
-          [2.2, -1.6],
-          [2.2, 1.6],
+          [-1.8, -1.4],
+          [-1.8, 1.4],
+          [1.8, -1.4],
+          [1.8, 1.4],
         ].map(([px, pz], i) => (
-          <mesh key={i} position={[px, 1.5, pz]} castShadow receiveShadow>
-            <cylinderGeometry args={[0.12, 0.12, 3, 8]} />
-            <meshStandardMaterial color="#4a2e1d" roughness={0.9} />
+          <mesh key={i} position={[px, 1.25, pz]} castShadow receiveShadow>
+            <cylinderGeometry args={[0.12, 0.14, 2.5, 8]} />
+            <meshStandardMaterial color="#5a3825" roughness={0.85} />
           </mesh>
         ))}
 
-        {/* Pitched Roof (Mái ngói âm dương đỏ) */}
-        <mesh position={[0, 3.4, 0]} rotation={[0, 0, 0]} castShadow>
-          <coneGeometry args={[3.2, 1.4, 4]} />
-          <meshStandardMaterial color="#a83917" roughness={0.82} />
+        {/* Cute Pitched Terracotta Roof with rounded overhang */}
+        <mesh position={[0, 2.9, 0]} rotation={[0, 0, 0]} castShadow>
+          <coneGeometry args={[2.8, 1.35, 4]} />
+          <meshStandardMaterial color="#c24823" roughness={0.7} />
         </mesh>
 
-        {/* Stacks of unbaked raw bricks drying inside shed */}
-        <mesh position={[-0.8, 0.45, 0]} castShadow receiveShadow>
-          <boxGeometry args={[1.6, 0.9, 1.8]} />
-          <meshStandardMaterial color="#8c5835" roughness={0.95} />
+        {/* Cute stacks of miniature toy bricks drying inside */}
+        <mesh position={[-0.6, 0.42, 0]} castShadow receiveShadow>
+          <boxGeometry args={[1.4, 0.8, 1.5]} />
+          <meshStandardMaterial color="#b8532b" roughness={0.85} />
         </mesh>
-        <mesh position={[0.9, 0.55, 0.2]} castShadow receiveShadow>
-          <boxGeometry args={[1.2, 1.1, 1.4]} />
-          <meshStandardMaterial color="#945d39" roughness={0.95} />
+        <mesh position={[0.7, 0.52, 0.2]} castShadow receiveShadow>
+          <boxGeometry args={[1.1, 1.0, 1.2]} />
+          <meshStandardMaterial color="#c75c32" roughness={0.85} />
         </mesh>
+
+        {/* Adorable friendly Cat loafing on top of the brick stack! */}
+        <group position={[-0.6, 0.82, 0.2]} scale={1.2}>
+          <Cat />
+        </group>
       </group>
 
-      {/* Rows of finished terracotta ceramic jars (Lu gốm, khạp sành) stacked on ground */}
-      <group position={[1.8, 0, 4.2]}>
-        {[
-          { x: 0, z: 0, r: 0.38, h: 0.72 },
-          { x: 0.9, z: -0.2, r: 0.42, h: 0.8 },
-          { x: 1.7, z: 0.1, r: 0.35, h: 0.65 },
-          { x: 0.4, z: 0.8, r: 0.4, h: 0.75 },
-          { x: 1.2, z: 0.7, r: 0.36, h: 0.7 },
-        ].map((pot, idx) => (
-          <group key={idx} position={[pot.x, 0, pot.z]}>
-            {/* Urn belly */}
-            <mesh position={[0, pot.h * 0.5, 0]} castShadow receiveShadow>
-              <sphereGeometry args={[pot.r, 16, 16]} />
-              <meshStandardMaterial color="#bf5326" roughness={0.7} />
-            </mesh>
-            {/* Urn neck/rim */}
-            <mesh position={[0, pot.h * 0.85, 0]} castShadow>
-              <cylinderGeometry args={[pot.r * 0.6, pot.r * 0.7, pot.h * 0.3, 16]} />
-              <meshStandardMaterial color="#963714" roughness={0.75} />
-            </mesh>
-          </group>
-        ))}
+      {/* Cute Chubby Ceramic Jars Stacked on Ground */}
+      <group position={[2.0, 0, 4.0]}>
+        <CutePotteryJar position={[0, 0, 0]} scale={1.05} color="#e66333" />
+        <CutePotteryJar position={[0.85, 0, -0.25]} scale={1.15} color="#d95427" />
+        <CutePotteryJar position={[1.65, 0, 0.1]} scale={0.92} color="#ec7042" />
+        <CutePotteryJar position={[0.45, 0, 0.75]} scale={1.0} color="#de5b2c" />
+        <CutePotteryJar position={[1.25, 0, 0.65]} scale={0.96} color="#e66333" />
       </group>
     </group>
   );

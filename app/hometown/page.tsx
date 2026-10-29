@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -97,6 +98,11 @@ export default function HometownPage() {
   );
   const [showPhotoRef, setShowPhotoRef] = useState(false);
   const [audioActive, setAudioActive] = useState(false);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   // Switch camera preset
   const handleSelectPreset = (key: ViewPreset) => {
@@ -282,164 +288,170 @@ export default function HometownPage() {
         </div>
       )}
 
-      {/* Specialties Modal / Drawer */}
-      {showSpecialties && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div
-            className="relative w-full max-w-3xl rounded-3xl border border-amber-500/40 bg-gradient-to-b from-[#241108] to-[#140803] p-5 sm:p-7 shadow-2xl max-h-[90vh] overflow-y-auto"
-            role="dialog"
-            aria-modal="true"
-          >
-            {/* Modal Header */}
-            <div className="flex items-start justify-between pb-4 border-b border-amber-600/25">
-              <div>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/20 px-3 py-1 text-xs font-semibold text-amber-300 border border-amber-500/30">
-                  <Sparkles className="size-3.5" />
-                  Đất Vĩnh Long - Địa linh nhân kiệt
-                </span>
-                <h2 className="mt-2 text-xl sm:text-2xl font-bold tracking-tight text-white">
-                  Đặc Sản & Tinh Hoa Quê Hương Vĩnh Long
-                </h2>
-                <p className="text-xs sm:text-sm text-neutral-300 mt-1">
-                  Khám phá những sản vật nông nghiệp và làng nghề trăm năm làm nên danh tiếng miền
-                  sông nước Cửu Long.
-                </p>
-              </div>
-              <button
-                onClick={() => setShowSpecialties(false)}
-                className="rounded-full p-1.5 text-neutral-400 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
-                aria-label="Đóng cửa sổ"
-              >
-                <X className="size-5" />
-              </button>
-            </div>
-
-            {/* Specialties List & Preview Grid */}
-            <div className="mt-5 grid grid-cols-1 md:grid-cols-12 gap-5">
-              {/* Left Column: List of items */}
-              <div className="md:col-span-5 flex flex-col gap-2">
-                {VINH_LONG_SPECIALTIES.map((item) => {
-                  const isSel = selectedSpecialty.id === item.id;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => setSelectedSpecialty(item)}
-                      className={`flex items-center justify-between rounded-xl p-3 text-left transition-all duration-200 cursor-pointer ${
-                        isSel
-                          ? "bg-amber-600/30 border border-amber-400/50 text-white shadow-md"
-                          : "bg-white/[0.03] border border-white/5 text-neutral-300 hover:bg-white/[0.07] hover:text-white"
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">{item.icon}</span>
-                        <div>
-                          <div className="text-xs font-semibold">{item.name}</div>
-                          <div className="text-[11px] text-amber-300/70">{item.origin}</div>
-                        </div>
-                      </div>
-                      <ChevronRight
-                        className={`size-4 transition-transform ${
-                          isSel ? "text-amber-400 translate-x-1" : "text-neutral-500"
-                        }`}
-                      />
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Right Column: Selected Specialty Deep Dive */}
-              <div className="md:col-span-7 rounded-2xl border border-amber-600/30 bg-black/45 p-5 flex flex-col justify-between">
+      {/* Specialties Modal / Drawer Portaled Directly to Body */}
+      {mounted &&
+        showSpecialties &&
+        createPortal(
+          <div className="fixed inset-0 z-[99999] isolate flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+            <div
+              className="relative w-full max-w-3xl rounded-3xl border border-amber-500/40 bg-gradient-to-b from-[#241108] to-[#140803] p-5 sm:p-7 shadow-2xl max-h-[90vh] overflow-y-auto"
+              role="dialog"
+              aria-modal="true"
+            >
+              {/* Modal Header */}
+              <div className="flex items-start justify-between pb-4 border-b border-amber-600/25">
                 <div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-3xl">{selectedSpecialty.icon}</span>
-                    <span className="rounded-full bg-amber-500/20 px-2.5 py-0.5 text-xs font-semibold text-amber-300 border border-amber-500/30">
-                      {selectedSpecialty.badge}
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/20 px-3 py-1 text-xs font-semibold text-amber-300 border border-amber-500/30">
+                    <Sparkles className="size-3.5" />
+                    Đất Vĩnh Long - Địa linh nhân kiệt
+                  </span>
+                  <h2 className="mt-2 text-xl sm:text-2xl font-bold tracking-tight text-white">
+                    Đặc Sản & Tinh Hoa Quê Hương Vĩnh Long
+                  </h2>
+                  <p className="text-xs sm:text-sm text-neutral-300 mt-1">
+                    Khám phá những sản vật nông nghiệp và làng nghề trăm năm làm nên danh tiếng miền
+                    sông nước Cửu Long.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowSpecialties(false)}
+                  className="rounded-full p-1.5 text-neutral-400 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+                  aria-label="Đóng cửa sổ"
+                >
+                  <X className="size-5" />
+                </button>
+              </div>
+
+              {/* Specialties List & Preview Grid */}
+              <div className="mt-5 grid grid-cols-1 md:grid-cols-12 gap-5">
+                {/* Left Column: List of items */}
+                <div className="md:col-span-5 flex flex-col gap-2">
+                  {VINH_LONG_SPECIALTIES.map((item) => {
+                    const isSel = selectedSpecialty.id === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => setSelectedSpecialty(item)}
+                        className={`flex items-center justify-between rounded-xl p-3 text-left transition-all duration-200 cursor-pointer ${
+                          isSel
+                            ? "bg-amber-600/30 border border-amber-400/50 text-white shadow-md"
+                            : "bg-white/[0.03] border border-white/5 text-neutral-300 hover:bg-white/[0.07] hover:text-white"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{item.icon}</span>
+                          <div>
+                            <div className="text-xs font-semibold">{item.name}</div>
+                            <div className="text-[11px] text-amber-300/70">{item.origin}</div>
+                          </div>
+                        </div>
+                        <ChevronRight
+                          className={`size-4 transition-transform ${
+                            isSel ? "text-amber-400 translate-x-1" : "text-neutral-500"
+                          }`}
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Right Column: Selected Specialty Deep Dive */}
+                <div className="md:col-span-7 rounded-2xl border border-amber-600/30 bg-black/45 p-5 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-3xl">{selectedSpecialty.icon}</span>
+                      <span className="rounded-full bg-amber-500/20 px-2.5 py-0.5 text-xs font-semibold text-amber-300 border border-amber-500/30">
+                        {selectedSpecialty.badge}
+                      </span>
+                    </div>
+
+                    <h3 className="mt-3 text-lg sm:text-xl font-bold text-white">
+                      {selectedSpecialty.name}
+                    </h3>
+                    <div className="text-xs text-amber-400 font-medium mt-0.5">
+                      {selectedSpecialty.origin}
+                    </div>
+
+                    <p className="mt-3 text-xs sm:text-sm text-neutral-200 font-medium leading-relaxed">
+                      {selectedSpecialty.desc}
+                    </p>
+
+                    <p className="mt-3 text-xs text-neutral-300/80 leading-relaxed border-t border-white/10 pt-3">
+                      {selectedSpecialty.details}
+                    </p>
+                  </div>
+
+                  <div className="mt-5 rounded-xl border border-amber-500/20 bg-amber-500/10 p-3 text-[11px] text-amber-200/90 flex items-start gap-2">
+                    <Info className="size-4 shrink-0 text-amber-400 mt-0.5" />
+                    <span>
+                      Mỗi sản vật không chỉ là hương vị quê hương mà còn gắn bó sâu sắc với tuổi thơ
+                      và tinh thần cần mẫn của con người miền Tây.
                     </span>
                   </div>
+                </div>
+              </div>
 
-                  <h3 className="mt-3 text-lg sm:text-xl font-bold text-white">
-                    {selectedSpecialty.name}
+              {/* Modal Footer */}
+              <div className="mt-6 flex items-center justify-end border-t border-amber-600/25 pt-4">
+                <button
+                  onClick={() => setShowSpecialties(false)}
+                  className="rounded-full bg-amber-600 px-5 py-2 text-xs font-semibold text-white shadow-lg transition-all hover:bg-amber-500 cursor-pointer"
+                >
+                  Đã hiểu, quay lại lò gốm 3D
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
+
+      {/* Photo Reference Modal Portaled Directly to Body */}
+      {mounted &&
+        showPhotoRef &&
+        createPortal(
+          <div className="fixed inset-0 z-[99999] isolate flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+            <div
+              className="relative w-full max-w-2xl rounded-3xl border border-amber-500/40 bg-[#1e0d06] p-4 sm:p-6 shadow-2xl"
+              role="dialog"
+              aria-modal="true"
+            >
+              <div className="flex items-center justify-between pb-3 border-b border-amber-600/25">
+                <div>
+                  <h3 className="text-base sm:text-lg font-bold text-white">
+                    Ảnh Di Sản Lò Gốm Mang Thít Thực Tế
                   </h3>
-                  <div className="text-xs text-amber-400 font-medium mt-0.5">
-                    {selectedSpecialty.origin}
-                  </div>
-
-                  <p className="mt-3 text-xs sm:text-sm text-neutral-200 font-medium leading-relaxed">
-                    {selectedSpecialty.desc}
-                  </p>
-
-                  <p className="mt-3 text-xs text-neutral-300/80 leading-relaxed border-t border-white/10 pt-3">
-                    {selectedSpecialty.details}
+                  <p className="text-xs text-amber-300/80">
+                    Nguồn cảm hứng thiết kế không gian 3D tại bờ kênh Thầy Cai, Vĩnh Long
                   </p>
                 </div>
-
-                <div className="mt-5 rounded-xl border border-amber-500/20 bg-amber-500/10 p-3 text-[11px] text-amber-200/90 flex items-start gap-2">
-                  <Info className="size-4 shrink-0 text-amber-400 mt-0.5" />
-                  <span>
-                    Mỗi sản vật không chỉ là hương vị quê hương mà còn gắn bó sâu sắc với tuổi thơ
-                    và tinh thần cần mẫn của con người miền Tây.
-                  </span>
-                </div>
+                <button
+                  onClick={() => setShowPhotoRef(false)}
+                  className="rounded-full p-1.5 text-neutral-400 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+                  aria-label="Đóng ảnh"
+                >
+                  <X className="size-5" />
+                </button>
               </div>
-            </div>
 
-            {/* Modal Footer */}
-            <div className="mt-6 flex items-center justify-end border-t border-amber-600/25 pt-4">
-              <button
-                onClick={() => setShowSpecialties(false)}
-                className="rounded-full bg-amber-600 px-5 py-2 text-xs font-semibold text-white shadow-lg transition-all hover:bg-amber-500 cursor-pointer"
-              >
-                Đã hiểu, quay lại lò gốm 3D
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Photo Reference Modal */}
-      {showPhotoRef && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
-          <div
-            className="relative w-full max-w-2xl rounded-3xl border border-amber-500/40 bg-[#1e0d06] p-4 sm:p-6 shadow-2xl"
-            role="dialog"
-            aria-modal="true"
-          >
-            <div className="flex items-center justify-between pb-3 border-b border-amber-600/25">
-              <div>
-                <h3 className="text-base sm:text-lg font-bold text-white">
-                  Ảnh Di Sản Lò Gốm Mang Thít Thực Tế
-                </h3>
-                <p className="text-xs text-amber-300/80">
-                  Nguồn cảm hứng thiết kế không gian 3D tại bờ kênh Thầy Cai, Vĩnh Long
-                </p>
+              <div className="mt-4 relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-amber-500/30 shadow-inner">
+                <Image
+                  src="/hometown/mang-thit-kilns.png"
+                  alt="Lò gốm Mang Thít, Vĩnh Long"
+                  fill
+                  className="object-cover"
+                  priority
+                />
               </div>
-              <button
-                onClick={() => setShowPhotoRef(false)}
-                className="rounded-full p-1.5 text-neutral-400 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
-                aria-label="Đóng ảnh"
-              >
-                <X className="size-5" />
-              </button>
-            </div>
 
-            <div className="mt-4 relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-amber-500/30 shadow-inner">
-              <Image
-                src="/hometown/mang-thit-kilns.png"
-                alt="Lò gốm Mang Thít, Vĩnh Long"
-                fill
-                className="object-cover"
-                priority
-              />
+              <p className="mt-3 text-xs text-neutral-300 leading-relaxed">
+                Các lò gạch có hình dáng parabol đặc trưng, xây dựng bằng gạch thô đỏ au. Qua hàng
+                chục năm nung lửa, bề mặt lò xuất hiện các vệt muối phong hóa màu trắng bạc hòa cùng
+                khói lam chiều bên dòng sông Cổ Chiên.
+              </p>
             </div>
-
-            <p className="mt-3 text-xs text-neutral-300 leading-relaxed">
-              Các lò gạch có hình dáng parabol đặc trưng, xây dựng bằng gạch thô đỏ au. Qua hàng
-              chục năm nung lửa, bề mặt lò xuất hiện các vệt muối phong hóa màu trắng bạc hòa cùng
-              khói lam chiều bên dòng sông Cổ Chiên.
-            </p>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body,
+        )}
     </main>
   );
 }

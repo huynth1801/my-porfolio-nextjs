@@ -63,11 +63,13 @@ export function HometownScene({
           <RiverLandscape />
 
           {/* Interactive 3D Heritage Markers */}
-          <HometownHotspots
-            activeId={activeHotspotId}
-            onSelect={onSelectHotspot}
-            visible={!hideHotspots}
-          />
+          {!hideHotspots && (
+            <HometownHotspots
+              activeId={activeHotspotId}
+              onSelect={onSelectHotspot}
+              visible={!hideHotspots}
+            />
+          )}
 
           {/* Smooth Camera Rig & Orbit Controls */}
           <HometownCameraRig
