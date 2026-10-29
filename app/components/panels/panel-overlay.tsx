@@ -111,7 +111,10 @@ function ExperienceContent() {
           <p className="mt-1.5 text-xs leading-relaxed text-gray-400">{exp.summary}</p>
           <div className="mt-2.5 flex flex-wrap gap-1.5">
             {exp.skills.slice(0, 5).map((skill) => (
-              <span key={skill} className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] text-gray-400">
+              <span
+                key={skill}
+                className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] text-gray-400"
+              >
                 {skill}
               </span>
             ))}
@@ -124,29 +127,47 @@ function ExperienceContent() {
 
 function ProjectsContent() {
   return (
-    <div className="space-y-3">
+    <div className="space-y-3.5">
       {projects.map((p) => {
         const Icon = PROJECT_ICONS[p.icon];
         return (
-          <article key={p.id} className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-            <div className="flex items-center gap-3">
-              <span className="flex size-9 items-center justify-center rounded-lg" style={{ backgroundColor: `${p.accent}22`, color: p.accent }}>
-                <Icon className="size-4" />
+          <article key={p.id} className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5">
+            <div className="relative mb-2.5 aspect-[16/9] w-full overflow-hidden rounded-lg border border-white/10 bg-black/40">
+              <Image src={p.image} alt={p.title} fill className="object-cover" />
+            </div>
+            <div className="flex items-center gap-2.5">
+              <span
+                className="flex size-7 shrink-0 items-center justify-center rounded-lg"
+                style={{ backgroundColor: `${p.accent}22`, color: p.accent }}
+              >
+                <Icon className="size-3.5" />
               </span>
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold text-white">{p.title}</p>
-                <p className="text-xs" style={{ color: p.accent }}>{p.tagline}</p>
+                <p className="text-xs" style={{ color: p.accent }}>
+                  {p.tagline}
+                </p>
               </div>
             </div>
-            <p className="mt-2.5 text-xs leading-relaxed text-gray-400">{p.description}</p>
+            <p className="mt-2 text-xs leading-relaxed text-gray-400">{p.description}</p>
             <div className="mt-3 flex items-center gap-4 text-xs">
               {p.demo && (
-                <a href={p.demo} target="_blank" rel="noopener noreferrer" className="panel-link !text-xs">
+                <a
+                  href={p.demo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="panel-link !text-xs"
+                >
                   Live demo
                 </a>
               )}
               {p.repo && (
-                <a href={p.repo} target="_blank" rel="noopener noreferrer" className="panel-link !text-xs">
+                <a
+                  href={p.repo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="panel-link !text-xs"
+                >
                   Source
                 </a>
               )}
@@ -209,19 +230,35 @@ function ContactContent() {
       <p className="text-sm leading-relaxed text-gray-400">
         My inbox is always in player-ready state — pick any channel below.
       </p>
-      <a href={`mailto:${profile.email}`} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-4 transition-colors hover:border-cyan-400/40">
+      <a
+        href={`mailto:${profile.email}`}
+        className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-4 transition-colors hover:border-cyan-400/40"
+      >
         <Mail className="size-4 text-cyan-300" />
         <span className="text-sm font-medium text-gray-200">{profile.email}</span>
       </a>
       <div className="grid grid-cols-2 gap-3">
-        <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="panel-link justify-center !py-3">
+        <a
+          href={profile.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="panel-link justify-center !py-3"
+        >
           <Linkedin className="size-4" /> LinkedIn
         </a>
-        <a href={profile.github} target="_blank" rel="noopener noreferrer" className="panel-link justify-center !py-3">
+        <a
+          href={profile.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="panel-link justify-center !py-3"
+        >
           <Github className="size-4" /> GitHub
         </a>
       </div>
-      <a href="/contact" className="flex items-center justify-center gap-2 rounded-xl btn-solid py-3 text-sm font-semibold transition-transform hover:scale-[1.02]">
+      <a
+        href="/contact"
+        className="flex items-center justify-center gap-2 rounded-xl btn-solid py-3 text-sm font-semibold transition-transform hover:scale-[1.02]"
+      >
         <Rocket className="size-4" /> Open the contact form
       </a>
     </div>

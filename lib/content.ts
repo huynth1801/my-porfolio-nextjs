@@ -126,6 +126,8 @@ export const experiences: Experience[] = [
   },
 ];
 
+export type ProjectCategory = "all" | "fullstack" | "frontend" | "game_3d";
+
 export type Project = {
   id: string;
   title: string;
@@ -137,6 +139,10 @@ export type Project = {
   icon: "store" | "clapperboard" | "gamepad" | "globe";
   accent: string;
   year: string;
+  image: string;
+  category: "fullstack" | "frontend" | "game_3d";
+  categories: ("fullstack" | "frontend" | "game_3d")[];
+  highlights?: string[];
 };
 
 export const projects: Project[] = [
@@ -152,6 +158,14 @@ export const projects: Project[] = [
     icon: "store",
     accent: "#34d399",
     year: "2026",
+    image: "/projects/myshop.jpg",
+    category: "fullstack",
+    categories: ["fullstack", "frontend"],
+    highlights: [
+      "Astro 5 islands architecture for ultra-fast initial page loads",
+      "Robust Java 21 Spring Boot RESTful API with PostgreSQL",
+      "Integrated Stripe Checkout payment flow and admin management",
+    ],
   },
   {
     id: "sunfix",
@@ -165,6 +179,14 @@ export const projects: Project[] = [
     icon: "clapperboard",
     accent: "#f472b6",
     year: "2023",
+    image: "/projects/sunfix.jpg",
+    category: "frontend",
+    categories: ["frontend"],
+    highlights: [
+      "Dynamic movie trending and categorization powered by TMDB API",
+      "Custom responsive dark cinema UI with Tailwind CSS",
+      "Axios interceptor layer for caching and optimistic error handling",
+    ],
   },
   {
     id: "flappy-bird",
@@ -177,6 +199,14 @@ export const projects: Project[] = [
     icon: "gamepad",
     accent: "#fbbf24",
     year: "2023",
+    image: "/projects/flappy-bird.jpg",
+    category: "game_3d",
+    categories: ["game_3d"],
+    highlights: [
+      "Precise physics simulation and collision detection in Cocos Creator",
+      "Custom state machine for game loop, scoring, and high-score storage",
+      "Responsive canvas scaling for desktop and mobile touch screens",
+    ],
   },
   {
     id: "portfolio",
@@ -189,6 +219,14 @@ export const projects: Project[] = [
     icon: "globe",
     accent: "#a78bfa",
     year: "2026",
+    image: "/projects/portfolio.jpg",
+    category: "game_3d",
+    categories: ["frontend", "game_3d"],
+    highlights: [
+      "Interactive 3D diorama powered by Three.js & React Three Fiber",
+      "Real-time day/sunset/night lighting cycles and postprocessing bloom",
+      "In-world retro Terminal CLI with character typing synchronization",
+    ],
   },
 ];
 
