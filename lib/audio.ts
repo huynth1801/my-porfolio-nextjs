@@ -32,7 +32,9 @@ class LofiEngine {
 
   private ensure() {
     if (this.ctx) return this.ctx;
-    const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const Ctor =
+      window.AudioContext ??
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     const ctx = new Ctor();
     this.ctx = ctx;
 
@@ -55,7 +57,7 @@ class LofiEngine {
 
   private scheduleBar(when: number) {
     const ctx = this.ctx!;
-    const barLen = 60 / 72 * 4; // 4 beats @ 72bpm
+    const barLen = (60 / 72) * 4; // 4 beats @ 72bpm
     const chord = CHORDS[this.bar % CHORDS.length];
 
     // pad: soft detuned triangles through a lowpass
@@ -101,7 +103,8 @@ class LofiEngine {
       const note = PENTA[Math.floor(Math.random() * PENTA.length)];
       const at = when + (Math.random() < 0.5 ? barLen * 0.25 : barLen * 0.625);
       this.pluck(note, at);
-      if (Math.random() < 0.4) this.pluck(PENTA[Math.floor(Math.random() * PENTA.length)], at + barLen / 8);
+      if (Math.random() < 0.4)
+        this.pluck(PENTA[Math.floor(Math.random() * PENTA.length)], at + barLen / 8);
     }
 
     // vinyl crackle pops
@@ -228,7 +231,9 @@ class Sfx {
   private ensure(): AudioContext | null {
     if (this.ctx) return this.ctx;
     try {
-      const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const Ctor =
+        window.AudioContext ??
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       this.ctx = new Ctor();
     } catch {
       return null;
@@ -355,6 +360,25 @@ class Sfx {
     o.connect(g).connect(ctx.destination);
     o.start(t);
     o.stop(t + 0.2);
+  }
+
+  /** friendly mini bus horn: cute double toot (beep beep) */
+  honk() {
+    const ctx = this.ensure();
+    if (!ctx) return;
+    if (ctx.state === "suspended") void ctx.resume();
+    const t = ctx.currentTime;
+    [0, 0.13].forEach((delay) => {
+      const o = ctx.createOscillator();
+      o.type = "triangle";
+      o.frequency.setValueAtTime(540, t + delay);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.07, t + delay);
+      g.gain.exponentialRampToValueAtTime(0.001, t + delay + 0.09);
+      o.connect(g).connect(ctx.destination);
+      o.start(t + delay);
+      o.stop(t + delay + 0.1);
+    });
   }
 }
 

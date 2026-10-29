@@ -9,15 +9,8 @@ import Image from "next/image";
 import { profile } from "@/lib/content";
 import { lofi } from "@/lib/audio";
 
-const sectionLinks = [
-  { name: "About", hash: "#about" },
-  { name: "Experience", hash: "#experience" },
-  { name: "Projects", hash: "#projects" },
-];
-
 export function Header() {
   const pathname = usePathname();
-  const onHome = pathname === "/";
   const [musicOn, setMusicOn] = useState(false);
 
   const toggleMusic = async () => {
@@ -26,66 +19,66 @@ export function Header() {
   };
 
   return (
-    <header className="fixed top-0 right-0 left-0 z-50 border-b border-white/5 bg-[#0d0d0f]/70 backdrop-blur-md">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-3">
-          <Image
-            src="/huy-nguyen-logo.svg"
-            alt="Huy Nguyen Logo"
-            width={32}
-            height={32}
-            className="size-8"
-            priority
-          />
-          <span className="text-lg font-semibold text-white">Huy Nguyen</span>
-        </Link>
+    <header className="fixed top-0 inset-x-0 z-50 pointer-events-none p-3.5 sm:p-5">
+      <div className="mx-auto flex max-w-7xl items-center justify-between">
+        {/* Left Floating Brand Pill */}
+        <div className="pointer-events-auto">
+          <Link
+            href="/"
+            className="group flex items-center gap-2.5 rounded-full border border-white/10 bg-black/55 px-3 py-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-all duration-200 hover:border-white/25 hover:bg-black/75 hover:scale-[1.02] active:scale-[0.98]"
+          >
+            <Image
+              src="/huy-nguyen-logo.svg"
+              alt="Huy Nguyen Logo"
+              width={22}
+              height={22}
+              className="size-5.5 transition-transform duration-300 group-hover:rotate-6"
+              priority
+            />
+            <span className="text-xs sm:text-sm font-semibold tracking-wide text-white">
+              Huy Nguyen
+            </span>
+          </Link>
+        </div>
 
-        {/* Section anchors — only meaningful on the home journey */}
-        {onHome && (
-          <nav className="hidden items-center gap-7 md:flex" aria-label="Sections">
-            {sectionLinks.map((item) => (
-              <a
-                key={item.hash}
-                href={item.hash}
-                className="text-sm font-medium text-gray-400 transition-colors hover:text-white"
-              >
-                {item.name}
-              </a>
-            ))}
-          </nav>
-        )}
-
-        {/* Always-visible actions: music, Resume, Contact */}
-        <nav className="flex items-center gap-4">
+        {/* Right Floating Actions Capsule */}
+        <nav
+          className="pointer-events-auto flex items-center gap-1.5 sm:gap-2.5 rounded-full border border-white/10 bg-black/55 p-1 pl-1.5 sm:pl-2.5 shadow-[0_8px_24px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-all duration-200"
+          aria-label="Quick Actions"
+        >
+          {/* Lo-fi Music Toggle */}
           <button
             onClick={toggleMusic}
             aria-label={musicOn ? "Turn lo-fi music off" : "Turn lo-fi music on"}
             aria-pressed={musicOn}
-            title={musicOn ? "Lo-fi: on" : "Lo-fi: off"}
+            title={musicOn ? "Lo-fi: Đang phát" : "Lo-fi: Đã tắt"}
             className={cn(
-              "flex size-9 cursor-pointer items-center justify-center rounded-full border transition-colors",
+              "flex size-7.5 sm:size-8 cursor-pointer items-center justify-center rounded-full border transition-all duration-200",
               musicOn
-                ? "border-cyan-400/50 text-cyan-300 shadow-[0_0_16px_-4px_rgba(34,211,238,0.6)]"
-                : "border-white/10 text-gray-400 hover:border-white/30 hover:text-white",
+                ? "border-cyan-400/60 bg-cyan-400/15 text-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.4)]"
+                : "border-white/10 bg-white/[0.04] text-neutral-400 hover:border-white/30 hover:text-white",
             )}
           >
-            {musicOn ? <Volume2 className="size-4" /> : <VolumeX className="size-4" />}
+            {musicOn ? <Volume2 className="size-3.5" /> : <VolumeX className="size-3.5" />}
           </button>
+
+          {/* Quick CV Download */}
           <a
             href={profile.resume}
             download
-            className="text-sm font-medium text-gray-400 transition-colors hover:text-white"
+            className="hidden sm:inline-flex text-xs font-mono font-medium text-neutral-300 hover:text-white transition-colors px-2 py-1 rounded-md hover:bg-white/[0.08]"
           >
-            Resume
+            CV
           </a>
+
+          {/* Contact Pill Button */}
           <Link
             href="/contact"
             className={cn(
-              "rounded-full px-4 py-1.5 text-sm font-semibold transition-colors",
+              "rounded-full px-3.5 py-1 text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer",
               pathname === "/contact"
-                ? "bg-white/15 text-white"
-                : "btn-solid",
+                ? "bg-white/20 text-white border border-white/25"
+                : "bg-white text-neutral-950 hover:bg-neutral-100 hover:shadow-[0_0_16px_rgba(255,255,255,0.25)] active:scale-95",
             )}
           >
             Contact

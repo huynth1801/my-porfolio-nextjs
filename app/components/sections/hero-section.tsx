@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { ChevronDown, FileDown, MousePointerClick, Play, Rocket } from "lucide-react";
+import { ChevronDown, MousePointerClick, Play, Rocket } from "lucide-react";
 import { profile } from "@/lib/content";
 import { journey } from "@/lib/journey-store";
 import { useAchievements } from "@/lib/achievements";
@@ -40,65 +40,66 @@ export function HeroSection() {
       ref={scope}
       id="home"
       data-zone="hero"
-      className="pointer-events-none relative flex min-h-screen flex-col items-start justify-end px-6 pb-28 text-left md:px-16"
+      className="pointer-events-none relative flex min-h-screen flex-col items-start justify-end px-6 pb-24 text-left md:px-14"
     >
-      {/* scrim so the HUD always reads over the room, at any viewport size */}
+      {/* Subtle bottom edge gradient so text stays legible without darkening the 3D diorama */}
       <div
         aria-hidden
-        className="absolute inset-x-0 bottom-0 h-[55%] bg-linear-to-t from-[#0d0d0f]/90 via-[#0d0d0f]/45 to-transparent"
+        className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-black/45 to-transparent pointer-events-none"
       />
 
-      <h1 className="sr-only">{profile.name} — {profile.role}</h1>
-
-      <div
-        data-hero-reveal
-        className="glass relative w-full max-w-md rounded-2xl p-6 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)] backdrop-blur-xl border border-white/12 md:p-7"
-      >
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="font-mono text-[10px] font-semibold tracking-wider text-cyan-300 uppercase px-2.5 py-0.5 rounded-full bg-cyan-400/10 border border-cyan-400/25">
-            WAYPOINT 01 // OVERVIEW
+      <div data-hero-reveal className="relative max-w-xl mb-4">
+        {/* Breadcrumb Tagline */}
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 font-mono text-[10px] font-semibold tracking-wider text-cyan-300 uppercase px-2.5 py-0.5 rounded-full bg-black/45 border border-white/15 backdrop-blur-md shadow-md">
+            <span className="size-1.5 rounded-full bg-cyan-400 animate-pulse" />
+            OVERVIEW // DIORAMA
           </span>
-          <span className="text-[11px] font-medium text-gray-400">
+          <span className="text-[11px] font-mono font-medium text-white/80 drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
             {profile.location}
           </span>
         </div>
 
-        <p className="mt-4 text-pretty text-lg leading-relaxed text-gray-100">
+        {/* Cinematic Headline Tagline (Borderless Typography) */}
+        <h1 className="mt-3 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)] leading-snug">
           {profile.tagline}
-        </p>
+        </h1>
 
-        <div className="pointer-events-auto mt-6 flex flex-wrap items-center gap-3">
+        {/* Minimalist Floating Action Micro-Capsules */}
+        <div className="pointer-events-auto mt-4 flex flex-wrap items-center gap-2.5">
           <a
             href="#projects"
-            className="group inline-flex items-center gap-2 rounded-full btn-solid px-5 py-2.5 text-sm font-semibold transition-transform duration-200 hover:scale-[1.04] active:scale-95"
+            className="group inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs sm:text-sm font-semibold text-neutral-950 shadow-[0_4px_20px_rgba(0,0,0,0.35)] transition-all duration-200 hover:bg-neutral-100 hover:scale-[1.03] active:scale-95"
           >
-            <Rocket className="size-4 transition-transform duration-200 group-hover:-translate-y-0.5" />
-            Explore projects
+            <Rocket className="size-3.5 sm:size-4 transition-transform duration-200 group-hover:-translate-y-0.5" />
+            <span>Explore projects</span>
           </a>
-          <a
-            href={profile.resume}
-            download
-            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-gray-200 transition-colors hover:border-white/30 hover:bg-white/10"
-          >
-            <FileDown className="size-4" />
-            Download CV
-          </a>
+
           <button
             onClick={() => startStory(0)}
-            className="inline-flex cursor-pointer items-center gap-2 rounded-full btn-story px-5 py-2.5 text-sm font-semibold transition-transform duration-200 hover:scale-[1.04] active:scale-95"
+            className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/20 bg-black/55 px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-lg backdrop-blur-xl transition-all duration-200 hover:bg-black/75 hover:border-white/40 hover:scale-[1.03] active:scale-95"
           >
-            <Play className="size-4" />
-            Watch my story
+            <Play className="size-3.5 sm:size-4 text-cyan-300 fill-cyan-300" />
+            <span>Watch story</span>
           </button>
         </div>
 
-        <p className="mt-3 text-xs text-gray-500">
-          🏆 Districts explored {ach.visited}/6 · Achievements {ach.unlocked}/3
-        </p>
-        <p className="mt-2 flex items-center gap-2 text-xs text-gray-400">
-          <MousePointerClick className="size-3.5 shrink-0 text-cyan-400" />
-          Drag to orbit the island · WASD to explore · Click districts for details
-        </p>
+        {/* Subtle Tutorial Hint & Exploration Telemetry */}
+        <div className="mt-3.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-mono text-white/85 drop-shadow-[0_1px_6px_rgba(0,0,0,0.8)]">
+          <span className="inline-flex items-center gap-1.5">
+            <span className="flex size-4.5 items-center justify-center rounded border border-white/20 bg-black/40 text-[9px] text-cyan-300 font-bold backdrop-blur-xs">
+              WASD
+            </span>
+            <span>dạo chơi</span>
+          </span>
+          <span className="text-white/40">·</span>
+          <span className="inline-flex items-center gap-1">
+            <MousePointerClick className="size-3 text-cyan-300" />
+            <span>Xoay đảo 3D</span>
+          </span>
+          <span className="text-white/40">·</span>
+          <span className="text-white/70">Khám phá {ach.visited}/6</span>
+        </div>
       </div>
 
       {/* bottom HUD — game flavor, kept subtle */}
