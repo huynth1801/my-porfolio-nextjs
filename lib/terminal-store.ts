@@ -75,18 +75,17 @@ export function useTerminal() {
 export function openTerminal() {
   state.isOpen = true;
   story.pose = "type";
-  // If player is near the house / desk, smoothly glide onto the stool facing laptop
+  // Smoothly glide onto the desk stool facing the 3D laptop
   const dist = Math.hypot(story.px - -2.58, story.pz - 3.43);
-  if (dist < 3.2) {
-    gsap.to(story, {
-      px: -2.58,
-      pz: 3.43,
-      py: 0.32,
-      heading: -2.74,
-      duration: 0.35,
-      ease: "power2.out",
-    });
-  }
+  const dur = dist < 1.2 ? 0.35 : dist < 4 ? 0.5 : 0.65;
+  gsap.to(story, {
+    px: -2.58,
+    pz: 3.43,
+    py: 0.32,
+    heading: -2.704,
+    duration: dur,
+    ease: "power2.out",
+  });
   emit();
 }
 

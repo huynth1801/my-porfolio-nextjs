@@ -134,11 +134,11 @@ export function CameraRig() {
 
     if (term.isOpen) {
       // Cinematic 3/4 over-the-shoulder shot clearly framing laptop screen & boy typing
-      const baseYaw = 0.68 + userYaw.current;
+      const baseYaw = 0.82 + userYaw.current;
       yawTarget = shortestAngle(yaw.current, baseYaw);
-      pitchTarget = THREE.MathUtils.clamp(0.42 + userPitch.current * 0.7, 0.18, 0.85);
-      radiusTarget = 1.25;
-      pivotTarget.current.set(-2.66, 0.54, 3.24);
+      pitchTarget = THREE.MathUtils.clamp(0.36 + userPitch.current * 0.7, 0.18, 0.85);
+      radiusTarget = 1.18;
+      pivotTarget.current.set(-2.68, 0.5, 3.26);
     } else if (flappy.isOpen) {
       // Zoom right into the retro arcade entrance & screen
       yawTarget = shortestAngle(yaw.current, -0.8);

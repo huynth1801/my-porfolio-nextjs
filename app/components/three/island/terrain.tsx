@@ -383,13 +383,13 @@ export function IslandTerrain() {
       <PineTree position={[-4.8, 0.2, 0.5]} scale={1.2} />
       <PineTree position={[-4.5, 0.2, -0.4]} scale={0.9} />
       <PineTree position={[0.8, 0.2, 4.6]} scale={1.1} />
-      <PineTree position={[-1.2, 0.2, 4.4]} scale={0.85} />
+      <PineTree position={[-0.6, 0.2, 4.8]} scale={0.85} />
       <PineTree position={[4.6, 0.2, 0.8]} scale={1.15} />
       <PineTree position={[4.8, 0.2, -2.8]} scale={1.0} />
       <PineTree position={[-1.6, 0.2, -4.5]} scale={1.1} />
       <PineTree position={[1.8, 0.2, -4.3]} scale={0.95} />
 
-      <RoundTree position={[-1.3, 0.2, 4.3]} scale={0.9} foliageColor="#52b756" />
+      <RoundTree position={[-0.8, 0.2, 4.6]} scale={0.9} foliageColor="#52b756" />
       <RoundTree position={[2.2, 0.2, 4.0]} scale={0.9} foliageColor="#4cae50" />
       <RoundTree position={[4.8, 0.2, 2.0]} scale={0.85} foliageColor="#43a047" />
       <RoundTree position={[-4.6, 0.2, -3.2]} scale={1.05} foliageColor="#5cb860" />

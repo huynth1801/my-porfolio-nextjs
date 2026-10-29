@@ -462,29 +462,29 @@ export function BoyCharacter() {
       const head = (scene.getObjectByName("mixamorigHead") ||
         scene.getObjectByName("mixamorig:Head")) as THREE.Bone | null;
 
-      // Aim head comfortably at the center of the 3D laptop screen (upright, zero face-plant)
+      // Lock head straight forward with zero sideways yaw/roll, gazing comfortably down at 3D screen
       if (head) {
-        headTarget.set(-2.72, 0.58 + Math.sin(t * 5) * 0.012, 3.1);
-        head.parent!.worldToLocal(headTarget);
-        head.lookAt(headTarget);
+        head.rotation.y = 0;
+        head.rotation.z = 0;
+        head.rotation.x = -0.22;
       }
 
       // Forearms angled gently forward toward keyboard
       if (leftForeArm) {
-        leftForeArm.rotation.x = -0.55;
+        leftForeArm.rotation.x = -0.45;
       }
       if (rightForeArm) {
-        rightForeArm.rotation.x = -0.55;
+        rightForeArm.rotation.x = -0.45;
       }
 
       // Alternating rhythmic tap of hands typing on keys
       const tapL = Math.sin(t * 18);
       const tapR = Math.sin(t * 18 + Math.PI);
       if (leftHand) {
-        leftHand.rotation.x = 0.2 + tapL * 0.14;
+        leftHand.rotation.x = 0.15 + tapL * 0.12;
       }
       if (rightHand) {
-        rightHand.rotation.x = 0.2 + tapR * 0.14;
+        rightHand.rotation.x = 0.15 + tapR * 0.12;
       }
     }
   });
