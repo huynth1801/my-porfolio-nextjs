@@ -7,7 +7,13 @@ import { getRig } from "./lighting";
 import { boot } from "./boot";
 
 /** Low-poly pine tree with vibrant green foliage */
-export function PineTree({ position, scale = 1 }: { position: [number, number, number]; scale?: number }) {
+export function PineTree({
+  position,
+  scale = 1,
+}: {
+  position: [number, number, number];
+  scale?: number;
+}) {
   return (
     <group position={position} scale={scale}>
       {/* Trunk */}
@@ -67,7 +73,13 @@ export function RoundTree({
 }
 
 /** Little low-poly flower blossoms scattered on the lawn */
-function FlowerPatch({ position, color = "#facc15" }: { position: [number, number, number]; color?: string }) {
+function FlowerPatch({
+  position,
+  color = "#facc15",
+}: {
+  position: [number, number, number];
+  color?: string;
+}) {
   return (
     <group position={position}>
       <mesh position={[0, 0.05, 0]}>
@@ -83,7 +95,13 @@ function FlowerPatch({ position, color = "#facc15" }: { position: [number, numbe
 }
 
 /** Low-poly street lamp with warm glowing lantern at night */
-export function StreetLamp({ position, rotation = [0, 0, 0] }: { position: [number, number, number]; rotation?: [number, number, number] }) {
+export function StreetLamp({
+  position,
+  rotation = [0, 0, 0],
+}: {
+  position: [number, number, number];
+  rotation?: [number, number, number];
+}) {
   const lightRef = useRef<THREE.PointLight>(null!);
   const glowRef = useRef<THREE.MeshStandardMaterial>(null!);
   const rig = getRig();
@@ -127,7 +145,14 @@ export function StreetLamp({ position, rotation = [0, 0, 0] }: { position: [numb
           roughness={0.2}
         />
       </mesh>
-      <pointLight ref={lightRef} position={[0.24, 1.2, 0]} color="#f59e0b" intensity={rig.neon * 1.6} distance={4} decay={2} />
+      <pointLight
+        ref={lightRef}
+        position={[0.24, 1.2, 0]}
+        color="#f59e0b"
+        intensity={rig.neon * 1.6}
+        distance={4}
+        decay={2}
+      />
     </group>
   );
 }
@@ -154,7 +179,8 @@ function SatelliteRock({
       angle.current += speed * delta;
       group.current.position.x = Math.cos(angle.current) * orbitRadius;
       group.current.position.z = Math.sin(angle.current) * orbitRadius;
-      group.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.8 + initialAngle) * 0.25;
+      group.current.position.y =
+        position[1] + Math.sin(state.clock.elapsedTime * 0.8 + initialAngle) * 0.25;
     }
   });
 
@@ -175,7 +201,12 @@ function SatelliteRock({
       {/* Glowing floating crystal */}
       <mesh position={[0.1, 0.78, 0.1]}>
         <octahedronGeometry args={[0.22, 0]} />
-        <meshStandardMaterial color="#38bdf8" emissive="#0284c7" emissiveIntensity={0.9} roughness={0.1} />
+        <meshStandardMaterial
+          color="#38bdf8"
+          emissive="#0284c7"
+          emissiveIntensity={0.9}
+          roughness={0.1}
+        />
       </mesh>
     </group>
   );
@@ -217,7 +248,14 @@ function CentralPlaza() {
       {/* Fountain water */}
       <mesh position={[0, 0.32, 0]}>
         <cylinderGeometry args={[0.7, 0.7, 0.05, 12]} />
-        <meshStandardMaterial ref={waterRef} color="#38bdf8" roughness={0.1} metalness={0.3} transparent opacity={0.88} />
+        <meshStandardMaterial
+          ref={waterRef}
+          color="#38bdf8"
+          roughness={0.1}
+          metalness={0.3}
+          transparent
+          opacity={0.88}
+        />
       </mesh>
       {/* Fountain central pillar */}
       <mesh position={[0, 0.5, 0]} castShadow>
@@ -227,7 +265,12 @@ function CentralPlaza() {
       {/* Floating fountain crystal prism */}
       <mesh position={[0, 0.78, 0]} castShadow>
         <dodecahedronGeometry args={[0.18, 0]} />
-        <meshStandardMaterial color="#67e8f9" emissive="#06b6d4" emissiveIntensity={0.8} roughness={0.15} />
+        <meshStandardMaterial
+          color="#67e8f9"
+          emissive="#06b6d4"
+          emissiveIntensity={0.8}
+          roughness={0.15}
+        />
       </mesh>
     </group>
   );
@@ -240,11 +283,31 @@ function CentralPlaza() {
 export function IslandTerrain() {
   const roads = useMemo(() => {
     return [
-      { pos: [-1.7, 0.012, 1.15] as [number, number, number], rot: Math.atan2(2.3, -3.4) + Math.PI / 2, len: 3.8 },
-      { pos: [1.6, 0.012, 1.4] as [number, number, number], rot: Math.atan2(2.8, 3.2) + Math.PI / 2, len: 3.9 },
-      { pos: [1.8, 0.012, -0.55] as [number, number, number], rot: Math.atan2(-1.1, 3.6) + Math.PI / 2, len: 3.5 },
-      { pos: [-1.6, 0.012, -1.1] as [number, number, number], rot: Math.atan2(-2.2, -3.2) + Math.PI / 2, len: 3.6 },
-      { pos: [0.1, 0.012, -2.15] as [number, number, number], rot: Math.atan2(-4.3, 0.2) + Math.PI / 2, len: 4.1 },
+      {
+        pos: [-1.7, 0.012, 1.15] as [number, number, number],
+        rot: Math.atan2(2.3, -3.4) + Math.PI / 2,
+        len: 3.8,
+      },
+      {
+        pos: [1.6, 0.012, 1.4] as [number, number, number],
+        rot: Math.atan2(2.8, 3.2) + Math.PI / 2,
+        len: 3.9,
+      },
+      {
+        pos: [1.8, 0.012, -0.55] as [number, number, number],
+        rot: Math.atan2(-1.1, 3.6) + Math.PI / 2,
+        len: 3.5,
+      },
+      {
+        pos: [-1.6, 0.012, -1.1] as [number, number, number],
+        rot: Math.atan2(-2.2, -3.2) + Math.PI / 2,
+        len: 3.6,
+      },
+      {
+        pos: [0.1, 0.012, -2.15] as [number, number, number],
+        rot: Math.atan2(-4.3, 0.2) + Math.PI / 2,
+        len: 4.1,
+      },
     ];
   }, []);
 
@@ -326,7 +389,7 @@ export function IslandTerrain() {
       <PineTree position={[-1.6, 0.2, -4.5]} scale={1.1} />
       <PineTree position={[1.8, 0.2, -4.3]} scale={0.95} />
 
-      <RoundTree position={[-2.2, 0.2, 3.6]} scale={1.0} foliageColor="#52b756" />
+      <RoundTree position={[-1.3, 0.2, 4.3]} scale={0.9} foliageColor="#52b756" />
       <RoundTree position={[2.2, 0.2, 4.0]} scale={0.9} foliageColor="#4cae50" />
       <RoundTree position={[4.8, 0.2, 2.0]} scale={0.85} foliageColor="#43a047" />
       <RoundTree position={[-4.6, 0.2, -3.2]} scale={1.05} foliageColor="#5cb860" />
@@ -342,9 +405,27 @@ export function IslandTerrain() {
       <FlowerPatch position={[1.2, 0.2, -3.6]} color="#ffffff" />
 
       {/* 7. Orbiting Satellite rocks */}
-      <SatelliteRock position={[-9, -1.5, 3]} scale={1.1} orbitRadius={9.5} speed={0.06} initialAngle={0.5} />
-      <SatelliteRock position={[8.5, -2.0, -4]} scale={0.85} orbitRadius={9} speed={0.075} initialAngle={2.6} />
-      <SatelliteRock position={[2, -3.0, 8.5]} scale={0.95} orbitRadius={8.8} speed={0.05} initialAngle={4.5} />
+      <SatelliteRock
+        position={[-9, -1.5, 3]}
+        scale={1.1}
+        orbitRadius={9.5}
+        speed={0.06}
+        initialAngle={0.5}
+      />
+      <SatelliteRock
+        position={[8.5, -2.0, -4]}
+        scale={0.85}
+        orbitRadius={9}
+        speed={0.075}
+        initialAngle={2.6}
+      />
+      <SatelliteRock
+        position={[2, -3.0, 8.5]}
+        scale={0.95}
+        orbitRadius={8.8}
+        speed={0.05}
+        initialAngle={4.5}
+      />
     </group>
   );
 }
