@@ -146,10 +146,10 @@ function executeInteraction(id: ProximityId) {
     case "dev-desk": {
       isInteracting = true;
       gsap.to(story, {
-        px: -2.62,
-        pz: 3.32,
-        py: 0.36,
-        heading: 3.49,
+        px: -2.58,
+        pz: 3.43,
+        py: 0.32,
+        heading: -2.74,
         duration: 0.35,
         ease: "power2.out",
         onComplete: () => {

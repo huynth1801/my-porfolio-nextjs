@@ -170,7 +170,7 @@ function DevDesk() {
       ))}
 
       {/* Stool with cushion */}
-      <group position={[0, 0, 0.24]}>
+      <group position={[0, 0, 0.36]}>
         <mesh position={[0, 0.17, 0]} castShadow>
           <cylinderGeometry args={[0.09, 0.09, 0.024, 12]} />
           <meshStandardMaterial color="#1e293b" roughness={0.8} />
@@ -188,48 +188,48 @@ function DevDesk() {
         ))}
       </group>
 
-      {/* Laptop */}
-      <group position={[-0.04, 0.334, 0]}>
+      {/* Laptop (Enlarged & ergonomic for 3D terminal reading) */}
+      <group position={[-0.03, 0.334, 0.02]}>
         {/* Base chassis */}
-        <mesh position={[0, 0.006, 0]} castShadow>
-          <boxGeometry args={[0.18, 0.012, 0.13]} />
+        <mesh position={[0, 0.008, 0]} castShadow>
+          <boxGeometry args={[0.24, 0.014, 0.16]} />
           <meshStandardMaterial color="#334155" metalness={0.5} roughness={0.4} />
         </mesh>
         {/* Keyboard recess */}
-        <mesh position={[0, 0.013, 0.01]}>
-          <boxGeometry args={[0.15, 0.004, 0.07]} />
+        <mesh position={[0, 0.016, 0.015]}>
+          <boxGeometry args={[0.2, 0.004, 0.09]} />
           <meshStandardMaterial color="#0f172a" roughness={0.9} />
         </mesh>
         {/* Trackpad */}
-        <mesh position={[0, 0.013, 0.05]}>
-          <boxGeometry args={[0.05, 0.002, 0.03]} />
+        <mesh position={[0, 0.016, 0.06]}>
+          <boxGeometry args={[0.07, 0.002, 0.04]} />
           <meshStandardMaterial color="#1e293b" roughness={0.6} />
         </mesh>
 
         {/* Screen Lid (angled slightly backward) */}
-        <group position={[0, 0.012, -0.065]} rotation={[-0.32, 0, 0]}>
-          <mesh position={[0, 0.06, 0]} castShadow>
-            <boxGeometry args={[0.18, 0.12, 0.008]} />
+        <group position={[0, 0.014, -0.078]} rotation={[-0.35, 0, 0]}>
+          <mesh position={[0, 0.075, 0]} castShadow>
+            <boxGeometry args={[0.24, 0.15, 0.008]} />
             <meshStandardMaterial color="#1e293b" metalness={0.5} roughness={0.4} />
           </mesh>
           {/* Live Dynamic 3D CRT Terminal Display Screen */}
-          <mesh position={[0, 0.06, 0.005]}>
-            <planeGeometry args={[0.164, 0.104]} />
+          <mesh position={[0, 0.075, 0.005]}>
+            <planeGeometry args={[0.22, 0.13]} />
             <meshStandardMaterial
               map={terminalTex}
               emissiveMap={terminalTex}
               emissive="#ffffff"
-              emissiveIntensity={1.8}
+              emissiveIntensity={2.0}
               roughness={0.2}
             />
           </mesh>
           {/* Screen Light illuminating the desk & keyboard */}
           <pointLight
             ref={screenLightRef}
-            position={[0, 0.06, 0.08]}
+            position={[0, 0.08, 0.1]}
             color="#ffb000"
-            intensity={0.6}
-            distance={1.2}
+            intensity={0.8}
+            distance={1.4}
             decay={2}
           />
         </group>
