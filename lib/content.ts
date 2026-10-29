@@ -158,7 +158,7 @@ export const projects: Project[] = [
     icon: "store",
     accent: "#34d399",
     year: "2026",
-    image: "/projects/myshop.jpg",
+    image: "/projects/myshop.png",
     category: "fullstack",
     categories: ["fullstack", "frontend"],
     highlights: [
@@ -179,7 +179,7 @@ export const projects: Project[] = [
     icon: "clapperboard",
     accent: "#f472b6",
     year: "2023",
-    image: "/projects/sunfix.jpg",
+    image: "/projects/sunfix.png",
     category: "frontend",
     categories: ["frontend"],
     highlights: [
