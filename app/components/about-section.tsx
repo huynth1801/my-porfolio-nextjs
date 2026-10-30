@@ -71,7 +71,7 @@ const AboutSection = memo(function AboutSection() {
           >
             <Image
               src="/working.jpg"
-              alt="Working"
+              alt="Huy Nguyen working on frontend engineering code"
               fill
               quality={85}
               sizes="(max-width: 768px) 50vw, 300px"
@@ -85,7 +85,7 @@ const AboutSection = memo(function AboutSection() {
           >
             <Image
               src="/play-sport.jpg"
-              alt="Playing sport"
+              alt="Huy Nguyen active in sports and outdoor activities"
               fill
               quality={85}
               sizes="(max-width: 768px) 50vw, 300px"

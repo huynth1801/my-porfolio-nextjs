@@ -69,6 +69,7 @@ export function HeroSection() {
 
         {/* Cinematic Headline Tagline (Borderless Typography) */}
         <h1 className="mt-3 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)] leading-snug">
+          <span className="sr-only">Huy Nguyen — Frontend Developer in Ho Chi Minh City. </span>
           {profile.tagline}
         </h1>
 
