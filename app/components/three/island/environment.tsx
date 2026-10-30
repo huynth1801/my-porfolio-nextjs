@@ -8,12 +8,14 @@ import { phaseStore } from "./lighting";
 const SKY_COLORS = {
   day: "#5ea5e6",
   golden: "#d97445",
+  rain: "#334155",
   night: "#0a0e24",
 };
 
 const FOG_DENSITY = {
   day: 0.012,
   golden: 0.015,
+  rain: 0.024,
   night: 0.018,
 };
 

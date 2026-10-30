@@ -17,6 +17,7 @@ import { StoryCamera } from "./story-camera";
 import { AchievementCelebration } from "./celebration";
 import { FloatingHearts } from "./floating-hearts";
 import { AmbientLife } from "./ambient-life";
+import { WeatherEffects } from "./weather-effects";
 
 /**
  * 🏝️ Đảo nổi — "Thành phố sự nghiệp" (Floating Career Island)
@@ -55,6 +56,7 @@ export function Island() {
       <AchievementCelebration />
       <FloatingHearts />
       <AmbientLife />
+      <WeatherEffects />
     </>
   );
 }
