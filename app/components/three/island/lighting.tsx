@@ -5,7 +5,7 @@ import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { boot } from "./boot";
 
-export type DayPhase = "day" | "golden" | "night";
+export type DayPhase = "day" | "golden" | "rain" | "night";
 
 function phaseFromHour(h: number): DayPhase {
   if (h >= 7 && h <= 16) return "day";
@@ -19,7 +19,8 @@ let currentPhase: DayPhase = (function () {
   try {
     override = new URLSearchParams(window.location.search).get("phase");
   } catch {}
-  if (override === "day" || override === "golden" || override === "night") return override;
+  if (override === "day" || override === "golden" || override === "rain" || override === "night")
+    return override;
   return phaseFromHour(new Date().getHours());
 })();
 
@@ -62,6 +63,12 @@ const RIGS: Record<DayPhase, LightRig> = {
     ambient: { color: "#ffe5cf", intensity: 0.75 },
     hemi: { sky: "#f0b68c", ground: "#6b5444", intensity: 0.6 },
     neon: 0.5,
+  },
+  rain: {
+    sun: { pos: [12, 22, 10], color: "#94a3b8", intensity: 1.5 },
+    ambient: { color: "#475569", intensity: 0.95 },
+    hemi: { sky: "#475569", ground: "#1e293b", intensity: 0.55 },
+    neon: 0.75,
   },
   night: {
     sun: { pos: [-14, 22, -12], color: "#9db4ff", intensity: 0.75 },
@@ -116,12 +123,23 @@ export function IslandLighting() {
           );
     const k = b * b * (3 - 2 * b) * flicker;
 
+    // Atmospheric lightning flash during rain
+    let lightningBoost = 0;
+    if (phase === "rain") {
+      const t = state.clock.elapsedTime;
+      const cycle = (t * 0.11) % 1;
+      if (cycle > 0.985) {
+        const pulse = Math.sin((cycle - 0.985) * 450);
+        lightningBoost = Math.max(0, pulse * 1.6);
+      }
+    }
+
     if (sunRef.current) {
-      sunRef.current.intensity = curSunIntensity.current * k;
+      sunRef.current.intensity = (curSunIntensity.current + lightningBoost * 2.2) * k;
       sunRef.current.color.copy(curSunColor.current);
     }
     if (ambRef.current) {
-      ambRef.current.intensity = curAmbIntensity.current * k;
+      ambRef.current.intensity = (curAmbIntensity.current + lightningBoost * 1.4) * k;
       ambRef.current.color.copy(curAmbColor.current);
     }
     if (hemiRef.current) {
@@ -146,7 +164,10 @@ export function IslandLighting() {
   return (
     <>
       <ambientLight ref={ambRef} color={init.ambient.color} intensity={init.ambient.intensity} />
-      <hemisphereLight ref={hemiRef} args={[init.hemi.sky, init.hemi.ground, init.hemi.intensity]} />
+      <hemisphereLight
+        ref={hemiRef}
+        args={[init.hemi.sky, init.hemi.ground, init.hemi.intensity]}
+      />
       <directionalLight
         ref={sunRef}
         position={init.sun.pos}
@@ -164,10 +185,38 @@ export function IslandLighting() {
         shadow-normalBias={0.02}
       />
       {/* District night light spills */}
-      <pointLight ref={arcadeRef} position={[-3.2, 2.2, -2.2]} color="#ff5fd2" intensity={2.4} distance={7} decay={2} />
-      <pointLight ref={homeRef} position={[-3.4, 1.6, 2.3]} color="#ffc078" intensity={1.6} distance={5} decay={2} />
-      <pointLight ref={schoolRef} position={[3.2, 1.6, 2.8]} color="#ffd573" intensity={1.4} distance={5.5} decay={2} />
-      <pointLight ref={towersRef} position={[3.6, 2.0, -1.1]} color="#38bdf8" intensity={2.0} distance={6.5} decay={2} />
+      <pointLight
+        ref={arcadeRef}
+        position={[-3.2, 2.2, -2.2]}
+        color="#ff5fd2"
+        intensity={2.4}
+        distance={7}
+        decay={2}
+      />
+      <pointLight
+        ref={homeRef}
+        position={[-3.4, 1.6, 2.3]}
+        color="#ffc078"
+        intensity={1.6}
+        distance={5}
+        decay={2}
+      />
+      <pointLight
+        ref={schoolRef}
+        position={[3.2, 1.6, 2.8]}
+        color="#ffd573"
+        intensity={1.4}
+        distance={5.5}
+        decay={2}
+      />
+      <pointLight
+        ref={towersRef}
+        position={[3.6, 2.0, -1.1]}
+        color="#38bdf8"
+        intensity={2.0}
+        distance={6.5}
+        decay={2}
+      />
     </>
   );
 }

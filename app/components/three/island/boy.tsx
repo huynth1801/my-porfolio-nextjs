@@ -337,10 +337,10 @@ export function BoyCharacter() {
         s.speed = Math.max(0, s.speed - dt * 5);
       }
 
-      // Detect closest interactive proximity target (suppressed during contact section)
+      // Detect closest interactive proximity target (only active during home/hero section)
       let closest: ProximityTarget | null = null;
       let minDistance = Infinity;
-      if (tourState.activeWaypointId !== "contact") {
+      if (tourState.activeWaypointId === "home") {
         for (const target of PROXIMITY_TARGETS) {
           if (target.check && !target.check(s.py)) continue;
           const dist = Math.hypot(s.px - target.pos[0], s.pz - target.pos[2]);
