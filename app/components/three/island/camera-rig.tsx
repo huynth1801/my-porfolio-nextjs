@@ -54,6 +54,12 @@ export function CameraRig() {
   const userPitch = useRef(0);
   const wasFocused = useRef(false);
 
+  // Smooth mouse parallax gyroscopic offsets
+  const parallaxYaw = useRef(0);
+  const parallaxPitch = useRef(0);
+  const parallaxPivotX = useRef(0);
+  const parallaxPivotY = useRef(0);
+
   const pivot = useRef(new THREE.Vector3(0, 1.4, 0));
   const radius = useRef(16.5);
   const pos = useRef(new THREE.Vector3(12, 11, 14));
@@ -126,38 +132,80 @@ export function CameraRig() {
     }
     wasFocused.current = !!focus;
 
+    const term = getTerminalSnapshot();
+
+    // Smooth gyroscopic mouse parallax:
+    // Calculates a natural 3D tilt as the user moves their cursor across the viewport.
+    const isSpecialView = term.isOpen || flappy.isOpen || !!focus;
+    const isMovingManually = dragState.moved > 0;
+    const parallaxDamping = 1 - Math.exp(-4.2 * delta);
+
+    const targetParallaxYaw =
+      journey.reduced || isMovingManually ? 0 : journey.pointer.x * (isSpecialView ? 0.05 : 0.2);
+    const targetParallaxPitch =
+      journey.reduced || isMovingManually ? 0 : journey.pointer.y * (isSpecialView ? 0.03 : 0.09);
+
+    parallaxYaw.current += (targetParallaxYaw - parallaxYaw.current) * parallaxDamping;
+    parallaxPitch.current += (targetParallaxPitch - parallaxPitch.current) * parallaxDamping;
+
+    const targetParallaxPivotX =
+      journey.reduced || isMovingManually ? 0 : -journey.pointer.x * (isSpecialView ? 0.08 : 0.35);
+    const targetParallaxPivotY =
+      journey.reduced || isMovingManually ? 0 : journey.pointer.y * (isSpecialView ? 0.05 : 0.22);
+
+    parallaxPivotX.current += (targetParallaxPivotX - parallaxPivotX.current) * parallaxDamping;
+    parallaxPivotY.current += (targetParallaxPivotY - parallaxPivotY.current) * parallaxDamping;
+
     let yawTarget: number;
     let pitchTarget: number;
     let radiusTarget: number;
 
-    const term = getTerminalSnapshot();
-
     if (term.isOpen) {
       // Cinematic 3/4 side angle clearly framing both boy typing & 3D laptop screen on the left
       const isMobile = state.size.width < 768;
-      const baseYaw = 1.25 + userYaw.current;
+      const baseYaw = 1.25 + userYaw.current + parallaxYaw.current;
       yawTarget = shortestAngle(yaw.current, baseYaw);
-      pitchTarget = THREE.MathUtils.clamp(0.38 + userPitch.current * 0.7, 0.18, 0.85);
+      pitchTarget = THREE.MathUtils.clamp(
+        0.38 + userPitch.current * 0.7 + parallaxPitch.current,
+        0.18,
+        0.85,
+      );
       radiusTarget = isMobile ? 2.5 : 2.25;
 
       // On desktop, shift pivot to the right in camera view so desk/boy are framed in the open left 55%
       if (isMobile) {
-        pivotTarget.current.set(-2.66, 0.44, 3.22);
+        pivotTarget.current.set(
+          -2.66 + parallaxPivotX.current,
+          0.44 + parallaxPivotY.current,
+          3.22,
+        );
       } else {
-        pivotTarget.current.set(-2.47, 0.44, 2.65);
+        pivotTarget.current.set(
+          -2.47 + parallaxPivotX.current,
+          0.44 + parallaxPivotY.current,
+          2.65,
+        );
       }
     } else if (flappy.isOpen) {
       // Zoom right into the retro arcade entrance & screen
-      yawTarget = shortestAngle(yaw.current, -0.8);
-      pitchTarget = 0.14;
+      yawTarget = shortestAngle(yaw.current, -0.8 + parallaxYaw.current);
+      pitchTarget = 0.14 + parallaxPitch.current;
       radiusTarget = 2.4;
-      pivotTarget.current.set(-3.86, 0.85, -1.56);
+      pivotTarget.current.set(-3.86 + parallaxPivotX.current, 0.85 + parallaxPivotY.current, -1.56);
     } else if (focus) {
       // Zoom and focus into district close-up for opened panel
-      yawTarget = shortestAngle(yaw.current, focus.yaw);
-      pitchTarget = focus.pitch;
+      yawTarget = shortestAngle(yaw.current, focus.yaw + parallaxYaw.current);
+      pitchTarget = THREE.MathUtils.clamp(
+        focus.pitch + parallaxPitch.current,
+        PITCH.min,
+        PITCH.max,
+      );
       radiusTarget = focus.radius;
-      pivotTarget.current.copy(focus.pivot);
+      pivotTarget.current.set(
+        focus.pivot.x + parallaxPivotX.current,
+        focus.pivot.y + parallaxPivotY.current,
+        focus.pivot.z,
+      );
     } else {
       // Follow the continuous Drone Tour path driven by GSAP ScrollTrigger
       const isOverview = tourState.activeWaypointIndex === 0 && journey.progress < 0.05;
@@ -174,17 +222,17 @@ export function CameraRig() {
         userPitch.current *= Math.exp(-2.2 * delta);
       }
 
-      const baseYaw = tourState.targetYaw + userYaw.current + sway;
+      const baseYaw = tourState.targetYaw + userYaw.current + sway + parallaxYaw.current;
       yawTarget = shortestAngle(yaw.current, baseYaw);
       pitchTarget = THREE.MathUtils.clamp(
-        tourState.targetPitch + userPitch.current * 0.7 + journey.pointer.y * 0.02,
+        tourState.targetPitch + userPitch.current * 0.7 + parallaxPitch.current,
         PITCH.min,
         PITCH.max,
       );
       radiusTarget = journey.tier === "low" ? tourState.targetRadius + 1.5 : tourState.targetRadius;
       pivotTarget.current.set(
-        tourState.targetPivot[0],
-        tourState.targetPivot[1],
+        tourState.targetPivot[0] + parallaxPivotX.current,
+        tourState.targetPivot[1] + parallaxPivotY.current,
         tourState.targetPivot[2],
       );
     }

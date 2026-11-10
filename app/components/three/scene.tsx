@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
+import { EffectComposer, Bloom, Vignette, TiltShift2, N8AO } from "@react-three/postprocessing";
 import * as THREE from "three";
 import { journey } from "@/lib/journey-store";
 import { Island } from "./island/island";
@@ -18,17 +18,30 @@ export default function Scene() {
       style={{ touchAction: "pan-y" }}
       onCreated={({ gl }) => {
         gl.toneMapping = THREE.ACESFilmicToneMapping;
-        gl.toneMappingExposure = 1.05;
+        gl.toneMappingExposure = 1.08;
       }}
     >
       <Island />
 
-      {/* Windows, neon arcade signs, and radio beacon glow with bloom —
-          skipped on small/weak devices to protect the frame budget */}
+      {/* Cinematic Post-Processing Suite:
+          - N8AO: Screen Space Ambient Occlusion for realistic ground/contact shadows
+          - TiltShift2: Macro lens blur on top/bottom for miniature diorama aesthetic
+          - Bloom: Soft atmospheric neon glow for windows, radio beacon, and arcade signs
+          - Vignette: Subtle lens edge darkening to focus viewer attention
+          Skipped on low-tier mobile devices to preserve 60fps frame budget */}
       {!low && (
-        <EffectComposer>
-          <Bloom mipmapBlur intensity={0.9} luminanceThreshold={0.55} luminanceSmoothing={0.25} />
-          <Vignette eskil={false} offset={0.18} darkness={0.45} />
+        <EffectComposer multisampling={0}>
+          <N8AO
+            aoRadius={0.9}
+            distanceFalloff={0.65}
+            intensity={2.2}
+            quality="medium"
+            halfRes
+            color="#090e1f"
+          />
+          <TiltShift2 blur={0.12} taper={0.65} samples={5} />
+          <Bloom mipmapBlur intensity={0.95} luminanceThreshold={0.52} luminanceSmoothing={0.25} />
+          <Vignette eskil={false} offset={0.18} darkness={0.42} />
         </EffectComposer>
       )}
     </Canvas>
