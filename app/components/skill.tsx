@@ -458,20 +458,25 @@ export default function SkillSection() {
     <section
       id="skills"
       data-zone="skills"
-      className="pointer-events-auto relative px-6 py-24 md:px-12 md:py-28"
+      className="pointer-events-auto relative px-5 py-24 sm:px-8 md:px-12 md:py-28"
     >
-      <div className="mx-auto max-w-3xl">
-        <header className="glass mb-8 rounded-2xl p-6 md:p-8 border border-white/12 shadow-2xl">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="font-mono text-[10px] font-semibold tracking-wider text-cyan-300 uppercase px-2.5 py-0.5 rounded-full bg-cyan-400/10 border border-cyan-400/25">
-              WAYPOINT 05 // SKILLS KIOSK
-            </span>
-            <span className="text-[11px] font-medium text-gray-400">Inventory & Stack</span>
+      <div className="mx-auto max-w-4xl">
+        <header className="glass mb-10 rounded-2xl p-6 sm:p-8 md:p-9 border border-white/12 shadow-2xl">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-mono text-[10px] font-semibold tracking-wider text-cyan-300 uppercase px-2.5 py-0.5 rounded-full bg-cyan-400/10 border border-cyan-400/25">
+                WAYPOINT 05 // SKILLS ORBIT
+              </span>
+              <span className="text-xs font-mono text-gray-400">Core Technologies</span>
+            </div>
+            <span className="font-mono text-[11px] text-cyan-300">Interactive Orbits</span>
           </div>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-white md:text-4xl">Skills</h2>
-          <p className="mt-2 text-sm leading-relaxed text-gray-300">
-            Interactive skill orbits: core tools and technologies powering production web & game
-            applications.
+          <h2 className="mt-5 text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-white">
+            Technical Stack & Ecosystem
+          </h2>
+          <p className="mt-2.5 max-w-2xl text-xs sm:text-sm leading-relaxed text-gray-300">
+            Hệ sinh thái kỹ thuật cốt lõi: các công nghệ và thư viện nền tảng được tối ưu hóa cho
+            ứng dụng web sản xuất quy mô lớn và trải nghiệm 3D thời gian thực.
           </p>
         </header>
 

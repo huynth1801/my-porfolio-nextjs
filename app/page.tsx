@@ -1,7 +1,7 @@
 import AboutSection from "./components/about-section";
 import EducationSection from "./components/education-section";
 import ExperienceSection from "./components/experience-section";
-import { SkillTreeSection } from "./components/skills/skill-tree-section";
+import SkillSection from "./components/skill";
 import { HeroSection } from "./components/sections/hero-section";
 import { ProjectsSection } from "./components/sections/projects-section";
 import { ContactCta } from "./components/sections/contact-cta";
@@ -22,7 +22,7 @@ export default function Home() {
         <AboutSection />
         <ExperienceSection />
         <ProjectsSection />
-        <SkillTreeSection />
+        <SkillSection />
         <EducationSection
           title="Education & Training"
           subtitle="A short list of degrees and certifications"
