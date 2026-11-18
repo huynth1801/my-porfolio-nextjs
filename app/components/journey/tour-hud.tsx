@@ -115,7 +115,7 @@ export function TourHud() {
       aria-label="3D Island Tour HUD"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="pointer-events-auto fixed right-4 bottom-5 z-30 flex flex-col items-end gap-2 sm:right-6 sm:bottom-6"
+      className="pointer-events-auto fixed right-3 bottom-4 z-30 flex max-w-[calc(100vw-24px)] flex-col items-end gap-2 sm:right-6 sm:bottom-6"
     >
       {/* Waypoint & Weather Telemetry Pill (Only shown at hero top to prevent double-stack clutter while scrolling) */}
       <AnimatePresence>
@@ -126,7 +126,7 @@ export function TourHud() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="glass flex items-center gap-3 rounded-full px-4 py-2 text-xs shadow-xl backdrop-blur-xl border border-white/12"
+            className="glass flex max-w-full items-center gap-2 sm:gap-3 rounded-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs shadow-xl backdrop-blur-xl border border-white/12"
           >
             <div className="flex items-center gap-2">
               <span className="relative flex size-2">

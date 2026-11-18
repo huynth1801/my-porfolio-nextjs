@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Huy Nguyen — Frontend Developer Portfolio",
+    name: "Huy Nguyen · Frontend Developer Portfolio",
     short_name: "Huy Nguyen",
     description:
       "Frontend developer in Ho Chi Minh City building playful, high-performance web experiences with React, Next.js and WebGL.",

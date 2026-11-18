@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 
 export const runtime = "nodejs";
 
-export const alt = "Huy Nguyen — Frontend Developer Portfolio";
+export const alt = "Huy Nguyen · Frontend Developer Portfolio";
 export const size = {
   width: 1200,
   height: 630,

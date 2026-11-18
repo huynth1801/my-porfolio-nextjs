@@ -1,6 +1,6 @@
 /**
  * Single source of truth for everything written on the site.
- * Update your story here — sections only render what this file says.
+ * Update your story here: sections only render what this file says.
  */
 
 export const profile = {
@@ -13,7 +13,7 @@ export const profile = {
   linkedin: "https://www.linkedin.com/in/huy-nguyen-085382206/",
   resume: "/NguyenThaiHuuHuy_FrontEndDeveloper_2026.pdf",
   tagline:
-    "I build playful, high-performance web experiences with React and Next.js — and a game developer's sense of feel.",
+    "I build playful, high-performance web experiences with React and Next.js, backed by a game developer's sense of feel.",
 };
 
 export type Strength = {
@@ -26,17 +26,17 @@ export const strengths: Strength[] = [
   {
     icon: "gamepad",
     title: "Game-feel interactions",
-    desc: "Cocos Creator background — easing, feedback and motion that make an interface feel alive, not just animated.",
+    desc: "Cocos Creator background: easing, tactile feedback and motion that make an interface feel responsive and alive.",
   },
   {
     icon: "gauge",
     title: "Performance-first",
-    desc: "Profiling, lazy loading and render discipline keep things at 60fps — even when WebGL is on the page.",
+    desc: "Profiling, lazy loading and render discipline maintain 60fps, even with WebGL running on the page.",
   },
   {
     icon: "rocket",
     title: "Ships end-to-end",
-    desc: "From an OCR module that sped up document processing to a real-time chat app — features delivered with design and backend teams.",
+    desc: "From an OCR module that sped up document processing to a real-time chat app, features delivered with design and backend teams.",
   },
 ];
 
@@ -59,7 +59,7 @@ export const experiences: Experience[] = [
     title: "Junior Frontend Developer",
     type: "Full-time",
     company: "TGM Research",
-    duration: "7.2025 — Present",
+    duration: "7.2025 – Present",
     summary: "Building complex React applications and architecting scalable frontend solutions.",
     responsibilities: [
       "Develop complex React applications with TypeScript and optimize website performance.",
@@ -83,7 +83,7 @@ export const experiences: Experience[] = [
     title: "Junior Frontend Developer",
     type: "Full-time",
     company: "CAS Corporation",
-    duration: "9.2024 — 5.2025",
+    duration: "9.2024 – 5.2025",
     summary:
       "Internal CRM platform, an OCR module and SEO-optimized landing pages built with Next.js.",
     responsibilities: [
@@ -100,7 +100,7 @@ export const experiences: Experience[] = [
     title: "Frontend Developer",
     type: "Short-term contract",
     company: "Likelion",
-    duration: "5.2024 — 8.2024",
+    duration: "5.2024 – 8.2024",
     summary: "Owned the frontend of a real-time web chat application for internal teams.",
     responsibilities: [
       "Owned the frontend of a real-time web-based chat application for internal team communication.",
@@ -115,7 +115,7 @@ export const experiences: Experience[] = [
     title: "Game Developer Intern",
     type: "Internship",
     company: "Onechain Game Studio",
-    duration: "5.2023 — 8.2023",
+    duration: "5.2023 – 8.2023",
     summary: "Where the motion design obsession started: hypercasual games in Cocos Creator.",
     responsibilities: [
       "Designed and developed hypercasual games using Cocos Creator and TypeScript.",
@@ -151,7 +151,7 @@ export const projects: Project[] = [
     title: "MyShop",
     tagline: "Full-stack e-commerce storefront",
     description:
-      "Online store with product catalog, categories, cart and Stripe Checkout — an Astro 5 + React islands frontend backed by a Java 21 Spring Boot API on PostgreSQL, with an admin area for orders.",
+      "Online store with product catalog, categories, cart and Stripe Checkout. Powered by an Astro 5 + React islands frontend backed by a Java 21 Spring Boot API on PostgreSQL, with an admin area for orders.",
     stack: ["Astro 5", "React", "Stripe", "Spring Boot", "PostgreSQL"],
     demo: "https://thuyshop.store",
     repo: "https://github.com/huynth1801/myshop-astro",
@@ -193,7 +193,7 @@ export const projects: Project[] = [
     title: "Flappy Bird",
     tagline: "Hypercasual game clone",
     description:
-      "A faithful Flappy Bird built in Cocos Creator with TypeScript — where I learned to think in game loops, not page loads.",
+      "A faithful Flappy Bird built in Cocos Creator with TypeScript, where I cultivated game loop and real-time animation mechanics.",
     stack: ["Cocos Creator", "TypeScript"],
     repo: "https://github.com/huynth1801/FlappyBird",
     icon: "gamepad",
@@ -213,7 +213,7 @@ export const projects: Project[] = [
     title: "This portfolio",
     tagline: "Interactive 3D floating career island",
     description:
-      "The site you're on right now: a low-poly floating island 'Career City' with 5 districts, real-time day/night lighting, camera transitions, and mascot cat — built with React Three Fiber, Three.js, and GSAP.",
+      "The site you're on right now: a low-poly floating island 'Career City' with 5 districts, real-time day/night lighting, camera transitions, and mascot cat (built with React Three Fiber, Three.js, and GSAP).",
     stack: ["Next.js 16", "React Three Fiber", "GSAP", "Lenis"],
     repo: "https://github.com/huynth1801/my-porfolio-nextjs",
     icon: "globe",

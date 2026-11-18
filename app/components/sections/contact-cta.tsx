@@ -17,9 +17,7 @@ export function ContactCta() {
           <span className="font-mono text-[10px] font-semibold tracking-wider text-cyan-300 uppercase px-2.5 py-0.5 rounded-full bg-cyan-400/10 border border-cyan-400/25">
             WAYPOINT 07 // BROADCAST STATION
           </span>
-          <span className="text-[11px] font-medium text-gray-400">
-            Signal Active
-          </span>
+          <span className="text-[11px] font-medium text-gray-400">Signal Active</span>
         </div>
 
         <h2 className="mt-4 max-w-xl text-balance text-3xl font-bold tracking-tight text-white md:text-5xl">
@@ -27,21 +25,21 @@ export function ContactCta() {
         </h2>
 
         <p className="mt-4 max-w-lg text-pretty leading-relaxed text-gray-300">
-          Looking for a frontend developer who cares about how a product feels, not just how it
-          looks? My inbox is always in player-ready state.
+          Open for production web applications, creative engineering, and frontend architecture
+          opportunities. My inbox is always player-ready.
         </p>
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
           <a
             href={`mailto:${profile.email}`}
-            className="inline-flex items-center gap-2 rounded-full btn-solid px-6 py-3 text-sm font-semibold transition-transform duration-200 hover:scale-[1.04] active:scale-95"
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-full btn-solid px-6 py-3 text-sm font-semibold transition-transform duration-200 hover:scale-[1.04] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
           >
             <Mail className="size-4" />
             {profile.email}
           </a>
           <a
             href="/contact"
-            className="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-gray-200 backdrop-blur-sm transition-colors hover:border-white/30 hover:bg-white/10"
+            className="group inline-flex min-h-[44px] items-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-gray-200 backdrop-blur-sm transition-colors hover:border-white/30 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
           >
             Use the contact form
             <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
@@ -54,7 +52,7 @@ export function ContactCta() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub"
-            className="flex size-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-gray-400 transition-colors hover:border-white/30 hover:text-white"
+            className="flex size-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-gray-400 transition-colors hover:border-white/30 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
           >
             <Github className="size-4.5" />
           </a>
@@ -63,7 +61,7 @@ export function ContactCta() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="LinkedIn"
-            className="flex size-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-gray-400 transition-colors hover:border-white/30 hover:text-white"
+            className="flex size-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-gray-400 transition-colors hover:border-white/30 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
           >
             <Linkedin className="size-4.5" />
           </a>
@@ -71,7 +69,7 @@ export function ContactCta() {
             href={profile.resume}
             download
             aria-label="Download resume"
-            className="flex size-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-gray-400 transition-colors hover:border-white/30 hover:text-white"
+            className="flex size-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-gray-400 transition-colors hover:border-white/30 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
           >
             <FileDown className="size-4.5" />
           </a>

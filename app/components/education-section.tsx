@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { motion } from "motion/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "lucide-react";
@@ -26,28 +25,25 @@ interface EducationSectionProps {
   items: EducationItem[];
 }
 
-const containerVariants = {
-  hidden: { opacity: 0, y: 12 },
-  show: { opacity: 1, y: 0, transition: { staggerChildren: 0.08 } },
-};
-
 export const EducationSection: React.FC<EducationSectionProps> = ({
   title = "Education",
   subtitle,
   items = educations,
 }) => {
   return (
-    <section id="education" className="pointer-events-auto py-12">
-      <div className="max-w-3xl mx-auto px-6">
+    <section
+      id="education"
+      data-zone="education"
+      className="pointer-events-auto relative px-6 py-24 md:px-12 md:py-28"
+    >
+      <div className="mx-auto max-w-3xl">
         <div className="glass mb-8 rounded-2xl p-6 md:p-8 border border-white/12 shadow-2xl flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-2">
               <span className="font-mono text-[10px] font-semibold tracking-wider text-cyan-300 uppercase px-2.5 py-0.5 rounded-full bg-cyan-400/10 border border-cyan-400/25">
                 WAYPOINT 06 // TECH ACADEMY
               </span>
-              <span className="text-[11px] font-medium text-gray-400">
-                Education & Credentials
-              </span>
+              <span className="text-[11px] font-medium text-gray-400">Education & Credentials</span>
             </div>
             <h3 className="text-2xl md:text-3xl font-bold text-white">{title}</h3>
             {subtitle && <p className="text-sm text-gray-300 mt-1">{subtitle}</p>}
@@ -59,19 +55,13 @@ export const EducationSection: React.FC<EducationSectionProps> = ({
           </Badge>
         </div>
 
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.15 }}
-          variants={containerVariants}
-          className="relative"
-        >
+        <div className="relative">
           {/* Vertical timeline line on md+ */}
           <div className="hidden md:block absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-gray-700 to-transparent" />
 
           <div className="space-y-6 md:space-y-8">
             {items.map((it) => (
-              <motion.article key={it.id} className={clsx("relative md:pl-16", "group")}>
+              <article key={it.id} className={clsx("relative md:pl-16", "group")}>
                 {/* Timeline dot (desktop) */}
                 <div className="hidden md:absolute md:left-0 md:top-2">
                   <div className="flex items-center">
@@ -83,25 +73,25 @@ export const EducationSection: React.FC<EducationSectionProps> = ({
                   <CardHeader className="p-4 md:p-5">
                     <div className="flex items-start gap-4">
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0">
-                            <CardTitle className="text-lg font-semibold text-white leading-tight truncate">
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-3">
+                          <div className="min-w-0 flex-1">
+                            <CardTitle className="text-base sm:text-lg font-semibold text-white leading-snug">
                               {it.degree} {it.field ? `· ${it.field}` : ""}
                             </CardTitle>
-                            <p className="text-sm text-gray-300 truncate">{it.school}</p>
+                            <p className="text-sm text-gray-300 mt-0.5">{it.school}</p>
                           </div>
 
-                          <div className="flex flex-col items-end text-right">
-                            <span className="text-sm text-gray-400">
+                          <div className="flex flex-wrap sm:flex-col sm:items-end sm:text-right gap-1.5 shrink-0">
+                            <span className="text-xs sm:text-sm font-mono text-cyan-300 sm:text-gray-400">
                               {formatRange(it.startDate, it.endDate)}
                             </span>
                             {it.tags && it.tags.length > 0 && (
-                              <div className="mt-2 flex flex-wrap gap-2">
+                              <div className="mt-1 flex flex-wrap gap-1.5">
                                 {it.tags.slice(0, 3).map((tag) => (
                                   <Badge
                                     key={tag}
                                     variant="secondary"
-                                    className="text-xs px-2 py-1"
+                                    className="text-[11px] px-2 py-0.5"
                                   >
                                     {tag}
                                   </Badge>
@@ -122,10 +112,10 @@ export const EducationSection: React.FC<EducationSectionProps> = ({
                     </div>
                   </CardHeader>
                 </Card>
-              </motion.article>
+              </article>
             ))}
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -134,8 +124,8 @@ export const EducationSection: React.FC<EducationSectionProps> = ({
 function formatRange(start?: string, end?: string) {
   if (!start && !end) return "";
   if (!start) return `${end ?? ""}`;
-  if (!end) return `${start} — Present`;
-  return `${start} — ${end}`;
+  if (!end) return `${start} – Present`;
+  return `${start} – ${end}`;
 }
 
 export default EducationSection;

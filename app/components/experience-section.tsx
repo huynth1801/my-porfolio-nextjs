@@ -1,7 +1,6 @@
 "use client";
 
 import { memo, useCallback, useState } from "react";
-import { motion } from "motion/react";
 import { ChevronDown } from "lucide-react";
 import { experiences, type Experience } from "@/lib/content";
 
@@ -45,13 +44,7 @@ function TimelineItem({
   const contentId = `timeline-content-${item.id}`;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 32 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className="relative"
-    >
+    <div className="relative">
       {/* checkpoint number — echoes the 3D gate you just flew through */}
       <span
         aria-hidden
@@ -67,7 +60,7 @@ function TimelineItem({
       >
         <button
           id={headerId}
-          className="w-full cursor-pointer rounded-t-2xl p-5 text-left transition-colors duration-200 md:p-6"
+          className="w-full cursor-pointer rounded-t-2xl p-5 text-left transition-colors duration-200 md:p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
           onClick={() => onToggle(item.id)}
           aria-expanded={expanded}
           aria-controls={contentId}
@@ -108,7 +101,7 @@ function TimelineItem({
           </div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -130,25 +123,20 @@ export function ExperienceSection() {
   }, []);
 
   return (
-    <section
-      id="experience"
-      className="pointer-events-auto relative px-6 py-20 md:px-12"
-    >
+    <section id="experience" className="pointer-events-auto relative px-6 py-20 md:px-12">
       <div className="mx-auto max-w-3xl">
         <div className="glass mb-8 rounded-2xl p-6 md:p-8 border border-white/12 shadow-2xl">
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-mono text-[10px] font-semibold tracking-wider text-cyan-300 uppercase px-2.5 py-0.5 rounded-full bg-cyan-400/10 border border-cyan-400/25">
               WAYPOINT 03 // CAREER TOWERS
             </span>
-            <span className="text-[11px] font-medium text-gray-400">
-              The journey so far
-            </span>
+            <span className="text-[11px] font-medium text-gray-400">The journey so far</span>
           </div>
           <h2 className="mt-3 text-3xl font-bold tracking-tight text-white md:text-4xl">
             Experience
           </h2>
           <p className="mt-2.5 text-sm leading-relaxed text-gray-300">
-            Four checkpoints — from game dev intern to building production React apps.
+            Four checkpoints: from game dev intern to building production React apps.
           </p>
         </div>
 

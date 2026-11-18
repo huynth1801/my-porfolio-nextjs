@@ -133,7 +133,7 @@ function ProjectsContent() {
         return (
           <article key={p.id} className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5">
             <div className="relative mb-2.5 aspect-[16/9] w-full overflow-hidden rounded-lg border border-white/10 bg-black/40">
-              <Image src={p.image} alt={p.title} fill className="object-cover" />
+              <Image src={p.image} alt={p.title} fill className="aspect-[16/9] object-cover" />
             </div>
             <div className="flex items-center gap-2.5">
               <span
@@ -211,7 +211,7 @@ function EducationContent() {
           <div className="flex items-baseline justify-between gap-3">
             <p className="text-sm font-semibold text-white">{edu.degree}</p>
             <span className="shrink-0 text-[11px] text-gray-500">
-              {edu.startDate} — {edu.endDate}
+              {edu.startDate} – {edu.endDate}
             </span>
           </div>
           <p className="mt-1 text-xs text-cyan-300">{edu.school}</p>
@@ -228,7 +228,7 @@ function ContactContent() {
   return (
     <div className="space-y-5">
       <p className="text-sm leading-relaxed text-gray-400">
-        My inbox is always in player-ready state — pick any channel below.
+        My inbox is always player-ready: pick any channel below.
       </p>
       <a
         href={`mailto:${profile.email}`}

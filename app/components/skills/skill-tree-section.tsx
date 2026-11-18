@@ -100,7 +100,7 @@ export function SkillTreeSection() {
                 </span>
               </h2>
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-gray-300">
-                Cây kỹ năng RPG tương tác — Bấm vào từng nút công nghệ để kích hoạt Holo-Projector
+                Cây kỹ năng RPG tương tác: Bấm vào từng nút công nghệ để kích hoạt Holo-Projector
                 xem <strong>dự án thực tế</strong>, <strong>tư duy kiến trúc</strong> và{" "}
                 <strong>mã nguồn sản xuất</strong>.
               </p>

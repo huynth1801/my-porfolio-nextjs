@@ -49,7 +49,7 @@ export function JsonLd() {
   const webSiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Huy Nguyen — Frontend Developer Portfolio",
+    name: "Huy Nguyen · Frontend Developer Portfolio",
     url: "https://my-porfolio-nextjs.vercel.app",
     inLanguage: "en-US",
     author: {

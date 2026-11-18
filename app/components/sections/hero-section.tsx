@@ -69,7 +69,7 @@ export function HeroSection() {
 
         {/* Cinematic Headline Tagline (Borderless Typography) */}
         <h1 className="mt-3 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)] leading-snug">
-          <span className="sr-only">Huy Nguyen — Frontend Developer in Ho Chi Minh City. </span>
+          <span className="sr-only">Huy Nguyen · Frontend Developer in Ho Chi Minh City. </span>
           {profile.tagline}
         </h1>
 
@@ -77,7 +77,7 @@ export function HeroSection() {
         <div className="pointer-events-auto mt-4 flex flex-wrap items-center gap-2.5">
           <a
             href="#projects"
-            className="group inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs sm:text-sm font-semibold text-neutral-950 shadow-[0_4px_20px_rgba(0,0,0,0.35)] transition-all duration-200 hover:bg-neutral-100 hover:scale-[1.03] active:scale-95"
+            className="group inline-flex min-h-[44px] items-center gap-2 rounded-full bg-white px-5 py-2.5 text-xs sm:text-sm font-semibold text-neutral-950 shadow-[0_4px_20px_rgba(0,0,0,0.35)] transition-all duration-200 hover:bg-neutral-100 hover:scale-[1.02] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
           >
             <Rocket className="size-3.5 sm:size-4 transition-transform duration-200 group-hover:-translate-y-0.5" />
             <span>Explore projects</span>
@@ -85,7 +85,7 @@ export function HeroSection() {
 
           <button
             onClick={() => startStory(0)}
-            className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/20 bg-black/55 px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-lg backdrop-blur-xl transition-all duration-200 hover:bg-black/75 hover:border-white/40 hover:scale-[1.03] active:scale-95"
+            className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-full border border-white/20 bg-black/55 px-5 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-lg backdrop-blur-xl transition-all duration-200 hover:bg-black/75 hover:border-white/40 hover:scale-[1.02] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
           >
             <Play className="size-3.5 sm:size-4 text-cyan-300 fill-cyan-300" />
             <span>Watch story</span>

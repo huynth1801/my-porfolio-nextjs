@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
@@ -36,46 +36,23 @@ const CATEGORY_TABS: { id: ProjectCategory; label: string }[] = [
 
 function ProjectCard({
   project,
-  index,
   onOpenModal,
 }: {
   project: Project;
-  index: number;
   onOpenModal: (project: Project) => void;
 }) {
-  const cardRef = useRef<HTMLDivElement>(null);
   const Icon = ICONS[project.icon];
-
-  const handleMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    const el = cardRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    el.style.transform = `perspective(900px) rotateX(${-y * 5}deg) rotateY(${x * 6}deg) translateY(-4px)`;
-  };
-
-  const handleLeave = () => {
-    const el = cardRef.current;
-    if (!el) return;
-    el.style.transform = "perspective(900px) rotateX(0deg) rotateY(0deg) translateY(0)";
-  };
 
   return (
     <motion.article
       layout
-      initial={{ opacity: 0, y: 28 }}
+      initial={{ opacity: 1, y: 0 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.45, delay: (index % 2) * 0.08, ease: "easeOut" }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
       className="h-full"
     >
-      <div
-        ref={cardRef}
-        onPointerMove={handleMove}
-        onPointerLeave={handleLeave}
-        className="group glass relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/12 p-5 md:p-6 transition-[transform,border-color,box-shadow] duration-300 ease-out hover:border-white/25 hover:shadow-[0_24px_70px_-20px_rgba(0,0,0,0.85)]"
-      >
+      <div className="group glass relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/12 p-5 md:p-6 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-white/25 hover:shadow-[0_24px_70px_-20px_rgba(0,0,0,0.85)]">
         {/* Ambient accent wash */}
         <div
           className="pointer-events-none absolute -top-24 -right-24 size-56 rounded-full opacity-20 blur-3xl transition-opacity duration-500 group-hover:opacity-40"
@@ -108,7 +85,7 @@ function ProjectCard({
               alt={`${project.title} mockup preview`}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              className="aspect-[16/10] object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             />
             {/* Subtle Gradient Shadow */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent opacity-60 transition-opacity group-hover:opacity-40" />
@@ -182,7 +159,7 @@ function ProjectCard({
               sfx.click();
               onOpenModal(project);
             }}
-            className="group/btn inline-flex items-center gap-1.5 text-xs font-semibold text-gray-300 hover:text-white transition-colors cursor-pointer"
+            className="group/btn inline-flex min-h-[44px] items-center gap-1.5 py-2.5 text-xs font-semibold text-gray-300 hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
           >
             <Sparkles className="size-3.5 text-cyan-400 transition-transform group-hover/btn:scale-110" />
             <span>Chi tiết & Kiến trúc</span>
@@ -194,7 +171,7 @@ function ProjectCard({
                 href={project.demo}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-300 transition-all hover:text-white hover:underline underline-offset-4"
+                className="inline-flex min-h-[44px] items-center gap-1.5 text-xs font-semibold text-cyan-300 transition-all hover:text-white hover:underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
               >
                 <ExternalLink className="size-3.5" />
                 <span>Live demo</span>
@@ -205,7 +182,7 @@ function ProjectCard({
                 href={project.repo}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-400 transition-colors hover:text-white"
+                className="inline-flex min-h-[44px] items-center gap-1.5 text-xs font-medium text-gray-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
                 title="Xem mã nguồn trên GitHub"
               >
                 <Github className="size-3.5" />
@@ -261,7 +238,7 @@ export function ProjectsSection() {
             Projects worth a click
           </h2>
           <p className="mt-2.5 text-sm leading-relaxed text-gray-300">
-            Things you can actually open and use — from a full-stack e-commerce store to games and
+            Things you can actually open and use: from a full-stack e-commerce store to games and
             WebGL experiences.
           </p>
         </div>
@@ -281,7 +258,7 @@ export function ProjectsSection() {
               <button
                 key={tab.id}
                 onClick={() => handleTabChange(tab.id)}
-                className={`group flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition-all duration-200 cursor-pointer shadow-md ${
+                className={`group flex min-h-[44px] items-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold transition-all duration-200 cursor-pointer shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${
                   isActive
                     ? "bg-cyan-400 text-neutral-950 shadow-[0_0_16px_rgba(34,211,238,0.45)] scale-[1.02]"
                     : "border border-white/10 bg-white/[0.04] text-gray-300 hover:border-white/25 hover:bg-white/[0.08] hover:text-white"
@@ -305,11 +282,10 @@ export function ProjectsSection() {
         {/* Projects Grid with AnimatePresence */}
         <motion.div layout className="grid gap-6 md:grid-cols-2">
           <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project, i) => (
+            {filteredProjects.map((project) => (
               <ProjectCard
                 key={project.id}
                 project={project}
-                index={i}
                 onOpenModal={(p) => setSelectedProject(p)}
               />
             ))}
@@ -370,7 +346,7 @@ export function ProjectsSection() {
                   src={selectedProject.image}
                   alt={selectedProject.title}
                   fill
-                  className="object-cover"
+                  className="aspect-[16/10] object-cover"
                   priority
                 />
               </div>

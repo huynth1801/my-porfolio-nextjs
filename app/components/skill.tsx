@@ -24,6 +24,7 @@ interface SkillConfig {
 interface OrbitingSkillProps {
   config: SkillConfig;
   angle: number;
+  scale?: number;
 }
 
 interface GlowingOrbitPathProps {
@@ -236,19 +237,21 @@ const skillsConfig: SkillConfig[] = [
 ];
 
 // --- Memoized Orbiting Skill Component ---
-const OrbitingSkill = memo(({ config, angle }: OrbitingSkillProps) => {
+const OrbitingSkill = memo(({ config, angle, scale = 1 }: OrbitingSkillProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const { orbitRadius, size, iconType, label } = config;
 
-  const x = Math.cos(angle) * orbitRadius;
-  const y = Math.sin(angle) * orbitRadius;
+  const currentRadius = orbitRadius * scale;
+  const currentSize = size * (scale < 0.8 ? 0.85 : 1);
+  const x = Math.cos(angle) * currentRadius;
+  const y = Math.sin(angle) * currentRadius;
 
   return (
     <div
       className="absolute top-1/2 left-1/2 transition-all duration-300 ease-out"
       style={{
-        width: `${size}px`,
-        height: `${size}px`,
+        width: `${currentSize}px`,
+        height: `${currentSize}px`,
         transform: `translate(calc(${x}px - 50%), calc(${y}px - 50%))`,
         zIndex: isHovered ? 20 : 10,
       }}
@@ -337,12 +340,24 @@ export function OrbitingSkills() {
   const [time, setTime] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [scale, setScale] = useState(1);
 
   useLayoutEffect(() => {
     const id = requestAnimationFrame(() => {
       setIsClient(true);
+      if (typeof window !== "undefined") {
+        setScale(window.innerWidth < 480 ? 0.65 : window.innerWidth < 768 ? 0.85 : 1);
+      }
     });
     return () => cancelAnimationFrame(id);
+  }, []);
+
+  useEffect(() => {
+    const onResize = () => {
+      setScale(window.innerWidth < 480 ? 0.65 : window.innerWidth < 768 ? 0.85 : 1);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
   useEffect(() => {
@@ -369,9 +384,9 @@ export function OrbitingSkills() {
   ];
 
   return (
-    <div className="flex w-full items-center justify-center overflow-hidden">
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-10">
+    <div className="relative flex w-full items-center justify-center overflow-hidden py-4">
+      {/* Background pattern clamped within this section only */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
         <div
           className="absolute inset-0"
           style={{
@@ -382,12 +397,12 @@ export function OrbitingSkills() {
       </div>
 
       <div
-        className="relative w-[calc(100vw-40px)] h-[calc(100vw-40px)] md:w-[450px] md:h-[450px] flex items-center justify-center"
+        className="relative w-[280px] h-[280px] sm:w-[380px] sm:h-[380px] md:w-[450px] md:h-[450px] flex items-center justify-center max-w-full overflow-hidden"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
         {/* Central "Code" Icon with enhanced glow */}
-        <div className="w-20 h-20 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full flex items-center justify-center z-10 relative shadow-2xl">
+        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full flex items-center justify-center z-10 relative shadow-2xl">
           <div className="absolute inset-0 rounded-full bg-cyan-500/30 blur-xl animate-pulse"></div>
           <div
             className="absolute inset-0 rounded-full bg-purple-500/20 blur-2xl animate-pulse"
@@ -421,18 +436,18 @@ export function OrbitingSkills() {
         {orbitConfigs.map((config) => (
           <GlowingOrbitPath
             key={`path-${config.radius}`}
-            radius={config.radius}
+            radius={config.radius * scale}
             glowColor={config.glowColor}
             animationDelay={config.delay}
           />
         ))}
 
         {/* Render orbiting skill icons */}
-          {isClient &&
-            skillsConfig.map((config) => {
-              const angle = time * config.speed + (config.phaseShift || 0);
-              return <OrbitingSkill key={config.id} config={config} angle={angle} />;
-            })}
+        {isClient &&
+          skillsConfig.map((config) => {
+            const angle = time * config.speed + (config.phaseShift || 0);
+            return <OrbitingSkill key={config.id} config={config} angle={angle} scale={scale} />;
+          })}
       </div>
     </div>
   );
@@ -440,10 +455,10 @@ export function OrbitingSkills() {
 
 export default function SkillSection() {
   return (
-    <div
+    <section
       id="skills"
       data-zone="skills"
-      className="pointer-events-auto relative px-2 py-24 sm:px-4"
+      className="pointer-events-auto relative px-6 py-24 md:px-12 md:py-28"
     >
       <div className="mx-auto max-w-3xl">
         <header className="glass mb-8 rounded-2xl p-6 md:p-8 border border-white/12 shadow-2xl">
@@ -451,18 +466,17 @@ export default function SkillSection() {
             <span className="font-mono text-[10px] font-semibold tracking-wider text-cyan-300 uppercase px-2.5 py-0.5 rounded-full bg-cyan-400/10 border border-cyan-400/25">
               WAYPOINT 05 // SKILLS KIOSK
             </span>
-            <span className="text-[11px] font-medium text-gray-400">
-              Inventory & Stack
-            </span>
+            <span className="text-[11px] font-medium text-gray-400">Inventory & Stack</span>
           </div>
           <h2 className="mt-3 text-3xl font-bold tracking-tight text-white md:text-4xl">Skills</h2>
           <p className="mt-2 text-sm leading-relaxed text-gray-300">
-            Interactive skill orbits — core tools and technologies powering production web & game applications.
+            Interactive skill orbits: core tools and technologies powering production web & game
+            applications.
           </p>
         </header>
 
         <OrbitingSkills />
       </div>
-    </div>
+    </section>
   );
 }

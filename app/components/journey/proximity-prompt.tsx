@@ -64,7 +64,7 @@ export function ProximityPrompt() {
           >
             <button
               onClick={() => proximityStore.triggerActive()}
-              className={`glass pointer-events-auto group flex items-center gap-3 rounded-full border px-4 py-2.5 shadow-[0_10px_35px_rgba(0,0,0,0.6)] backdrop-blur-xl transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer ${
+              className={`glass pointer-events-auto group flex max-w-[calc(100vw-32px)] items-center gap-2.5 sm:gap-3 rounded-full border px-3 sm:px-4 py-2 sm:py-2.5 shadow-[0_10px_35px_rgba(0,0,0,0.6)] backdrop-blur-xl transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${
                 active.id === "dev-desk"
                   ? "border-amber-400/40 bg-black/85 shadow-[0_0_25px_rgba(245,158,11,0.25)] hover:border-amber-400/80"
                   : "border-white/20 bg-black/80 shadow-[0_0_25px_rgba(56,189,248,0.25)] hover:border-cyan-400/60"
@@ -72,7 +72,7 @@ export function ProximityPrompt() {
             >
               {/* Keyboard badge [~ or E] */}
               <div
-                className={`flex size-7 items-center justify-center rounded-lg border text-xs font-black tracking-wider transition-colors duration-200 ${
+                className={`flex size-7 shrink-0 items-center justify-center rounded-lg border text-xs font-black tracking-wider transition-colors duration-200 ${
                   active.id === "dev-desk"
                     ? "border-amber-400/60 bg-amber-400/20 text-amber-200 shadow-[0_0_12px_rgba(245,158,11,0.4)] group-hover:bg-amber-400 group-hover:text-black"
                     : "border-cyan-400/60 bg-cyan-400/20 text-cyan-200 shadow-[0_0_12px_rgba(34,211,238,0.4)] group-hover:bg-cyan-400 group-hover:text-black"
@@ -82,13 +82,13 @@ export function ProximityPrompt() {
               </div>
 
               {/* Icon & Label */}
-              <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                <span className="text-base">{active.icon}</span>
-                <span>{active.label}</span>
+              <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-white truncate min-w-0">
+                <span className="text-sm sm:text-base shrink-0">{active.icon}</span>
+                <span className="truncate">{active.label}</span>
               </div>
 
               {/* Hint badge */}
-              <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-medium text-gray-300">
+              <span className="hidden sm:inline-flex shrink-0 items-center gap-1 rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-medium text-gray-300">
                 <Sparkles
                   className={`size-2.5 ${active.id === "dev-desk" ? "text-amber-400" : "text-cyan-400"}`}
                 />

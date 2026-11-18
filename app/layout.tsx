@@ -17,8 +17,8 @@ const description =
 export const metadata: Metadata = {
   metadataBase: new URL("https://my-porfolio-nextjs.vercel.app"),
   title: {
-    default: "Huy Nguyen — Frontend Developer",
-    template: "%s — Huy Nguyen",
+    default: "Huy Nguyen · Frontend Developer",
+    template: "%s · Huy Nguyen",
   },
   description,
   applicationName: "Huy Nguyen Portfolio",
@@ -58,16 +58,16 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Huy Nguyen — Frontend Developer",
+    title: "Huy Nguyen · Frontend Developer",
     description,
     url: "/",
-    siteName: "Huy Nguyen — Portfolio",
+    siteName: "Huy Nguyen · Portfolio",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Huy Nguyen — Frontend Developer",
+    title: "Huy Nguyen · Frontend Developer",
     description,
     creator: "@huuhuy1801",
   },
@@ -97,6 +97,12 @@ export default function RootLayout({
         <JsonLd />
       </head>
       <body className="antialiased">
+        <a
+          href="#home"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-full focus:bg-cyan-400 focus:px-4 focus:py-2 focus:text-xs focus:font-bold focus:text-neutral-950 focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-white"
+        >
+          Skip to main content
+        </a>
         <Header />
         {children}
         <Analytics />

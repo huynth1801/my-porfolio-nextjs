@@ -7,13 +7,7 @@ import { ProjectsSection } from "./components/sections/projects-section";
 import { ContactCta } from "./components/sections/contact-cta";
 import { JourneyCanvas } from "./components/journey/journey-canvas";
 import { SmoothScroll } from "./components/journey/smooth-scroll";
-import { PanelOverlay } from "./components/panels/panel-overlay";
-import { StoryPlayer } from "./components/three/island/story-player";
-import { AchievementToasts } from "./components/achievements/achievement-toasts";
-import { TourHud } from "./components/journey/tour-hud";
-import { ProximityPrompt } from "./components/journey/proximity-prompt";
-import { ArcadeCabinetOverlay } from "./components/three/island/arcade-cabinet-overlay";
-import { TerminalOverlay } from "./components/terminal/terminal-overlay";
+import { InteractiveShell } from "./components/interactive-shell";
 import { educations } from "@/lib/content";
 
 export default function Home() {
@@ -36,13 +30,7 @@ export default function Home() {
         />
         <ContactCta />
       </main>
-      <PanelOverlay />
-      <StoryPlayer />
-      <AchievementToasts />
-      <TourHud />
-      <ProximityPrompt />
-      <ArcadeCabinetOverlay />
-      <TerminalOverlay />
+      <InteractiveShell />
     </>
   );
 }
