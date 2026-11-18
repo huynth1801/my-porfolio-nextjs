@@ -223,28 +223,36 @@ export function ProjectsSection() {
     <section
       id="projects"
       data-zone="projects"
-      className="pointer-events-auto relative px-5 py-24 sm:px-6 md:px-12 md:py-28"
+      className="pointer-events-auto relative px-5 py-24 sm:px-8 md:px-12 md:py-28"
     >
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-6xl">
         {/* Section Header Box */}
-        <div className="glass mb-8 max-w-xl rounded-2xl p-6 md:p-8 border border-white/12 shadow-2xl">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="font-mono text-[10px] font-semibold tracking-wider text-cyan-300 uppercase px-2.5 py-0.5 rounded-full bg-cyan-400/10 border border-cyan-400/25">
-              WAYPOINT 04 // PIXEL ARCADE
-            </span>
-            <span className="text-[11px] font-medium text-gray-400">Selected work</span>
+        <div className="glass mb-10 rounded-2xl p-6 sm:p-8 md:p-9 border border-white/12 shadow-2xl">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-mono text-[10px] font-semibold tracking-wider text-cyan-300 uppercase px-2.5 py-0.5 rounded-full bg-cyan-400/10 border border-cyan-400/25">
+                WAYPOINT 04 // PIXEL ARCADE · MISSION ARCHIVE
+              </span>
+              <span className="text-xs font-mono text-gray-400 flex items-center gap-1.5">
+                <Sparkles className="size-3.5 text-cyan-400" />
+                {projects.length} Shipped Deployments
+              </span>
+            </div>
+            <span className="font-mono text-[11px] text-gray-400">Selected Works (2022–2026)</span>
           </div>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-white md:text-4xl">
-            Projects worth a click
+
+          <h2 className="mt-5 text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-white">
+            Projects Worth Exploring
           </h2>
-          <p className="mt-2.5 text-sm leading-relaxed text-gray-300">
-            Things you can actually open and use: from a full-stack e-commerce store to games and
-            WebGL experiences.
+          <p className="mt-2.5 max-w-2xl text-xs sm:text-sm leading-relaxed text-gray-300">
+            Các sản phẩm thực chiến từ ứng dụng E-commerce full-stack, nền tảng giải trí media, đến
+            các thể nghiệm 3D WebGL và game loop tương tác mà bạn có thể trải nghiệm trực tiếp ngay
+            bây giờ.
           </p>
         </div>
 
         {/* Category Filters Bar */}
-        <div className="mb-8 flex flex-wrap items-center gap-2">
+        <div className="mb-8 flex flex-wrap items-center gap-2.5">
           {CATEGORY_TABS.map((tab) => {
             const isActive = activeTab === tab.id;
             const count =
@@ -258,18 +266,18 @@ export function ProjectsSection() {
               <button
                 key={tab.id}
                 onClick={() => handleTabChange(tab.id)}
-                className={`group flex min-h-[44px] items-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold transition-all duration-200 cursor-pointer shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${
+                className={`group flex min-h-[44px] items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-mono font-semibold transition-all duration-200 cursor-pointer shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${
                   isActive
-                    ? "bg-cyan-400 text-neutral-950 shadow-[0_0_16px_rgba(34,211,238,0.45)] scale-[1.02]"
-                    : "border border-white/10 bg-white/[0.04] text-gray-300 hover:border-white/25 hover:bg-white/[0.08] hover:text-white"
+                    ? "bg-cyan-400 text-neutral-950 shadow-[0_0_20px_rgba(34,211,238,0.45)] scale-[1.02]"
+                    : "border border-white/10 bg-[#0e111a]/80 text-gray-300 hover:border-cyan-400/30 hover:bg-[#121624] hover:text-white"
                 }`}
               >
                 <span>{tab.label}</span>
                 <span
-                  className={`rounded-full px-1.5 py-0.2 text-[10px] font-mono transition-colors ${
+                  className={`rounded-md px-1.5 py-0.5 text-[10px] font-mono transition-colors ${
                     isActive
                       ? "bg-black/25 text-neutral-950 font-bold"
-                      : "bg-white/10 text-gray-400 group-hover:text-white"
+                      : "bg-white/10 text-gray-400 group-hover:text-cyan-300"
                   }`}
                 >
                   {count}

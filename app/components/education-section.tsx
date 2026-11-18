@@ -1,9 +1,7 @@
 "use client";
 
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Calendar } from "lucide-react";
+import { GraduationCap, Award } from "lucide-react";
 import clsx from "clsx";
 import { educations } from "@/lib/content";
 
@@ -22,96 +20,98 @@ export type EducationItem = {
 interface EducationSectionProps {
   title?: string;
   subtitle?: string;
-  items: EducationItem[];
+  items?: EducationItem[];
 }
 
 export const EducationSection: React.FC<EducationSectionProps> = ({
-  title = "Education",
-  subtitle,
+  title = "Education & Training",
+  subtitle = "Học vấn chính quy, chứng chỉ chuyên sâu và nền tảng kỹ thuật phần mềm.",
   items = educations,
 }) => {
   return (
     <section
       id="education"
       data-zone="education"
-      className="pointer-events-auto relative px-6 py-24 md:px-12 md:py-28"
+      className="pointer-events-auto relative px-5 py-24 sm:px-8 md:px-12 md:py-28"
     >
-      <div className="mx-auto max-w-3xl">
-        <div className="glass mb-8 rounded-2xl p-6 md:p-8 border border-white/12 shadow-2xl flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+      <div className="mx-auto max-w-4xl">
+        {/* Section Header Card */}
+        <div className="glass mb-10 rounded-2xl p-6 sm:p-8 md:p-9 border border-white/12 shadow-2xl flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-2">
               <span className="font-mono text-[10px] font-semibold tracking-wider text-cyan-300 uppercase px-2.5 py-0.5 rounded-full bg-cyan-400/10 border border-cyan-400/25">
                 WAYPOINT 06 // TECH ACADEMY
               </span>
-              <span className="text-[11px] font-medium text-gray-400">Education & Credentials</span>
+              <span className="text-xs font-mono text-gray-400 flex items-center gap-1.5">
+                <GraduationCap className="size-3.5 text-cyan-400" />
+                Verified Credentials
+              </span>
             </div>
-            <h3 className="text-2xl md:text-3xl font-bold text-white">{title}</h3>
-            {subtitle && <p className="text-sm text-gray-300 mt-1">{subtitle}</p>}
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-white">
+              {title}
+            </h2>
+            {subtitle && (
+              <p className="text-xs sm:text-sm text-gray-300 mt-2 max-w-xl leading-relaxed">
+                {subtitle}
+              </p>
+            )}
           </div>
-          <Badge className="bg-[#d84f4c] text-white shadow-md border-0">
-            <span className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" /> {items.length} entries
-            </span>
-          </Badge>
+
+          <div className="shrink-0 flex items-center gap-2 rounded-xl border border-cyan-400/30 bg-cyan-950/40 px-3.5 py-1.5 font-mono text-xs font-semibold text-cyan-300">
+            <Award className="size-4 text-amber-400" />
+            <span>{items.length} Credentials Logged</span>
+          </div>
         </div>
 
         <div className="relative">
           {/* Vertical timeline line on md+ */}
-          <div className="hidden md:block absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-gray-700 to-transparent" />
+          <div className="hidden md:block absolute left-8 top-0 bottom-0 w-px bg-linear-to-b from-cyan-400/40 via-white/15 to-transparent" />
 
           <div className="space-y-6 md:space-y-8">
             {items.map((it) => (
               <article key={it.id} className={clsx("relative md:pl-16", "group")}>
                 {/* Timeline dot (desktop) */}
-                <div className="hidden md:absolute md:left-0 md:top-2">
-                  <div className="flex items-center">
-                    <div className="h-3 w-3 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(56,189,248,0.15)]" />
-                  </div>
+                <div className="hidden md:absolute md:left-6 md:top-6 -translate-x-1/2">
+                  <div className="size-4 rounded-full border-2 border-cyan-400 bg-[#07080b] shadow-[0_0_12px_rgba(34,211,238,0.8)]" />
                 </div>
 
-                <Card className="glass border-none shadow-lg transition-all duration-300 hover:border-cyan-500/30">
-                  <CardHeader className="p-4 md:p-5">
-                    <div className="flex items-start gap-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-3">
-                          <div className="min-w-0 flex-1">
-                            <CardTitle className="text-base sm:text-lg font-semibold text-white leading-snug">
-                              {it.degree} {it.field ? `· ${it.field}` : ""}
-                            </CardTitle>
-                            <p className="text-sm text-gray-300 mt-0.5">{it.school}</p>
-                          </div>
-
-                          <div className="flex flex-wrap sm:flex-col sm:items-end sm:text-right gap-1.5 shrink-0">
-                            <span className="text-xs sm:text-sm font-mono text-cyan-300 sm:text-gray-400">
-                              {formatRange(it.startDate, it.endDate)}
-                            </span>
-                            {it.tags && it.tags.length > 0 && (
-                              <div className="mt-1 flex flex-wrap gap-1.5">
-                                {it.tags.slice(0, 3).map((tag) => (
-                                  <Badge
-                                    key={tag}
-                                    variant="secondary"
-                                    className="text-[11px] px-2 py-0.5"
-                                  >
-                                    {tag}
-                                  </Badge>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        {it.description && (
-                          <CardContent className="p-0 mt-3">
-                            <p className="text-sm text-gray-400 leading-relaxed">
-                              {it.description}
-                            </p>
-                          </CardContent>
-                        )}
-                      </div>
+                <div className="glass rounded-2xl border border-white/10 p-5 sm:p-6 md:p-7 shadow-lg transition-all duration-300 hover:border-cyan-400/40 hover:shadow-[0_12px_32px_-10px_rgba(34,211,238,0.2)]">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-base sm:text-lg font-bold text-white leading-snug">
+                        {it.degree} {it.field ? `· ${it.field}` : ""}
+                      </h3>
+                      <p className="text-xs sm:text-sm font-semibold text-cyan-300 mt-0.5">
+                        {it.school}
+                      </p>
                     </div>
-                  </CardHeader>
-                </Card>
+
+                    <div className="flex flex-wrap sm:flex-col sm:items-end sm:text-right gap-1.5 shrink-0">
+                      <span className="font-mono text-xs text-gray-400 rounded-md border border-white/10 bg-black/40 px-2 py-0.5">
+                        {formatRange(it.startDate, it.endDate)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {it.description && (
+                    <p className="mt-3 text-xs sm:text-sm text-gray-300 leading-relaxed">
+                      {it.description}
+                    </p>
+                  )}
+
+                  {it.tags && it.tags.length > 0 && (
+                    <div className="mt-4 flex flex-wrap gap-1.5 border-t border-white/10 pt-3">
+                      {it.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-md border border-white/10 bg-[#0e111a] px-2 py-0.5 font-mono text-[11px] text-gray-300 transition-colors hover:border-cyan-400/30 hover:text-cyan-200"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </article>
             ))}
           </div>
